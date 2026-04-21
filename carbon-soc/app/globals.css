@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Carbon Design System tokens ── */
+  --color-primary:                   #0f62fe;
+  --color-primary-container:         #d0e2ff;
+  --color-on-primary:                #ffffff;
+  --color-on-primary-container:      #161616;
+  --color-on-primary-fixed-variant:  #0043ce;
+  --color-primary-fixed-dim:         #78a9ff;
+
+  --color-secondary:                 #6f6f6f;
+  --color-secondary-container:       #e0e0e0;
+  --color-on-secondary-container:    #525252;
+
+  --color-tertiary:                  #198038;
+  --color-tertiary-container:        #a7f0ba;
+  --color-on-tertiary-container:     #044317;
+  --color-tertiary-fixed-dim:        #42be65;
+
+  --color-error:                     #da1e28;
+  --color-error-container:           #fff1f1;
+  --color-on-error-container:        #750e13;
+
+  --color-background:                #ffffff;
+  --color-on-background:             #161616;
+  --color-surface:                   #ffffff;
+  --color-on-surface:                #161616;
+  --color-on-surface-variant:        #525252;
+  --color-surface-variant:           #f4f4f4;
+  --color-surface-container:         #f4f4f4;
+  --color-surface-container-low:     #f4f4f4;
+  --color-surface-container-high:    #e0e0e0;
+  --color-surface-container-highest: #c6c6c6;
+  --color-surface-container-lowest:  #ffffff;
+  --color-surface-dim:               #e0e0e0;
+  --color-surface-bright:            #ffffff;
+
+  --color-outline:                   #8d8d8d;
+  --color-outline-variant:           #e0e0e0;
+
+  --color-inverse-surface:           #393939;
+  --color-inverse-on-surface:        #f4f4f4;
+  --color-inverse-primary:           #78a9ff;
+
+  /* ── Border radius — Carbon is nearly square ── */
+  --radius-DEFAULT: 0.125rem;
+  --radius-sm:      0.125rem;
+  --radius-md:      0.125rem;
+  --radius-lg:      0.25rem;
+  --radius-xl:      0.5rem;
+  --radius-full:    0.75rem;
+
+  /* ── Typography — IBM Plex Sans loaded via next/font/google ── */
+  --font-sans: var(--font-ibm-plex-sans), 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  overflow: hidden;
+  height: 100%;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f4f4f4; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #c6c6c6; }
+.hide-scrollbar::-webkit-scrollbar         { display: none; }

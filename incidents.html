@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Incident Insights | Carbon SOC</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container": "#f4f4f4",
+          "error": "#da1e28",
+          "inverse-on-surface": "#f4f4f4",
+          "surface-container-low": "#f4f4f4",
+          "inverse-surface": "#393939",
+          "on-secondary": "#ffffff",
+          "on-secondary-fixed-variant": "#525252",
+          "primary-container": "#d0e2ff",
+          "on-tertiary-container": "#044317",
+          "on-error": "#ffffff",
+          "tertiary-container": "#a7f0ba",
+          "outline-variant": "#e0e0e0",
+          "on-tertiary-fixed-variant": "#044317",
+          "on-error-container": "#750e13",
+          "on-primary-fixed-variant": "#0043ce",
+          "on-primary": "#ffffff",
+          "surface": "#ffffff",
+          "primary": "#0f62fe",
+          "primary-fixed-dim": "#78a9ff",
+          "on-surface": "#161616",
+          "on-primary-container": "#161616",
+          "secondary-fixed-dim": "#c6c6c6",
+          "secondary": "#6f6f6f",
+          "surface-variant": "#f4f4f4",
+          "on-secondary-fixed": "#161616",
+          "inverse-primary": "#78a9ff",
+          "background": "#ffffff",
+          "surface-bright": "#ffffff",
+          "outline": "#8d8d8d",
+          "on-primary-fixed": "#001d6c",
+          "tertiary": "#198038",
+          "on-tertiary": "#ffffff",
+          "primary-fixed": "#d0e2ff",
+          "surface-tint": "#0f62fe",
+          "on-secondary-container": "#525252",
+          "tertiary-fixed-dim": "#42be65",
+          "secondary-fixed": "#e0e0e0",
+          "on-surface-variant": "#525252",
+          "error-container": "#fff1f1",
+          "secondary-container": "#e0e0e0",
+          "surface-container-highest": "#c6c6c6",
+          "surface-container-high": "#e0e0e0",
+          "on-background": "#161616",
+          "on-tertiary-fixed": "#022d0d",
+          "tertiary-fixed": "#a7f0ba",
+          "surface-container-lowest": "#ffffff",
+          "surface-dim": "#e0e0e0"
+        },
+        borderRadius: {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        fontFamily: {
+          "headline": ["IBM Plex Sans", "sans-serif"],
+          "body": ["IBM Plex Sans", "sans-serif"],
+          "label": ["IBM Plex Sans", "sans-serif"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'IBM Plex Sans', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: #f4f4f4; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #8d8d8d; }
+</style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-hidden">
+
+<!-- Top Nav Bar -->
+<header class="bg-white flex justify-between items-center w-full px-4 h-12 z-50 fixed top-0 border-b border-outline-variant font-body text-sm tracking-tight">
+  <div class="flex items-center gap-8">
+    <span class="text-lg font-semibold text-on-surface">Carbon SOC</span>
+    <nav class="hidden md:flex gap-6 h-full items-center">
+      <a class="text-secondary hover:bg-surface-container transition-colors h-12 flex items-center px-1" href="index.html">Dashboard</a>
+      <a class="text-secondary hover:bg-surface-container transition-colors h-12 flex items-center px-1" href="#">Log Explorer</a>
+      <a class="text-secondary hover:bg-surface-container transition-colors h-12 flex items-center px-1" href="#">Policy Manager</a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="relative hidden sm:block">
+      <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+      <input class="bg-surface-container border-none h-8 w-64 pl-8 text-xs focus:ring-1 focus:ring-primary" placeholder="Search resources..." type="text"/>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="w-10 h-10 flex items-center justify-center text-secondary hover:bg-surface-container transition-colors" title="DNS Status">
+        <span class="material-symbols-outlined">dns</span>
+      </button>
+      <button class="w-10 h-10 flex items-center justify-center text-secondary hover:bg-surface-container transition-colors" title="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="w-10 h-10 flex items-center justify-center text-secondary hover:bg-surface-container transition-colors" title="Settings">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+      <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-semibold">TA</div>
+    </div>
+  </div>
+</header>
+
+<!-- Left Sidebar -->
+<aside class="bg-surface-container fixed left-0 top-12 h-[calc(100vh-48px)] flex flex-col z-40 w-64 border-r border-outline-variant font-body text-xs font-normal">
+  <div class="p-4 border-b border-outline-variant">
+    <p class="text-sm font-bold text-on-surface uppercase tracking-wider">System Operations</p>
+    <p class="text-secondary text-[10px]">Enterprise Tier</p>
+  </div>
+  <nav class="flex-1 py-4 overflow-y-auto">
+    <a class="text-secondary flex items-center px-4 py-3 gap-3 hover:bg-outline-variant transition-all" href="index.html">
+      <span class="material-symbols-outlined text-lg">dashboard</span>
+      <span>Overview</span>
+    </a>
+    <a class="bg-white border-l-4 border-primary text-primary font-semibold flex items-center px-4 py-3 gap-3 transition-all" href="#">
+      <span class="material-symbols-outlined text-lg">security</span>
+      <span>Incidents</span>
+    </a>
+    <a class="text-secondary flex items-center px-4 py-3 gap-3 hover:bg-outline-variant transition-all" href="#">
+      <span class="material-symbols-outlined text-lg">hub</span>
+      <span>Intelligence</span>
+    </a>
+    <a class="text-secondary flex items-center px-4 py-3 gap-3 hover:bg-outline-variant transition-all" href="#">
+      <span class="material-symbols-outlined text-lg">smart_toy</span>
+      <span>Automations</span>
+    </a>
+    <a class="text-secondary flex items-center px-4 py-3 gap-3 hover:bg-outline-variant transition-all" href="ai-assistant.html">
+      <span class="material-symbols-outlined text-lg">memory</span>
+      <span>AI Agents</span>
+    </a>
+  </nav>
+  <div class="p-4">
+    <button class="w-full bg-primary text-white py-3 font-semibold text-sm flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant active:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined text-sm">add</span>
+      Deploy Agent
+    </button>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-12 h-[calc(100vh-48px)] overflow-y-auto p-6 bg-surface custom-scrollbar">
+
+  <!-- Incident Header -->
+  <div class="flex justify-between items-start mb-6 border-b border-outline-variant pb-4">
+    <div>
+      <div class="flex items-center gap-3 mb-1">
+        <span class="bg-error text-white text-[10px] px-2 py-0.5 font-bold tracking-wider">CRITICAL</span>
+        <h1 class="text-2xl font-semibold tracking-tight">INC-2024-0812: Advanced Persistence Threat</h1>
+      </div>
+      <p class="text-secondary text-sm">Detected: 12 Aug 2024 14:22:01 · Assigned to: Lead Analyst Chen</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="flex items-center gap-2 px-4 h-10 border border-primary text-primary text-sm font-semibold hover:bg-primary-container transition-colors">
+        <span class="material-symbols-outlined text-sm">share</span> Export Report
+      </button>
+      <button class="flex items-center gap-2 px-4 h-10 bg-primary text-white text-sm font-semibold hover:bg-on-primary-fixed-variant transition-colors">
+        <span class="material-symbols-outlined text-sm">check_circle</span> Resolve Incident
+      </button>
+    </div>
+  </div>
+
+  <!-- Layout Grid -->
+  <div class="grid grid-cols-12 gap-6">
+
+    <!-- Left Column -->
+    <div class="col-span-8 flex flex-col gap-6">
+
+      <!-- Bento: Map + Metrics -->
+      <div class="grid grid-cols-2 gap-4">
+
+        <!-- Map Card -->
+        <div class="bg-surface-container p-4 min-h-[300px] flex flex-col">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xs font-bold uppercase text-secondary tracking-widest">Target Node Location</h3>
+            <span class="text-xs text-primary font-mono">192.168.1.104 (Dallas, US)</span>
+          </div>
+          <div class="flex-1 bg-surface-container-high relative overflow-hidden">
+            <!-- Map placeholder with dark grid -->
+            <div class="absolute inset-0 bg-[#1a1a2e]" style="background-image: linear-gradient(rgba(15,98,254,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(15,98,254,0.1) 1px, transparent 1px); background-size: 24px 24px;"></div>
+            <!-- Continents simplified shapes -->
+            <svg class="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 400 220" fill="none">
+              <path d="M60 80 Q80 60 110 70 L130 90 Q120 110 100 105 Z" fill="#0f62fe"/>
+              <path d="M160 60 Q200 40 240 55 L260 80 Q250 110 220 115 Q190 120 165 100 Z" fill="#0f62fe"/>
+              <path d="M270 70 Q300 60 320 75 L325 95 Q310 105 285 100 Z" fill="#0f62fe"/>
+              <path d="M170 120 Q185 115 195 125 L192 145 Q178 150 170 138 Z" fill="#0f62fe"/>
+              <path d="M280 110 Q310 100 330 115 L335 140 Q320 155 295 150 Q270 145 275 128 Z" fill="#0f62fe"/>
+            </svg>
+            <!-- Ping dot at Dallas -->
+            <div class="absolute" style="left: 22%; top: 42%;">
+              <div class="w-6 h-6 bg-error/20 border-2 border-error rounded-full animate-ping absolute -translate-x-1/2 -translate-y-1/2"></div>
+              <div class="w-3 h-3 bg-error rounded-full absolute -translate-x-1/2 -translate-y-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-surface-container p-4 flex flex-col justify-between">
+            <span class="text-secondary text-xs">Exfiltrated Data</span>
+            <div>
+              <div class="text-2xl font-bold">14.2 GB</div>
+              <div class="text-[10px] text-error font-semibold flex items-center mt-1">
+                <span class="material-symbols-outlined text-[12px] mr-1">trending_up</span> HIGH RISK
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container p-4 flex flex-col justify-between">
+            <span class="text-secondary text-xs">Time to Detect</span>
+            <div>
+              <div class="text-2xl font-bold">42m 12s</div>
+              <div class="text-[10px] text-tertiary font-semibold flex items-center mt-1">
+                <span class="material-symbols-outlined text-[12px] mr-1">bolt</span> TOP 5% SPEED
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container p-4 col-span-2 flex flex-col justify-between">
+            <span class="text-secondary text-xs">Blast Radius</span>
+            <div class="w-full bg-surface-container-highest h-2 mt-4">
+              <div class="bg-error h-full w-[65%]"></div>
+            </div>
+            <div class="flex justify-between text-[10px] mt-2 font-mono">
+              <span>65/100 ENDPOINTS AFFECTED</span>
+              <span class="text-error font-bold">CRITICAL SCOPE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Timeline -->
+      <div class="bg-surface-container p-5">
+        <h3 class="text-xs font-bold uppercase text-secondary tracking-widest mb-6">Detailed Activity Timeline</h3>
+        <div class="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-outline-variant">
+
+          <!-- Entry 1 -->
+          <div class="relative pl-8">
+            <div class="absolute left-0 top-1 w-6 h-6 bg-primary-container text-primary flex items-center justify-center rounded-full z-10 border-2 border-surface">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">login</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="text-xs font-bold">Initial Access: Phishing Link Execution</span>
+              <span class="text-[10px] font-mono text-secondary">14:22:01</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">User 'j_doe' executed attachment 'Invoice_394.zip' from external sender. PowerShell script launched hidden process 'svchost_tmp.exe'.</p>
+            <div class="mt-2 flex gap-2">
+              <span class="px-2 py-0.5 bg-surface-container-high text-[10px] font-mono text-secondary border border-outline-variant">SHA256: 8f2...e1c</span>
+              <span class="px-2 py-0.5 bg-surface-container-high text-[10px] font-mono text-secondary border border-outline-variant">PID: 4812</span>
+            </div>
+          </div>
+
+          <!-- Entry 2 -->
+          <div class="relative pl-8">
+            <div class="absolute left-0 top-1 w-6 h-6 bg-tertiary-container text-tertiary flex items-center justify-center rounded-full z-10 border-2 border-surface">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="text-xs font-bold">Persistence: Registry Key Modification</span>
+              <span class="text-[10px] font-mono text-secondary">14:28:44</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">Modification of HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run to include path to malicious binary. Scheduled task 'WinUpdateCheck' created.</p>
+          </div>
+
+          <!-- Entry 3 -->
+          <div class="relative pl-8">
+            <div class="absolute left-0 top-1 w-6 h-6 bg-error-container text-error flex items-center justify-center rounded-full z-10 border-2 border-surface">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="text-xs font-bold">Data Discovery: Network Scanning</span>
+              <span class="text-[10px] font-mono text-secondary">14:45:10</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">Internal port scan initiated on ports 445, 3389 across subnet 10.0.4.0/24. Identification of backup servers and SQL databases.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-span-4 flex flex-col gap-6">
+
+      <!-- AI Root Cause Analysis -->
+      <div class="bg-primary text-white p-5 flex flex-col gap-4 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 opacity-10">
+          <span class="material-symbols-outlined text-9xl">smart_toy</span>
+        </div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-xl">psychology</span>
+          <h3 class="text-sm font-bold tracking-tight">AI ROOT CAUSE ANALYSIS</h3>
+        </div>
+        <div class="space-y-4 relative z-10">
+          <div class="p-3 bg-white/10 border-l-2 border-white/50">
+            <p class="text-xs leading-relaxed italic">"Highly probable 'Lazarus' variant activity. The attack pattern matches TTPs for financial infrastructure targeting. Registry obfuscation suggests a multi-stage payload delivery."</p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-2 bg-white/5 border border-white/20">
+              <div class="text-[10px] uppercase font-bold opacity-70 mb-1">Confidence</div>
+              <div class="text-lg font-bold">94.2%</div>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/20">
+              <div class="text-[10px] uppercase font-bold opacity-70 mb-1">Severity</div>
+              <div class="text-lg font-bold">Level 5</div>
+            </div>
+          </div>
+          <button class="w-full py-2 bg-white text-primary text-xs font-bold hover:bg-surface-variant transition-colors">
+            Generate Full AI Forensics
+          </button>
+        </div>
+      </div>
+
+      <!-- Autonomous Agent Actions -->
+      <div class="bg-surface-container border border-outline-variant p-5">
+        <h3 class="text-xs font-bold uppercase text-secondary tracking-widest mb-4">Autonomous Agent Actions</h3>
+        <div class="flex flex-col gap-3">
+          <button class="flex items-center justify-between w-full p-4 bg-surface hover:bg-surface-variant border border-outline-variant transition-all text-left">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-error">block</span>
+              <div>
+                <div class="text-xs font-bold">Block Source IP</div>
+                <div class="text-[10px] text-secondary">Block 104.22.4.19 across Edge Firewalls</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-secondary">chevron_right</span>
+          </button>
+          <button class="flex items-center justify-between w-full p-4 bg-surface hover:bg-surface-variant border border-outline-variant transition-all text-left">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary">security_update_warning</span>
+              <div>
+                <div class="text-xs font-bold">Quarantine Host</div>
+                <div class="text-[10px] text-secondary">Isolate 'TX-FIN-004' from local network</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-secondary">chevron_right</span>
+          </button>
+          <button class="flex items-center justify-between w-full p-4 bg-surface hover:bg-surface-variant border border-outline-variant transition-all text-left">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-secondary">group</span>
+              <div>
+                <div class="text-xs font-bold">Escalate to L3</div>
+                <div class="text-[10px] text-secondary">Notify SOC Manager and CISO</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-secondary">chevron_right</span>
+          </button>
+          <button class="flex items-center justify-center gap-2 w-full p-3 bg-white border border-primary text-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary-container transition-all mt-2">
+            <span class="material-symbols-outlined text-xs">tune</span> Customize Response Playbook
+          </button>
+        </div>
+      </div>
+
+      <!-- Affected Asset Data -->
+      <div class="bg-surface-container p-5">
+        <h3 class="text-xs font-bold uppercase text-secondary tracking-widest mb-4">Affected Asset Data</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+            <span class="text-xs text-secondary">Hostname</span>
+            <span class="text-xs font-mono font-bold">TX-FIN-004-WK</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+            <span class="text-xs text-secondary">OS Version</span>
+            <span class="text-xs font-mono">Win 10 Enterprise LTSC</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+            <span class="text-xs text-secondary">Last Patch</span>
+            <span class="text-xs font-mono">02 Aug 2024</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-xs text-secondary">Vulnerability Score</span>
+            <span class="text-xs font-mono text-error font-bold">8.4 (High)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+</body>
+</html>
