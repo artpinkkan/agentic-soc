@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #F8FAFC;
+    --surface:   #FFFFFF;
+    --surface2:  #F1F5F9;
+    --border:    #E2E8F0;
+    --border2:   #CBD5E1;
+    --txt:       #0F172A;
+    --txt2:      #475569;
+    --txt3:      #94A3B8;
+    --primary:   #0D9488;
+    --primary-bg:#F0FDFA;
+    --red:       #EF4444;
+    --red-bg:    #FEF2F2;
+    --amber:     #F59E0B;
+    --amber-bg:  #FFFBEB;
+    --green:     #10B981;
+    --green-bg:  #ECFDF5;
+    --blue:      #3B82F6;
+    --blue-bg:   #EFF6FF;
+    --shadow:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+    --radius:    8px;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Inter', sans-serif;
+    --nav-w:     52px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--txt); font-size: 14px; line-height: 1.5; }
+
+  /* ── Side Nav ── */
+  .sidenav {
+    position: fixed; left: 0; top: 0; bottom: 0; width: var(--nav-w);
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 14px 0; gap: 2px; z-index: 200;
+  }
+  .nav-logo {
+    width: 30px; height: 30px; background: var(--primary);
+    clip-path: polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%);
+    margin-bottom: 14px; flex-shrink: 0; display: block;
+  }
+  .nav-item {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--txt3); cursor: pointer; transition: all .12s;
+    text-decoration: none; position: relative;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--txt2); }
+  .nav-item.active { background: var(--primary-bg); color: var(--primary); }
+  .nav-item svg { flex-shrink: 0; }
+  .nav-spacer { flex: 1; }
+  .nav-tooltip {
+    position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+    background: var(--txt); color: white; font-size: 11px; font-weight: 500;
+    padding: 4px 10px; border-radius: 5px; white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity .15s; z-index: 300;
+  }
+  .nav-item:hover .nav-tooltip { opacity: 1; }
+
+  /* ── Top Bar ── */
+  .topbar {
+    height: 52px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; position: sticky; top: 0; z-index: 100;
+    margin-left: var(--nav-w);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 28px; height: 28px; background: var(--primary);
+    clip-path: polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%);
+  }
+  .logo-name { font-size: 15px; font-weight: 600; color: var(--txt); }
+  .logo-sub  { font-size: 11px; color: var(--txt3); font-family: var(--mono); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .live-chip {
+    display: flex; align-items: center; gap: 5px; padding: 4px 10px;
+    background: var(--green-bg); border-radius: 99px; font-size: 11px;
+    font-weight: 500; color: var(--green); border: 1px solid #A7F3D0;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .clock { font-family: var(--mono); font-size: 12px; color: var(--txt2); }
+
+  /* ── Layout ── */
+  .main { padding: 20px; display: flex; flex-direction: column; gap: 16px; max-width: 1280px; margin: 0 auto; margin-left: calc(var(--nav-w) + 0px); padding-left: 20px; }
+
+  /* ── KPI Row ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+    border-top: 3px solid var(--kpi-color, var(--primary));
+    transition: box-shadow .15s;
+  }
+  .kpi-card:hover { box-shadow: var(--shadow-md); }
+  .kpi-label { font-size: 11px; font-weight: 500; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 600; color: var(--kpi-color, var(--txt)); font-family: var(--mono); line-height: 1; margin-bottom: 6px; }
+  .kpi-sub   { font-size: 12px; color: var(--txt3); }
+  .kpi-sub .up   { color: var(--red); }
+  .kpi-sub .down { color: var(--green); }
+  .kpi-sub .ok   { color: var(--primary); }
+
+  /* ── Grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 340px; gap: 12px; }
+
+  /* ── Panel ── */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+  }
+  .panel-header {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title { font-size: 12px; font-weight: 600; color: var(--txt2); text-transform: uppercase; letter-spacing: .06em; }
+  .panel-badge {
+    font-size: 11px; font-family: var(--mono); font-weight: 500;
+    padding: 2px 8px; border-radius: 99px;
+  }
+  .badge-teal   { background: var(--primary-bg); color: var(--primary); }
+  .badge-red    { background: var(--red-bg);     color: var(--red); }
+  .badge-green  { background: var(--green-bg);   color: var(--green); }
+
+  /* ── Alert List ── */
+  .alert-item {
+    display: grid; grid-template-columns: 4px 1fr auto auto;
+    gap: 12px; align-items: center; padding: 11px 16px;
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: background .12s;
+  }
+  .alert-item:hover { background: var(--surface2); }
+  .alert-item:last-child { border-bottom: none; }
+  .sev-bar { border-radius: 2px; align-self: stretch; }
+  .alert-name  { font-size: 13px; font-weight: 500; color: var(--txt); margin-bottom: 2px; }
+  .alert-meta  { font-size: 11px; color: var(--txt3); font-family: var(--mono); }
+  .alert-time  { font-size: 11px; color: var(--txt3); font-family: var(--mono); white-space: nowrap; }
+  .sev-tag {
+    font-size: 10px; font-weight: 600; font-family: var(--mono);
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .sev-critical { background: var(--red-bg);   color: var(--red); }
+  .sev-high     { background: var(--amber-bg); color: var(--amber); }
+  .sev-medium   { background: var(--blue-bg);  color: var(--blue); }
+  .sev-low      { background: var(--green-bg); color: var(--green); }
+
+  /* Expanded detail */
+  .detail-row {
+    padding: 14px 16px; background: #F8FAFC;
+    border-bottom: 1px solid var(--border);
+    animation: slideDown .18s ease;
+  }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+  .detail-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 12px; }
+  .dg-label { font-size: 10px; font-weight: 500; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .dg-val   { font-size: 12px; font-family: var(--mono); color: var(--txt); }
+  .ai-box {
+    background: var(--primary-bg); border-left: 3px solid var(--primary);
+    border-radius: 0 6px 6px 0; padding: 10px 14px; font-size: 12px; color: var(--txt2); line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .ai-box-label { font-size: 10px; font-weight: 600; color: var(--primary); letter-spacing: .06em; margin-bottom: 4px; }
+  .action-row { display: flex; gap: 8px; }
+  .btn {
+    padding: 6px 14px; font-size: 12px; font-weight: 500; border-radius: 6px;
+    border: 1px solid var(--border2); background: var(--surface);
+    color: var(--txt2); cursor: pointer; font-family: var(--sans); transition: all .12s;
+    text-decoration: none; display: inline-flex; align-items: center;
+  }
+  .btn:hover { background: var(--surface2); color: var(--txt); }
+  .btn-danger { border-color: #FECACA; background: var(--red-bg);   color: var(--red); }
+  .btn-danger:hover { background: #FEE2E2; }
+  .btn-primary{ border-color: #99F6E4; background: var(--primary-bg); color: var(--primary); }
+  .btn-primary:hover { background: #CCFBF1; }
+
+  /* AI Input Bar */
+  .ai-input-bar {
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    background: var(--surface2); border-top: 1px solid var(--border); cursor: pointer;
+    transition: background .12s; text-decoration: none;
+  }
+  .ai-input-bar:hover { background: var(--primary-bg); }
+  .ai-icon-box {
+    width: 28px; height: 28px; background: var(--primary); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: white; font-weight: 600; flex-shrink: 0;
+  }
+  .ai-placeholder { flex: 1; font-size: 12px; color: var(--txt3); }
+  .ai-arrow { font-size: 13px; color: var(--primary); }
+
+  /* ── Sparkline ── */
+  .spark-wrap { padding: 14px 16px 10px; }
+  .spark-bars { display: flex; align-items: flex-end; gap: 4px; height: 52px; }
+  .spark-bar  { flex: 1; border-radius: 3px 3px 0 0; }
+  .spark-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; color: var(--txt3); font-family: var(--mono); }
+
+  /* ── Category Bars ── */
+  .cat-row { display: flex; align-items: center; gap: 10px; padding: 7px 16px; }
+  .cat-label { font-size: 11px; color: var(--txt2); width: 72px; flex-shrink: 0; }
+  .cat-track { flex: 1; background: var(--surface2); border-radius: 99px; height: 6px; }
+  .cat-fill  { height: 6px; border-radius: 99px; }
+  .cat-pct   { font-size: 11px; color: var(--txt3); font-family: var(--mono); width: 32px; text-align: right; }
+
+  /* ── Data Sources ── */
+  .source-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 12px;
+  }
+  .source-row:last-child { border-bottom: none; }
+  .source-name { color: var(--txt); font-weight: 500; }
+  .source-status { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 11px; }
+  .st-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── Timeline ── */
+  .tl-item { display: flex; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); position: relative; }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; border: 2px solid white; box-shadow: 0 0 0 2px var(--border); }
+  .tl-msg  { font-size: 12px; color: var(--txt); margin-bottom: 2px; line-height: 1.4; }
+  .tl-time { font-size: 11px; color: var(--txt3); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<!-- SIDE NAV -->
+<nav class="sidenav">
+  <a href="dashboard.html" class="nav-logo"></a>
+
+  <a href="dashboard.html" class="nav-item active">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="10" y="1" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="1" y="10" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="10" y="10" width="7" height="7" rx="1.5" fill="currentColor"/></svg>
+    <span class="nav-tooltip">Dashboard</span>
+  </a>
+
+  <a href="investigate.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4C2 3.45 2.45 3 3 3H15C15.55 3 16 3.45 16 4V11C16 11.55 15.55 12 15 12H6L2 15V4Z" fill="currentColor"/></svg>
+    <span class="nav-tooltip">Investigate</span>
+  </a>
+
+  <a href="triage.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="4" y="4" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="6.5" y="6.5" width="5" height="5" rx="1" fill="currentColor"/><line x1="4" y1="7" x2="2" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="11" x2="2" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="7" x2="16" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="4" x2="7" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="4" x2="11" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="14" x2="11" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Triage</span>
+  </a>
+
+  <a href="reports.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="10" x2="12" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="13" x2="9" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Reports</span>
+  </a>
+
+  <div class="nav-spacer"></div>
+
+  <a href="#" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.93 3.93l1.06 1.06M13.01 13.01l1.06 1.06M3.93 14.07l1.06-1.06M13.01 4.99l1.06-1.06" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Settings</span>
+  </a>
+</nav>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark"></div>
+    <div>
+      <div class="logo-name">Shannon Sentinel</div>
+      <div class="logo-sub">SOC Dashboard</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="live-chip"><div class="live-dot"></div>Live</div>
+    <div class="clock" id="clock">--:--:-- WIB</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="--kpi-color:var(--red)">
+      <div class="kpi-label">Open Incidents</div>
+      <div class="kpi-value" id="kpi-inc">12</div>
+      <div class="kpi-sub"><span class="up">↑ 3</span> from yesterday</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--amber)">
+      <div class="kpi-label">MTTD</div>
+      <div class="kpi-value">4.2<span style="font-size:16px;font-weight:400">m</span></div>
+      <div class="kpi-sub"><span class="ok">✓</span> Target &lt; 5 min</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--green)">
+      <div class="kpi-label">MTTR</div>
+      <div class="kpi-value">18<span style="font-size:16px;font-weight:400">m</span></div>
+      <div class="kpi-sub"><span class="down">↓ 22%</span> this week</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--primary)">
+      <div class="kpi-label">Alerts 24h</div>
+      <div class="kpi-value">1,847</div>
+      <div class="kpi-sub"><span class="ok">92%</span> auto-triaged</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid-2">
+
+    <!-- LEFT: Alert Feed -->
+    <div class="panel" style="display:flex;flex-direction:column">
+      <div class="panel-header">
+        <div class="panel-title">Active Alert Feed</div>
+        <div class="panel-badge badge-red">6 open</div>
+      </div>
+      <div id="alert-list" style="flex:1;overflow-y:auto;max-height:420px"></div>
+      <a href="investigate.html" class="ai-input-bar">
+        <div class="ai-icon-box">AI</div>
+        <div class="ai-placeholder">Ask AI about any alert…  e.g. "Explain the SSH brute force"</div>
+        <div class="ai-arrow">↗</div>
+      </a>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Sparkline -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Alert Volume — 7 Days</div>
+          <span style="font-size:11px;color:var(--red);font-weight:500">↑ 38% today</span>
+        </div>
+        <div class="spark-wrap">
+          <div class="spark-bars">
+            <div class="spark-bar" style="height:38%;background:var(--blue);opacity:.45"></div>
+            <div class="spark-bar" style="height:52%;background:var(--blue);opacity:.5"></div>
+            <div class="spark-bar" style="height:44%;background:var(--blue);opacity:.55"></div>
+            <div class="spark-bar" style="height:61%;background:var(--blue);opacity:.6"></div>
+            <div class="spark-bar" style="height:36%;background:var(--blue);opacity:.45"></div>
+            <div class="spark-bar" style="height:73%;background:var(--amber);opacity:.7"></div>
+            <div class="spark-bar" style="height:100%;background:var(--red);opacity:.8"></div>
+          </div>
+          <div class="spark-labels"><span>18 Apr</span><span>25 Apr</span></div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Alert Categories</div></div>
+        <div style="padding:8px 0">
+          <div class="cat-row"><div class="cat-label">Malware</div><div class="cat-track"><div class="cat-fill" style="width:72%;background:var(--red)"></div></div><div class="cat-pct">72%</div></div>
+          <div class="cat-row"><div class="cat-label">Credential</div><div class="cat-track"><div class="cat-fill" style="width:55%;background:var(--amber)"></div></div><div class="cat-pct">55%</div></div>
+          <div class="cat-row"><div class="cat-label">Network</div><div class="cat-track"><div class="cat-fill" style="width:40%;background:var(--blue)"></div></div><div class="cat-pct">40%</div></div>
+          <div class="cat-row"><div class="cat-label">Insider</div><div class="cat-track"><div class="cat-fill" style="width:22%;background:#8B5CF6"></div></div><div class="cat-pct">22%</div></div>
+        </div>
+      </div>
+
+      <!-- Data Sources -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Data Sources</div>
+          <div class="panel-badge badge-green">5 active</div>
+        </div>
+        <div class="source-row"><div class="source-name">Firewall Logs</div><div class="source-status"><div class="st-dot" style="background:var(--green)"></div><span style="color:var(--green)">Connected</span></div></div>
+        <div class="source-row"><div class="source-name">EDR — Endpoints</div><div class="source-status"><div class="st-dot" style="background:var(--green)"></div><span style="color:var(--green)">Connected</span></div></div>
+        <div class="source-row"><div class="source-name">Cloud / AWS</div><div class="source-status"><div class="st-dot" style="background:var(--green)"></div><span style="color:var(--green)">Connected</span></div></div>
+        <div class="source-row"><div class="source-name">Active Directory</div><div class="source-status"><div class="st-dot" style="background:var(--amber)"></div><span style="color:var(--amber)">Lag 2m</span></div></div>
+        <div class="source-row"><div class="source-name">Threat Intel Feed</div><div class="source-status"><div class="st-dot" style="background:var(--green)"></div><span style="color:var(--green)">Connected</span></div></div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">AI Agent Activity</div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--primary)"></div><div><div class="tl-msg">Auto-triaged 47 alerts — 44 closed as false positives</div><div class="tl-time">14:30</div></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div><div class="tl-msg">Playbook executed — host 192.168.10.45 isolated</div><div class="tl-time">14:22</div></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div><div class="tl-msg">New IOC submitted to threat intel database</div><div class="tl-time">14:15</div></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div><div class="tl-msg">Weekly report auto-generated and sent</div><div class="tl-time">13:58</div></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const alerts = [
+  { title:"SSH Brute Force Attack", meta:"192.168.10.45 → auth-server-01", sev:"critical", time:"2m ago", host:"192.168.10.45", src:"EDR", detail:"340 attempts / 2 min", ai:"This IP attempted 340 SSH logins in under 2 minutes — classic brute force. Recommend immediate isolation and password reset on targeted accounts." },
+  { title:"Lateral Movement Detected", meta:"AD01 → file-server → db-server", sev:"critical", time:"7m ago", host:"AD01", src:"SIEM", detail:"3 hops detected", ai:"Sequential access across 3 internal hosts in 4 minutes. Matches known APT lateral movement. Contain AD01 immediately." },
+  { title:"Unusual Data Exfiltration", meta:"joko@corp.id → external FTP", sev:"high", time:"14m ago", host:"ws-joko-012", src:"DLP", detail:"4.2 GB upload", ai:"4.2GB uploaded to unrecognized FTP at 2:14 AM — outside working hours. Could be insider threat or compromised account." },
+  { title:"Suspicious PowerShell", meta:"CORP\\dev-pc-07 — encoded cmd", sev:"high", time:"31m ago", host:"dev-pc-07", src:"EDR", detail:"Base64 payload", ai:"Encoded PowerShell consistent with download-and-execute patterns. Parent: Word.exe — likely macro malware." },
+  { title:"Failed Login Spike", meta:"portal.corp.id — 220 failures", sev:"medium", time:"1h ago", host:"portal.corp.id", src:"WAF", detail:"220 failures / 10 min", ai:"Distributed credential stuffing from 18 IPs. Consider enabling CAPTCHA or rate limiting." },
+  { title:"Port Scan from Unknown IP", meta:"45.33.102.77 → DMZ subnet", sev:"low", time:"2h ago", host:"DMZ", src:"Firewall", detail:"1,200 ports scanned", ai:"Reconnaissance scan. No active exploitation detected. Monitor for follow-up activity." },
+];
+const sevBarColor = { critical:"var(--red)", high:"var(--amber)", medium:"var(--blue)", low:"var(--green)" };
+const sevTagClass = { critical:"sev-critical", high:"sev-high", medium:"sev-medium", low:"sev-low" };
+let expanded = null;
+
+function render() {
+  const list = document.getElementById('alert-list');
+  list.innerHTML = alerts.map((a, i) => `
+    <div class="alert-item" onclick="toggle(${i})">
+      <div class="sev-bar" style="background:${sevBarColor[a.sev]}"></div>
+      <div>
+        <div class="alert-name">${a.title}</div>
+        <div class="alert-meta">${a.meta}</div>
+      </div>
+      <div class="sev-tag ${sevTagClass[a.sev]}">${a.sev.toUpperCase()}</div>
+      <div class="alert-time">${a.time}</div>
+    </div>
+    ${expanded === i ? `
+    <div class="detail-row">
+      <div class="detail-grid">
+        <div><div class="dg-label">Host</div><div class="dg-val">${a.host}</div></div>
+        <div><div class="dg-label">Source</div><div class="dg-val">${a.src}</div></div>
+        <div><div class="dg-label">Severity</div><div class="dg-val" style="color:${sevBarColor[a.sev]}">${a.sev.toUpperCase()}</div></div>
+        <div><div class="dg-label">Detail</div><div class="dg-val">${a.detail}</div></div>
+      </div>
+      <div class="ai-box"><div class="ai-box-label">AI Analysis</div>${a.ai}</div>
+      <div class="action-row">
+        <button class="btn btn-danger" onclick="event.stopPropagation()">Isolate Host</button>
+        <button class="btn" onclick="event.stopPropagation()">Block IP</button>
+        <a href="investigate.html" class="btn btn-primary" onclick="event.stopPropagation()">Open in AI Chat ↗</a>
+        <button class="btn" style="margin-left:auto" onclick="event.stopPropagation();toggle(${i})">Close ✕</button>
+      </div>
+    </div>` : ''}
+  `).join('');
+}
+
+function toggle(i) { expanded = expanded === i ? null : i; render(); }
+
+function tick() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} WIB`;
+}
+setInterval(tick, 1000); tick();
+render();
+</script>
+</body>
+</html>

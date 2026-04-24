@@ -39,6 +39,9 @@ jobs:
       - name: Add .nojekyll
         run: touch carbon-soc/out/.nojekyll
 
+      - name: Copy Shannon Sentinel pages
+        run: cp dashboard.html investigate.html triage.html reports.html carbon-soc/out/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — AI Investigation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #F8FAFC;
+    --surface:  #FFFFFF;
+    --surface2: #F1F5F9;
+    --border:   #E2E8F0;
+    --txt:      #0F172A;
+    --txt2:     #475569;
+    --txt3:     #94A3B8;
+    --primary:  #0D9488;
+    --primary-bg:#F0FDFA;
+    --primary-border:#99F6E4;
+    --red:      #EF4444; --red-bg: #FEF2F2;
+    --amber:    #F59E0B; --amber-bg: #FFFBEB;
+    --green:    #10B981; --green-bg: #ECFDF5;
+    --blue:     #3B82F6; --blue-bg: #EFF6FF;
+    --shadow:   0 1px 3px rgba(0,0,0,.06);
+    --radius:   8px;
+    --mono:     'JetBrains Mono', monospace;
+    --sans:     'Inter', sans-serif;
+    --nav-w:    52px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--txt); font-size: 14px; height: 100vh; display: flex; overflow: hidden; }
+
+  /* ── Side Nav ── */
+  .sidenav {
+    width: var(--nav-w); background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 14px 0; gap: 2px; flex-shrink: 0; z-index: 200;
+  }
+  .nav-logo {
+    width: 30px; height: 30px; background: var(--primary);
+    clip-path: polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%);
+    margin-bottom: 14px; flex-shrink: 0; display: block;
+  }
+  .nav-item {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--txt3); cursor: pointer; transition: all .12s;
+    text-decoration: none; position: relative;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--txt2); }
+  .nav-item.active { background: var(--primary-bg); color: var(--primary); }
+  .nav-spacer { flex: 1; }
+  .nav-tooltip {
+    position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+    background: var(--txt); color: white; font-size: 11px; font-weight: 500;
+    padding: 4px 10px; border-radius: 5px; white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity .15s; z-index: 300;
+  }
+  .nav-item:hover .nav-tooltip { opacity: 1; }
+
+  /* ── App wrapper ── */
+  .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+  /* Topbar */
+  .topbar {
+    height: 52px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; flex-shrink: 0;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 28px; height: 28px; background: var(--primary); clip-path: polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%); }
+  .logo-name { font-size: 14px; font-weight: 600; }
+  .breadcrumb { font-size: 12px; color: var(--txt3); font-family: var(--mono); display: flex; align-items: center; gap: 5px; }
+  .breadcrumb a { color: var(--txt3); text-decoration: none; transition: color .12s; }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .current { color: var(--txt2); }
+  .sprint-badge { font-size: 11px; font-family: var(--mono); background: var(--primary-bg); color: var(--primary); padding: 3px 10px; border-radius: 99px; border: 1px solid var(--primary-border); font-weight: 500; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 280px 1fr; flex: 1; overflow: hidden; min-height: 0; }
+
+  /* Context sidebar */
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .sb-top { padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .section-label { font-size: 10px; font-weight: 600; color: var(--txt3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .alert-title-big { font-size: 14px; font-weight: 600; color: var(--txt); line-height: 1.3; margin-bottom: 8px; }
+  .sev-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; background: var(--red-bg); color: var(--red); border: 1px solid #FECACA; }
+  .sev-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .sb-scroll { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .sb-scroll::-webkit-scrollbar { width: 3px; }
+  .sb-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .kv { margin-bottom: 14px; }
+  .kv-key { font-size: 10px; font-weight: 600; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .kv-val { font-size: 12px; font-family: var(--mono); color: var(--txt); }
+  .kv-val.danger { color: var(--red); }
+  .log-sample { background: var(--surface2); border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 8px 12px; font-family: var(--mono); font-size: 11px; color: var(--txt2); line-height: 1.7; }
+  .related-alert { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 9px 11px; margin-bottom: 6px; cursor: pointer; transition: border-color .12s; }
+  .related-alert:hover { border-color: var(--primary); }
+  .related-alert.active { border-color: var(--primary); background: var(--primary-bg); }
+  .ra-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .ra-name { font-size: 12px; font-weight: 500; }
+  .ra-sev  { font-size: 10px; font-weight: 600; font-family: var(--mono); padding: 1px 6px; border-radius: 4px; }
+  .ra-meta { font-size: 11px; color: var(--txt3); font-family: var(--mono); }
+
+  /* Chat panel */
+  .chat-panel { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+  .chat-topbar {
+    padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .ai-identity { display: flex; align-items: center; gap: 10px; }
+  .ai-avatar {
+    width: 36px; height: 36px; background: var(--primary); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: white;
+  }
+  .ai-name-txt { font-size: 14px; font-weight: 600; }
+  .ai-desc-txt { font-size: 11px; color: var(--txt3); }
+  .ctx-chip { font-size: 11px; font-family: var(--mono); color: var(--green); background: var(--green-bg); padding: 3px 10px; border-radius: 99px; border: 1px solid #A7F3D0; display: flex; align-items: center; gap: 5px; }
+  .ctx-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+  .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .system-note { align-self: center; font-size: 11px; font-family: var(--mono); color: var(--txt3); background: var(--surface); border: 1px solid var(--border); padding: 4px 14px; border-radius: 99px; }
+
+  .msg { display: flex; gap: 10px; animation: fadeUp .2s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-av { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; margin-top: 2px; }
+  .msg-av.ai   { background: var(--primary); color: white; }
+  .msg-av.user { background: var(--blue); color: white; }
+  .bubble { padding: 10px 14px; font-size: 13px; line-height: 1.6; max-width: 560px; }
+  .msg.ai   .bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 2px 10px 10px 10px; color: var(--txt); box-shadow: var(--shadow); }
+  .msg.user .bubble { background: var(--primary); border-radius: 10px 2px 10px 10px; color: white; }
+  .msg-time { font-size: 10px; color: var(--txt3); font-family: var(--mono); margin-top: 5px; }
+  .msg.user .msg-time { text-align: right; }
+  .code-snippet { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-family: var(--mono); font-size: 11px; color: var(--txt2); line-height: 1.6; margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip { font-size: 11px; font-family: var(--mono); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--txt2); cursor: pointer; transition: all .12s; font-weight: 500; }
+  .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+  .chip.danger { border-color: #FECACA; color: var(--red); background: var(--red-bg); }
+  .chip.danger:hover { border-color: var(--red); }
+  .chip.link { text-decoration: none; display: inline-flex; align-items: center; }
+  .typing-bubble { display: flex; align-items: center; gap: 4px; padding: 12px 14px; }
+  .typing-bubble span { width: 6px; height: 6px; border-radius: 50%; background: var(--txt3); animation: tb .7s infinite; }
+  .typing-bubble span:nth-child(2) { animation-delay: .15s; }
+  .typing-bubble span:nth-child(3) { animation-delay: .3s; }
+  @keyframes tb { 0%,100%{opacity:.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-3px)} }
+
+  /* Input area */
+  .input-area { padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
+  .quick-row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .qchip { font-size: 11px; font-family: var(--mono); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--txt3); cursor: pointer; transition: all .12s; text-decoration: none; display: inline-flex; align-items: center; }
+  .qchip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+  .input-row { display: flex; gap: 10px; align-items: center; }
+  .txt-input {
+    flex: 1; height: 40px; padding: 0 14px; border: 1px solid var(--border);
+    border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--txt);
+    background: var(--surface); outline: none; transition: border-color .12s;
+  }
+  .txt-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,.1); }
+  .txt-input::placeholder { color: var(--txt3); }
+  .send-btn {
+    width: 40px; height: 40px; background: var(--primary); border: none; border-radius: 8px;
+    color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: opacity .12s; flex-shrink: 0;
+  }
+  .send-btn:hover { opacity: .85; }
+</style>
+</head>
+<body>
+
+<!-- SIDE NAV -->
+<nav class="sidenav">
+  <a href="dashboard.html" class="nav-logo"></a>
+
+  <a href="dashboard.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="10" y="1" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="1" y="10" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="10" y="10" width="7" height="7" rx="1.5" fill="currentColor"/></svg>
+    <span class="nav-tooltip">Dashboard</span>
+  </a>
+
+  <a href="investigate.html" class="nav-item active">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4C2 3.45 2.45 3 3 3H15C15.55 3 16 3.45 16 4V11C16 11.55 15.55 12 15 12H6L2 15V4Z" fill="currentColor"/></svg>
+    <span class="nav-tooltip">Investigate</span>
+  </a>
+
+  <a href="triage.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="4" y="4" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="6.5" y="6.5" width="5" height="5" rx="1" fill="currentColor"/><line x1="4" y1="7" x2="2" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="11" x2="2" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="7" x2="16" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="4" x2="7" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="4" x2="11" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="7" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="14" x2="11" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Triage</span>
+  </a>
+
+  <a href="reports.html" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="10" x2="12" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="13" x2="9" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Reports</span>
+  </a>
+
+  <div class="nav-spacer"></div>
+
+  <a href="#" class="nav-item">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.93 3.93l1.06 1.06M13.01 13.01l1.06 1.06M3.93 14.07l1.06-1.06M13.01 4.99l1.06-1.06" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="nav-tooltip">Settings</span>
+  </a>
+</nav>
+
+<!-- APP MAIN -->
+<div class="app-main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <div class="logo-name">Shannon Sentinel</div>
+      <span style="color:var(--border);margin:0 6px">/</span>
+      <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a>
+        <span>/</span>
+        <span>Alerts</span>
+        <span>/</span>
+        <span class="current">SSH Brute Force — 192.168.10.45</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="sprint-badge">AI Investigation</span>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-top">
+        <div class="section-label">Active Alert</div>
+        <div class="alert-title-big">SSH Brute Force Attack</div>
+        <span class="sev-pill"><span class="sev-dot"></span>Critical</span>
+      </div>
+      <div class="sb-scroll">
+        <div class="kv"><div class="kv-key">Source Host</div><div class="kv-val danger">192.168.10.45</div></div>
+        <div class="kv"><div class="kv-key">Target</div><div class="kv-val">auth-server-01</div></div>
+        <div class="kv"><div class="kv-key">Detection Time</div><div class="kv-val">14:28:03 WIB</div></div>
+        <div class="kv"><div class="kv-key">Event Count</div><div class="kv-val danger">340 attempts / 2 min</div></div>
+        <div class="kv"><div class="kv-key">Data Source</div><div class="kv-val">EDR + Firewall Logs</div></div>
+        <div class="kv">
+          <div class="kv-key">Raw Log Sample</div>
+          <div class="log-sample">Failed password for root<br>from 192.168.10.45 port 52341<br>ssh2 [repeated 340×]</div>
+        </div>
+        <div class="section-label" style="margin-bottom:8px">Related Alerts</div>
+        <div class="related-alert active">
+          <div class="ra-row"><div class="ra-name">Lateral Movement</div><span class="ra-sev" style="background:var(--red-bg);color:var(--red)">CRITICAL</span></div>
+          <div class="ra-meta">AD01 → 3 internal hosts</div>
+        </div>
+        <div class="related-alert">
+          <div class="ra-row"><div class="ra-name">Port Scan</div><span class="ra-sev" style="background:var(--green-bg);color:var(--green)">LOW</span></div>
+          <div class="ra-meta">Same IP — 20 min prior</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="chat-panel">
+      <div class="chat-topbar">
+        <div class="ai-identity">
+          <div class="ai-avatar">AI</div>
+          <div>
+            <div class="ai-name-txt">Shannon AI Agent</div>
+            <div class="ai-desc-txt">Security investigation assistant</div>
+          </div>
+        </div>
+        <span class="ctx-chip"><span class="ctx-dot"></span>Alert context loaded</span>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="system-note">Alert context auto-injected — SSH Brute Force / 192.168.10.45</div>
+        <div class="msg ai">
+          <div class="msg-av ai">AI</div>
+          <div class="msg-body">
+            <div class="bubble">
+              Alert context loaded. Here's my initial assessment:<br><br>
+              <strong>192.168.10.45</strong> attempted <strong style="color:var(--red)">340 SSH logins</strong> against <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:11px">auth-server-01</code> in under 2 minutes — a clear automated brute force signature.<br><br>
+              I also found a <strong>port scan from the same IP</strong> 20 minutes prior. This is a classic recon → attack sequence.
+              <div class="chips">
+                <div class="chip danger" onclick="send('Isolate 192.168.10.45 now')">🔴 Isolate host</div>
+                <div class="chip" onclick="send('Is this IP in threat intel?')">Check threat intel</div>
+                <div class="chip" onclick="send('Which accounts were targeted?')">Targeted accounts</div>
+                <div class="chip" onclick="send('Show full attack timeline')">Full timeline</div>
+              </div>
+            </div>
+            <div class="msg-time">14:28 · AI Agent</div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="msg-av user">AK</div>
+          <div class="msg-body">
+            <div class="bubble">Is this IP in threat intelligence? Any history?</div>
+            <div class="msg-time">14:29 · Analyst Kurniawan</div>
+          </div>
+        </div>
+        <div class="msg ai">
+          <div class="msg-av ai">AI</div>
+          <div class="msg-body">
+            <div class="bubble">
+              Yes — matched in <strong>2 threat intel sources</strong>:
+              <div class="code-snippet">Source: AbuseIPDB<br>Confidence: 94% malicious<br>Reports: 47 abuse reports (last 30 days)<br>Category: Brute-Force, SSH Scanner<br><br>Source: AlienVault OTX<br>Tags: scanner, brute-force<br>Last seen: 6 hours ago</div>
+              This is a <strong>known scanner IP</strong>. Recommend immediate block at the firewall level.
+            </div>
+            <div class="msg-time">14:29 · AI Agent</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="quick-row">
+          <div class="qchip" onclick="fill('Were any logins successful?')">Any successful logins?</div>
+          <a href="reports.html" class="qchip">Generate report ↗</a>
+          <div class="qchip" onclick="fill('What are the containment steps?')">Containment steps</div>
+          <div class="qchip" onclick="fill('Is there lateral movement from this IP?')">Lateral movement?</div>
+        </div>
+        <div class="input-row">
+          <input class="txt-input" id="inp" placeholder="Ask about this alert…  e.g. 'What accounts were targeted?'" onkeydown="if(event.key==='Enter')send()">
+          <button class="send-btn" onclick="send()">↑</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const aiReplies = {
+  isolat: "Isolation command sent to EDR. Host <strong>192.168.10.45</strong> has been quarantined — all active sessions terminated. Incident ticket <strong style='color:var(--primary)'>#INC-2047</strong> created and assigned to Tier 2.",
+  timeline: "Full attack timeline:<div class='code-snippet'>14:08 — Port scan (1,200 ports on DMZ subnet)<br>14:10 — Recon on auth-server-01<br>14:26 — SSH brute force started<br>14:28 — <span style='color:var(--red)'>340 failed logins detected</span><br>14:28 — Shannon Sentinel alert triggered<br>14:29 — AI analysis completed</div>Total from recon to detection: ~20 minutes.",
+  account: "Analyzing targeted accounts...<div class='code-snippet'>Targeted: root, admin, ubuntu, ec2-user<br>Failed: 340 attempts<br>Successful: <span style='color:var(--green)'>0 — none succeeded</span><br>Auto-locked: 2 accounts</div>No credentials compromised. Recommend rotating passwords for all targeted accounts as a precaution.",
+  report: "Draft incident report generated. Sections: Executive Summary, Attack Timeline, Affected Assets, Threat Intel Match, Containment Actions, and Recommendations. <strong style='color:var(--primary)'>Report ready for review.</strong> <a href='reports.html' style='color:var(--primary);text-decoration:underline'>Open in Report Generator →</a>",
+  intel: "Matched in AbuseIPDB (94% confidence, 47 recent reports) and AlienVault OTX (tagged: scanner, brute-force, last seen 6 hours ago). This is a known malicious IP actively scanning SSH targets globally.",
+  default: "Based on the current alert data, 192.168.10.45 is part of an automated SSH scanning campaign. The attack pattern is consistent with credential stuffing tools. I recommend isolating the host and rotating passwords for targeted accounts."
+};
+function getReply(msg) {
+  const m = msg.toLowerCase();
+  if (m.includes('isolat') || m.includes('block') || m.includes('contain')) return aiReplies.isolat;
+  if (m.includes('timeline') || m.includes('history')) return aiReplies.timeline;
+  if (m.includes('account') || m.includes('success') || m.includes('comprom')) return aiReplies.account;
+  if (m.includes('report')) return aiReplies.report;
+  if (m.includes('intel') || m.includes('threat') || m.includes('known')) return aiReplies.intel;
+  return aiReplies.default;
+}
+function addMsg(role, html) {
+  const c = document.getElementById('messages');
+  const time = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const d = document.createElement('div'); d.className = `msg ${role}`;
+  const init = role === 'ai' ? 'AI' : 'AK';
+  const label = role === 'ai' ? 'AI Agent' : 'Analyst Kurniawan';
+  d.innerHTML = `<div class="msg-av ${role}">${init}</div><div class="msg-body"><div class="bubble">${html}</div><div class="msg-time">${time} · ${label}</div></div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function addTyping() {
+  const c = document.getElementById('messages');
+  const d = document.createElement('div'); d.className = 'msg ai'; d.id = 'typing';
+  d.innerHTML = `<div class="msg-av ai">AI</div><div class="msg-body"><div class="bubble"><div class="typing-bubble"><span></span><span></span><span></span></div></div></div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function send(txt) {
+  const inp = document.getElementById('inp');
+  const msg = txt || inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  addMsg('user', msg);
+  addTyping();
+  setTimeout(() => {
+    document.getElementById('typing')?.remove();
+    addMsg('ai', getReply(msg));
+  }, 1100);
+}
+function fill(t) { document.getElementById('inp').value = t; document.getElementById('inp').focus(); }
+</script>
+</body>
+</html>
