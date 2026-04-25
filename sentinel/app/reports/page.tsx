@@ -30,6 +30,154 @@ const genSteps = [
   "Formatting final document…",
 ];
 
+const rawDataSections = [
+  {
+    key: "report_metadata",
+    label: "report_metadata",
+    color: "text-[#0D9488]",
+    fields: [
+      { k: "report_id",       v: '"RPT-20260425-001"',      vc: "text-amber-600" },
+      { k: "generated_at",    v: '"2026-04-25T14:30:00+07:00"', vc: "text-amber-600" },
+      { k: "period_start",    v: '"2026-04-19T00:00:00+07:00"', vc: "text-amber-600" },
+      { k: "period_end",      v: '"2026-04-25T23:59:59+07:00"', vc: "text-amber-600" },
+      { k: "organization",    v: '"PT Contoh Tbk"',          vc: "text-amber-600" },
+      { k: "classification",  v: '"INTERNAL"',               vc: "text-amber-600" },
+      { k: "agent_version",   v: '"v2.1.4"',                 vc: "text-amber-600" },
+    ],
+  },
+  {
+    key: "alert_statistics",
+    label: "alert_statistics",
+    color: "text-[#3B82F6]",
+    fields: [
+      { k: "total_alerts",       v: "1847",  vc: "text-[#3B82F6]" },
+      { k: "auto_triaged",       v: "1700",  vc: "text-[#10B981]" },
+      { k: "escalated",          v: "12",    vc: "text-[#EF4444]" },
+      { k: "false_positives",    v: "135",   vc: "text-slate-400" },
+      { k: "auto_triage_pct",    v: "92.04", vc: "text-[#10B981]" },
+      { k: "alert_delta_7d_pct", v: "+38.2", vc: "text-[#EF4444]" },
+    ],
+  },
+  {
+    key: "sla_metrics",
+    label: "sla_metrics",
+    color: "text-[#8B5CF6]",
+    fields: [
+      { k: "avg_detection_sec",  v: "252",   vc: "text-[#0D9488]" },
+      { k: "avg_response_sec",   v: "1080",  vc: "text-[#10B981]" },
+      { k: "sla_compliance_pct", v: "94.0",  vc: "text-[#10B981]" },
+      { k: "breached_sla",       v: "1",     vc: "text-[#F59E0B]" },
+      { k: "p95_detection_sec",  v: "840",   vc: "text-slate-500" },
+    ],
+  },
+  {
+    key: "top_incidents",
+    label: "top_incidents  [ 4 items ]",
+    color: "text-[#EF4444]",
+    fields: [
+      { k: "[0].id",       v: '"INC-2047"',                        vc: "text-amber-600" },
+      { k: "[0].title",    v: '"SSH Brute Force — 192.168.10.45"', vc: "text-amber-600" },
+      { k: "[0].severity", v: '"CRITICAL"',                        vc: "text-[#EF4444]" },
+      { k: "[0].resolved_in_sec", v: "840",                        vc: "text-[#10B981]" },
+      { k: "[1].id",       v: '"INC-2044"',                        vc: "text-amber-600" },
+      { k: "[1].severity", v: '"CRITICAL"',                        vc: "text-[#EF4444]" },
+      { k: "[2].id",       v: '"INC-2041"',                        vc: "text-amber-600" },
+      { k: "[2].severity", v: '"HIGH"',                            vc: "text-[#F59E0B]" },
+      { k: "[2].status",   v: '"MONITORING"',                      vc: "text-[#F59E0B]" },
+      { k: "[3].id",       v: '"INC-2038"',                        vc: "text-amber-600" },
+      { k: "[3].severity", v: '"HIGH"',                            vc: "text-[#F59E0B]" },
+    ],
+  },
+  {
+    key: "data_sources",
+    label: "data_sources  [ 5 queried ]",
+    color: "text-slate-500",
+    fields: [
+      { k: "siem",       v: '"Elastic SIEM  · 1,847 events"',   vc: "text-slate-400" },
+      { k: "edr",        v: '"CrowdStrike   · 312 detections"',  vc: "text-slate-400" },
+      { k: "firewall",   v: '"Palo Alto NGF · 9,204 log lines"', vc: "text-slate-400" },
+      { k: "ad_logs",    v: '"AD01/AD02     · 5,612 events"',    vc: "text-slate-400" },
+      { k: "threat_intel",v: '"AbuseIPDB    · 14 IP lookups"',   vc: "text-slate-400" },
+    ],
+  },
+];
+
+const historyItems = [
+  {
+    id: "RPT-20260425-001",
+    title: "Weekly Security Report",
+    type: "WEEKLY",
+    date: "25 Apr 2026",
+    time: "14:30",
+    status: "ready",
+    agent: "AI Agent v2.1",
+    size: "184 KB",
+    pages: 2,
+  },
+  {
+    id: "RPT-20260418-003",
+    title: "Weekly Security Report",
+    type: "WEEKLY",
+    date: "18 Apr 2026",
+    time: "09:15",
+    status: "ready",
+    agent: "AI Agent v2.1",
+    size: "176 KB",
+    pages: 2,
+  },
+  {
+    id: "RPT-20260416-002",
+    title: "Incident Report — INC-2031",
+    type: "INCIDENT",
+    date: "16 Apr 2026",
+    time: "18:42",
+    status: "ready",
+    agent: "AI Agent v2.0",
+    size: "98 KB",
+    pages: 1,
+  },
+  {
+    id: "RPT-20260401-001",
+    title: "Monthly Summary — March 2026",
+    type: "MONTHLY",
+    date: "01 Apr 2026",
+    time: "08:00",
+    status: "ready",
+    agent: "AI Agent v2.0",
+    size: "241 KB",
+    pages: 3,
+  },
+  {
+    id: "RPT-20260325-002",
+    title: "OJK Compliance Report Q1",
+    type: "COMPLIANCE",
+    date: "25 Mar 2026",
+    time: "11:30",
+    status: "ready",
+    agent: "AI Agent v1.9",
+    size: "317 KB",
+    pages: 5,
+  },
+  {
+    id: "RPT-20260318-001",
+    title: "Weekly Security Report",
+    type: "WEEKLY",
+    date: "18 Mar 2026",
+    time: "09:00",
+    status: "archived",
+    agent: "AI Agent v1.9",
+    size: "162 KB",
+    pages: 2,
+  },
+];
+
+const typeBadge: Record<string, string> = {
+  WEEKLY:     "bg-[#F0FDFA] text-[#0D9488] border border-[#99F6E4]",
+  INCIDENT:   "bg-red-50 text-red-600 border border-red-100",
+  MONTHLY:    "bg-[#EFF6FF] text-[#3B82F6] border border-blue-100",
+  COMPLIANCE: "bg-[#F5F3FF] text-[#8B5CF6] border border-purple-100",
+};
+
 function ReportContent() {
   return (
     <div id="pdf-report-content">
@@ -47,7 +195,7 @@ function ReportContent() {
       </div>
 
       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488] mb-1.5">Weekly Security Report</p>
-      <h1 className="text-[24px] font-semibold text-slate-900 leading-tight mb-1.5" style={{ fontFamily: "Georgia, serif" }}>Weekly Security Operations Summary</h1>
+      <h1 className="text-[24px] font-semibold text-slate-900 leading-tight mb-1.5">Weekly Security Operations Summary</h1>
       <p className="text-[12px] text-slate-400 mb-6">Period: 19 April – 25 April 2026 · PT Contoh Tbk · Prepared by Shannon Sentinel AI</p>
 
       {/* Executive summary */}
@@ -133,6 +281,159 @@ function ReportContent() {
   );
 }
 
+function RawDataTab() {
+  const [open, setOpen] = useState<Record<string, boolean>>({
+    report_metadata: true,
+    alert_statistics: true,
+    sla_metrics: false,
+    top_incidents: false,
+    data_sources: false,
+  });
+
+  return (
+    <div className="flex-1 overflow-y-auto scroll-thin px-6 py-5">
+      {/* Header bar */}
+      <div className="glass rounded-2xl overflow-hidden max-w-[860px] mx-auto animate-fade-up">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/50">
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full bg-[#EF4444]" />
+            <div className="w-2 h-2 rounded-full bg-[#F59E0B]" />
+            <div className="w-2 h-2 rounded-full bg-[#10B981]" />
+            <span className="ml-2 text-[12px] font-mono text-slate-400">RPT-20260425-001.json</span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400">
+            <span>5 sections</span>
+            <span className="w-px h-3 bg-slate-200" />
+            <span className="text-[#10B981]">✓ valid JSON</span>
+          </div>
+        </div>
+
+        {/* JSON viewer */}
+        <div className="p-5 font-mono text-[12px] leading-relaxed bg-slate-900/[0.02]">
+          <div className="text-slate-500 mb-2">{"{"}</div>
+
+          {rawDataSections.map((section) => (
+            <div key={section.key} className="mb-1">
+              <button
+                onClick={() => setOpen((prev) => ({ ...prev, [section.key]: !prev[section.key] }))}
+                className="flex items-center gap-1.5 w-full text-left group pl-4 hover:bg-white/40 rounded-lg py-0.5 transition-colors"
+              >
+                <svg
+                  width="10" height="10" viewBox="0 0 10 10"
+                  className={`text-slate-400 transition-transform shrink-0 ${open[section.key] ? "rotate-90" : ""}`}
+                  fill="currentColor"
+                >
+                  <path d="M3 2l4 3-4 3V2z"/>
+                </svg>
+                <span className={`${section.color} font-semibold`}>&quot;{section.label}&quot;</span>
+                <span className="text-slate-400">:</span>
+                <span className="text-slate-400 ml-1">{open[section.key] ? "{" : "{ … }"}</span>
+              </button>
+
+              {open[section.key] && (
+                <div className="pl-10 mt-0.5 mb-1 border-l border-slate-200/60 ml-6">
+                  {section.fields.map((f, fi) => (
+                    <div key={fi} className="flex items-baseline gap-1.5 py-0.5">
+                      <span className="text-slate-500 shrink-0">&quot;{f.k}&quot;</span>
+                      <span className="text-slate-400">:</span>
+                      <span className={`${f.vc}`}>{f.v}</span>
+                      {fi < section.fields.length - 1 && <span className="text-slate-300">,</span>}
+                    </div>
+                  ))}
+                  <div className="text-slate-400 mt-0.5">{"}"}{section.key !== rawDataSections[rawDataSections.length - 1].key ? "," : ""}</div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="text-slate-500 mt-1">{"}"}</div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-white/50 flex items-center justify-between">
+          <span className="text-[11px] font-mono text-slate-400">Queried 5 data sources · 18,975 raw events processed</span>
+          <button className="text-[11px] font-mono text-[#0D9488] hover:underline">Copy JSON</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryTab() {
+  return (
+    <div className="flex-1 overflow-y-auto scroll-thin px-6 py-5">
+      <div className="glass rounded-2xl overflow-hidden max-w-[860px] mx-auto animate-fade-up">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/50">
+          <div>
+            <p className="text-[13px] font-semibold text-slate-800">Generation History</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">{historyItems.length} reports · last 30 days</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 glass-btn rounded-lg">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span className="text-[11px] text-slate-500">All types</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr className="border-b border-white/40">
+              {["Report", "Type", "Generated", "Pages", "Size", "Status", ""].map((h) => (
+                <th key={h} className="text-left px-5 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {historyItems.map((item, i) => (
+              <tr key={item.id} className={`border-b border-white/30 last:border-0 hover:bg-white/30 transition-colors ${i === 0 ? "bg-[#F0FDFA]/40" : ""}`}>
+                <td className="px-5 py-3">
+                  <div className="text-[12px] font-medium text-slate-700">{item.title}</div>
+                  <div className="text-[10px] font-mono text-slate-400 mt-0.5">{item.id}</div>
+                </td>
+                <td className="px-5 py-3">
+                  <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-full ${typeBadge[item.type]}`}>{item.type}</span>
+                </td>
+                <td className="px-5 py-3">
+                  <div className="text-[12px] text-slate-600">{item.date}</div>
+                  <div className="text-[10px] font-mono text-slate-400">{item.time} WIB · {item.agent}</div>
+                </td>
+                <td className="px-5 py-3 font-mono text-slate-500">{item.pages}</td>
+                <td className="px-5 py-3 font-mono text-slate-500">{item.size}</td>
+                <td className="px-5 py-3">
+                  {item.status === "ready" ? (
+                    <span className="flex items-center gap-1.5 text-[11px] font-mono text-[#10B981]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />Ready
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />Archived
+                    </span>
+                  )}
+                </td>
+                <td className="px-5 py-3">
+                  <div className="flex items-center gap-1">
+                    <button className="text-[11px] font-mono text-[#0D9488] hover:underline px-1.5 py-0.5 rounded hover:bg-[#F0FDFA] transition-colors">View</button>
+                    <button className="text-[11px] font-mono text-slate-400 hover:text-slate-600 px-1.5 py-0.5 rounded hover:bg-white/50 transition-colors">PDF</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-white/50 flex items-center justify-between">
+          <span className="text-[11px] font-mono text-slate-400">Showing 6 of 6 reports</span>
+          <span className="text-[11px] font-mono text-slate-400">Reports auto-deleted after 90 days</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ReportsPage() {
   const [prompt, setPrompt] = useState(quickItems[0].prompt);
   const [activeQuick, setActiveQuick] = useState(0);
@@ -145,6 +446,7 @@ export default function ReportsPage() {
   function generate() {
     setGenerating(true);
     setShowReport(false);
+    setActiveTab(0);
     setGenStep(0);
     let i = 0;
     const tick = () => {
@@ -273,14 +575,16 @@ export default function ReportsPage() {
           </div>
         )}
 
-        {/* Report preview */}
-        {showReport && !generating && (
+        {/* Tab content */}
+        {!generating && activeTab === 0 && showReport && (
           <div className="flex-1 overflow-y-auto scroll-thin px-6 py-5">
             <div className="glass rounded-2xl p-8 max-w-[780px] mx-auto animate-fade-up">
               <ReportContent />
             </div>
           </div>
         )}
+        {!generating && activeTab === 1 && <RawDataTab />}
+        {!generating && activeTab === 2 && <HistoryTab />}
 
         {/* Toolbar */}
         <div className="glass-bar border-t border-white/40 px-5 py-2.5 shrink-0 flex items-center gap-2">
@@ -310,15 +614,12 @@ export default function ReportsPage() {
 
         {/* Viewer toolbar */}
         <div className="shrink-0 flex items-center gap-3 px-5 h-[52px] border-b border-white/10" style={{ background: "rgba(15,23,42,0.90)" }}>
-          {/* File info */}
           <div className="flex items-center gap-2 mr-4">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-slate-400 shrink-0">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/>
             </svg>
             <span className="text-[13px] font-medium text-slate-200">Weekly_Security_Report_Apr2026.pdf</span>
           </div>
-
-          {/* Page + zoom */}
           <div className="flex items-center gap-2 text-[12px] font-mono text-slate-400 border border-white/10 rounded-lg px-3 py-1.5" style={{ background: "rgba(255,255,255,0.05)" }}>
             <span>Page 1 / 1</span>
           </div>
@@ -326,10 +627,7 @@ export default function ReportsPage() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             <span>100%</span>
           </div>
-
           <div className="flex-1" />
-
-          {/* Download button */}
           <button
             onClick={() => window.print()}
             className="flex items-center gap-1.5 text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all"
@@ -338,8 +636,6 @@ export default function ReportsPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download PDF
           </button>
-
-          {/* Close */}
           <button
             onClick={() => setPdfPreview(false)}
             className="ml-1 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
@@ -350,7 +646,6 @@ export default function ReportsPage() {
 
         {/* Viewer body */}
         <div className="flex-1 overflow-y-auto scroll-thin py-8 px-4" style={{ background: "#374151" }}>
-          {/* A4 page */}
           <div
             id="pdf-print-root"
             className="mx-auto bg-white rounded shadow-2xl p-[52px]"
