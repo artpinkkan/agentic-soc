@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — Triase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  const lang = localStorage.getItem('ss-lang') || 'id';
+  document.documentElement.setAttribute('data-lang', lang);
+</script>
+<style>
+  :root {
+    --color-brand:       #1D9E75;
+    --color-brand-dark:  #0F6E56;
+    --color-brand-light: #E1F5EE;
+    --color-danger:      #E24B4A;
+    --color-warning:     #EF9F27;
+    --color-neutral-50:  #F1EFE8;
+    --color-neutral-200: #B4B2A9;
+    --color-neutral-700: #444441;
+    --color-neutral-900: #2C2C2A;
+    --color-surface:     #FFFFFF;
+    --color-surface-alt: #F8F7F4;
+    --color-border:      rgba(68,68,65,0.15);
+    --font-sans:         'Inter', system-ui, sans-serif;
+    --font-mono:         'JetBrains Mono', monospace;
+    --radius-sm:         6px;
+    --radius-md:         10px;
+    --radius-lg:         16px;
+    --gap-sm:            8px;
+    --gap-md:            16px;
+    --gap-lg:            24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface-alt);
+    color: var(--color-neutral-900);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  .ss-nav {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gap-lg); height: 52px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .ss-nav__brand { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-nav__logo { font-weight: 600; font-size: 15px; color: var(--color-brand); letter-spacing: -0.3px; }
+  .ss-nav__tier { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+  .ss-nav__tier--free { background: var(--color-brand-light); color: var(--color-brand-dark); }
+  .ss-nav__links { display: flex; align-items: center; gap: 4px; }
+  .ss-nav__links a {
+    font-size: 13px; color: var(--color-neutral-700); text-decoration: none;
+    padding: 5px 10px; border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s;
+  }
+  .ss-nav__links a:hover { background: var(--color-neutral-50); }
+  .ss-nav__links a.active { color: var(--color-brand); font-weight: 500; }
+  .ss-nav__actions { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-btn-ghost {
+    background: none; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+    padding: 5px 12px; font-size: 13px; font-family: var(--font-sans);
+    color: var(--color-neutral-700); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-ghost:hover { background: var(--color-neutral-50); }
+
+  /* ── Page content ── */
+  .page-shell { max-width: 1100px; margin: 0 auto; padding: 28px var(--gap-lg) 64px; display: flex; flex-direction: column; gap: var(--gap-md); }
+
+  /* ── Panel ── */
+  .panel {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .panel-header {
+    padding: 12px var(--gap-md); border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title { font-size: 11px; font-weight: 600; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .08em; }
+
+  /* ── Pipeline ── */
+  .pipeline { display: grid; grid-template-columns: repeat(5,1fr); gap: var(--gap-sm); padding: 20px var(--gap-lg); }
+  .pipe-step { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .pipe-icon {
+    width: 48px; height: 48px; border-radius: 12px; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    border: 1px solid var(--color-border);
+  }
+  .pipe-count { font-size: 26px; font-weight: 700; font-family: var(--font-mono); line-height: 1; margin-bottom: 4px; }
+  .pipe-label { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .pipe-sub   { font-size: 11px; color: var(--color-neutral-200); }
+
+  /* ── Two-col grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-md); }
+
+  /* ── Triage feed ── */
+  .triage-item {
+    display: grid; grid-template-columns: 3px 1fr auto; gap: 12px; align-items: center;
+    padding: 10px var(--gap-md); border-bottom: 1px solid var(--color-border);
+    animation: slideIn .25s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
+  .triage-item:last-child { border-bottom: none; }
+  .ti-bar { border-radius: 2px; align-self: stretch; }
+  .ti-name { font-size: 12px; font-weight: 500; margin-bottom: 1px; }
+  .ti-meta { font-size: 11px; color: var(--color-neutral-200); font-family: var(--font-mono); }
+  .ti-result { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-mono); }
+  .tr-fp   { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+  .tr-esc  { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .tr-wch  { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .tr-auto { background: var(--color-brand-light); color: var(--color-brand-dark); border: 0.5px solid #5DCAA5; }
+
+  /* Stats bar */
+  .stats-bar { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--color-border); }
+  .stat-cell { padding: 12px var(--gap-md); text-align: center; border-right: 1px solid var(--color-border); }
+  .stat-cell:last-child { border-right: none; }
+  .stat-val { font-size: 22px; font-weight: 700; font-family: var(--font-mono); line-height: 1; }
+  .stat-lbl { font-size: 10px; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+  .stat-sub { font-size: 10px; color: var(--color-neutral-200); margin-top: 2px; }
+
+  /* Pulse indicator */
+  .pulse { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-family: var(--font-mono); color: var(--color-brand); }
+  .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-brand); animation: pulse 1.3s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .sim-btn {
+    font-size: 11px; font-family: var(--font-mono); font-weight: 500;
+    padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(29,158,117,0.35);
+    background: var(--color-brand-light); color: var(--color-brand); cursor: pointer; transition: all .12s;
+  }
+  .sim-btn:hover { background: #C3EDD9; }
+
+  /* ── Playbook panel ── */
+  .pb-header-row {
+    padding: 14px var(--gap-md) 10px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pb-name-row { display: flex; align-items: center; gap: 10px; }
+  .pb-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid var(--color-border); background: var(--color-surface-alt); flex-shrink: 0; }
+  .pb-name { font-size: 13px; font-weight: 600; }
+  .pb-trigger { font-size: 11px; color: var(--color-neutral-200); font-family: var(--font-mono); }
+  .ps-run { font-size: 11px; font-weight: 500; font-family: var(--font-mono); padding: 3px 10px; border-radius: 999px; background: var(--color-brand-light); color: var(--color-brand-dark); border: 1px solid rgba(29,158,117,0.35); }
+  .mvp-note { font-size: 12px; color: var(--color-neutral-200); padding: 6px var(--gap-md) 10px; }
+
+  /* ── Playbook steps ── */
+  .pb-steps { padding: var(--gap-md); display: flex; flex-direction: column; gap: 10px; }
+
+  /* Read-only step (auto-completed) */
+  .pb-step-auto {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: var(--radius-sm);
+    background: #EAF3DE33; border: 1px solid #97C45966;
+  }
+  .step-check { width: 20px; height: 20px; border-radius: 50%; background: #EAF3DE; color: #3B6D11; border: 1px solid #97C459; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .step-label { font-size: 13px; color: var(--color-neutral-900); flex: 1; }
+  .step-auto-tag { font-size: 10px; font-weight: 500; color: #3B6D11; background: #EAF3DE; border: 0.5px solid #97C459; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+
+  /* Blocked step */
+  .pb-step-blocked {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: var(--radius-sm);
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    opacity: 0.55;
+  }
+  .step-block-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--color-surface-alt); border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-neutral-200); flex-shrink: 0; }
+
+  /* ── HITL card ── */
+  .ss-hitl-card {
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-md);
+    padding: var(--gap-md);
+    background: rgba(239,159,39,0.06);
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .ss-hitl-card__header { display: flex; align-items: flex-start; gap: 10px; }
+  .ss-hitl-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .ss-hitl-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .t-small { font-size: 12px; }
+  .t-muted { color: var(--color-neutral-200); }
+
+  .badge-pending {
+    margin-left: auto; flex-shrink: 0;
+    background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775;
+    font-size: 11px; font-weight: 500; padding: 2px 10px; border-radius: 999px;
+  }
+
+  .ss-hitl-context {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 8px 12px;
+  }
+  .ss-hitl-context .t-small { color: var(--color-neutral-700); line-height: 1.5; }
+
+  .ss-hitl-actions { display: flex; align-items: center; gap: var(--gap-sm); flex-wrap: wrap; }
+  .ss-btn-approve {
+    background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459;
+    padding: 6px 16px; border-radius: var(--radius-sm); font-weight: 500;
+    font-size: 13px; font-family: var(--font-sans); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-approve:hover { background: #D4EBC2; }
+  .ss-btn-reject {
+    background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595;
+    padding: 6px 16px; border-radius: var(--radius-sm); font-weight: 500;
+    font-size: 13px; font-family: var(--font-sans); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-reject:hover { background: #F7D5D5; }
+
+  /* ── Audit trail ── */
+  .ss-audit-panel {
+    margin-top: var(--gap-sm); border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); overflow: hidden;
+  }
+  .ss-audit-toggle {
+    padding: 10px var(--gap-md); font-size: 12px; font-weight: 500;
+    color: var(--color-neutral-700); cursor: pointer; list-style: none;
+    background: var(--color-surface-alt); display: flex; align-items: center; gap: var(--gap-sm);
+    user-select: none;
+  }
+  .ss-audit-toggle::-webkit-details-marker { display: none; }
+  .ss-audit-toggle::before { content: '▶'; font-size: 10px; color: var(--color-neutral-200); transition: transform 0.15s; }
+  details[open] .ss-audit-toggle::before { transform: rotate(90deg); }
+  .ss-audit-list {
+    list-style: none; padding: 10px var(--gap-md);
+    background: var(--color-surface); display: flex; flex-direction: column; gap: 6px;
+    max-height: 160px; overflow-y: auto;
+  }
+  .ss-audit-list li { font-size: 12px; color: var(--color-neutral-700); font-family: var(--font-mono); }
+
+  /* Severity badges (shared) */
+  .badge-critical { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .badge-high     { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-medium   { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+  .badge-low      { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="ss-nav">
+  <div class="ss-nav__brand">
+    <span class="ss-nav__logo">Shannon Sentinel</span>
+    <span class="ss-nav__tier ss-nav__tier--free t" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+  </div>
+  <div class="ss-nav__links">
+    <a href="/agentic-soc/onboarding/" class="t" data-en="Setup" data-id="Pengaturan">Pengaturan</a>
+    <a href="/agentic-soc/dashboard/" class="t" data-en="Dashboard" data-id="Dasbor">Dasbor</a>
+    <a href="/agentic-soc/investigate/" class="t" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+    <a href="/agentic-soc/triage/" class="active t" data-en="Triage" data-id="Triase">Triase</a>
+    <a href="/agentic-soc/reports/" class="t" data-en="Reports" data-id="Laporan">Laporan</a>
+    <a href="/agentic-soc/inspector/" class="t" data-en="Inspector" data-id="Inspektor">Inspektor</a>
+  </div>
+  <div class="ss-nav__actions">
+    <button onclick="toggleLang()" id="lang-btn" class="ss-btn-ghost">EN</button>
+    <button class="ss-btn-ghost t" data-en="Settings" data-id="Setelan">Setelan</button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <!-- ── Pipeline funnel ── -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title t" data-en="AI Triage Pipeline — Today" data-id="Pipeline Triase AI — Hari Ini">Pipeline Triase AI — Hari Ini</span>
+    </div>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-icon" style="background:var(--color-surface-alt)">📥</div>
+        <div class="pipe-count" style="color:var(--color-neutral-700)" id="p-in">0</div>
+        <div class="pipe-label t" data-en="Ingested" data-id="Diterima">Diterima</div>
+        <div class="pipe-sub t" data-en="raw events" data-id="event mentah">event mentah</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-icon" style="background:#F5F3FF;border-color:#DDD6FE">🤖</div>
+        <div class="pipe-count" style="color:#8B5CF6" id="p-proc">0</div>
+        <div class="pipe-label t" data-en="AI Processed" data-id="Diproses AI">Diproses AI</div>
+        <div class="pipe-sub t" data-en="scored &amp; correlated" data-id="diberi skor &amp; dikorelasi">diberi skor &amp; dikorelasi</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-icon" style="background:#EAF3DE;border-color:#97C459">✅</div>
+        <div class="pipe-count" style="color:#3B6D11" id="p-fp">0</div>
+        <div class="pipe-label t" data-en="Auto-closed" data-id="Ditutup Otomatis">Ditutup Otomatis</div>
+        <div class="pipe-sub t" data-en="false positives" data-id="false positive">false positive</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-icon" style="background:#FAEEDA;border-color:#FAC775">👁</div>
+        <div class="pipe-count" style="color:#854F0B" id="p-watch">0</div>
+        <div class="pipe-label t" data-en="Watching" data-id="Dipantau">Dipantau</div>
+        <div class="pipe-sub t" data-en="low confidence" data-id="kepercayaan rendah">kepercayaan rendah</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-icon" style="background:#FCEBEB;border-color:#F09595">🚨</div>
+        <div class="pipe-count" style="color:#A32D2D" id="p-esc">0</div>
+        <div class="pipe-label t" data-en="Escalated" data-id="Dieskalasi">Dieskalasi</div>
+        <div class="pipe-sub t" data-en="to analyst" data-id="ke analis">ke analis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Two-column ── -->
+  <div class="grid-2">
+
+    <!-- Live triage feed -->
+    <div class="panel" style="display:flex;flex-direction:column">
+      <div class="panel-header">
+        <span class="panel-title t" data-en="Live Triage Feed" data-id="Feed Triase Langsung">Feed Triase Langsung</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="pulse"><span class="pulse-dot"></span><span class="t" data-en="Processing" data-id="Memproses">Memproses</span></span>
+          <button class="sim-btn" onclick="addFeedItem()">+ <span class="t" data-en="Simulate" data-id="Simulasi">Simulasi</span></button>
+        </div>
+      </div>
+      <div id="feed" style="flex:1;overflow-y:auto;max-height:360px"></div>
+      <div class="stats-bar">
+        <div class="stat-cell">
+          <div class="stat-val" style="color:#3B6D11">92%</div>
+          <div class="stat-lbl t" data-en="Auto-classified" data-id="Diklasifikasi otomatis">Diklasifikasi otomatis</div>
+          <div class="stat-sub t" data-en="(triage only — containment requires approval)" data-id="(hanya triase — penahanan memerlukan persetujuan)">(hanya triase — penahanan memerlukan persetujuan)</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val" style="color:var(--color-brand)">0.3s</div>
+          <div class="stat-lbl t" data-en="Avg triage time" data-id="Rata-rata triase">Rata-rata triase</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val" style="color:#A32D2D">12</div>
+          <div class="stat-lbl t" data-en="Escalated" data-id="Dieskalasi">Dieskalasi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playbook engine -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title t" data-en="Playbook Engine" data-id="Mesin Playbook">Mesin Playbook</span>
+        <span class="ps-run t" data-en="1 active" data-id="1 aktif">1 aktif</span>
+      </div>
+
+      <!-- Single playbook: SSH Brute Force Response -->
+      <div class="pb-header-row">
+        <div class="pb-name-row">
+          <div class="pb-icon">🔒</div>
+          <div>
+            <div class="pb-name t" data-en="SSH Brute Force Response" data-id="Respons Brute Force SSH">Respons Brute Force SSH</div>
+            <div class="pb-trigger t" data-en="Trigger: ≥50 SSH failures / 5 min" data-id="Pemicu: ≥50 kegagalan SSH / 5 menit">Pemicu: ≥50 kegagalan SSH / 5 menit</div>
+          </div>
+        </div>
+        <span class="ps-run t" data-en="● Running" data-id="● Berjalan">● Berjalan</span>
+      </div>
+
+      <p class="mvp-note t" data-en="1 playbook active at MVP. More playbooks ship in v2." data-id="1 playbook aktif di MVP. Playbook lainnya hadir di v2.">
+        1 playbook aktif di MVP. Playbook lainnya hadir di v2.
+      </p>
+
+      <div class="pb-steps">
+
+        <!-- Step 1: Read-only → auto ✓ -->
+        <div class="pb-step-auto">
+          <div class="step-check">✓</div>
+          <span class="step-label t" data-en="Capture offending IP + threat intel lookup" data-id="Tangkap IP pelanggar + pencarian threat intel">Tangkap IP pelanggar + pencarian threat intel</span>
+          <span class="step-auto-tag t" data-en="Auto (read-only)" data-id="Otomatis (hanya baca)">Otomatis (hanya baca)</span>
+        </div>
+
+        <!-- Step 2: HITL — Block firewall -->
+        <div class="ss-hitl-card" id="hitl-1">
+          <div class="ss-hitl-card__header">
+            <span class="ss-hitl-icon">⏸</span>
+            <div>
+              <p class="ss-hitl-title t" data-en="Block IP at firewall" data-id="Blokir IP di firewall">Blokir IP di firewall</p>
+              <p class="t-muted t-small t" data-en="Target: 192.168.10.45 — Perimeter firewall rule" data-id="Target: 192.168.10.45 — Aturan firewall perimeter">Target: 192.168.10.45 — Aturan firewall perimeter</p>
+            </div>
+            <span class="badge-pending" id="badge-1" data-en="Awaiting approval" data-id="Menunggu persetujuan">Menunggu persetujuan</span>
+          </div>
+          <div class="ss-hitl-context">
+            <p class="t-small">
+              <strong class="t" data-en="AI recommendation:" data-id="Rekomendasi AI:">Rekomendasi AI:</strong>
+              <span class="t" data-en="Block recommended — IP has 47 abuse reports (AbuseIPDB, 94% confidence)." data-id="Blokir direkomendasikan — IP memiliki 47 laporan penyalahgunaan (AbuseIPDB, kepercayaan 94%).">Blokir direkomendasikan — IP memiliki 47 laporan penyalahgunaan (AbuseIPDB, kepercayaan 94%).</span>
+            </p>
+          </div>
+          <div class="ss-hitl-actions" id="actions-1">
+            <button class="ss-btn-approve" onclick="approveAction('1')" data-en="Approve" data-id="Setujui">Setujui</button>
+            <button class="ss-btn-reject"  onclick="rejectAction('1')"  data-en="Reject"  data-id="Tolak">Tolak</button>
+            <button class="ss-btn-ghost"   onclick="askAI('1')"
+                    data-en="Ask AI for more info ↗" data-id="Minta info lebih dari AI ↗">Minta info lebih dari AI ↗</button>
+          </div>
+        </div>
+
+        <!-- Step 3: HITL — Isolate host -->
+        <div class="ss-hitl-card" id="hitl-2">
+          <div class="ss-hitl-card__header">
+            <span class="ss-hitl-icon">⏸</span>
+            <div>
+              <p class="ss-hitl-title t" data-en="Isolate source host" data-id="Isolasi host sumber">Isolasi host sumber</p>
+              <p class="t-muted t-small t" data-en="Target: 192.168.10.45 — Full network quarantine" data-id="Target: 192.168.10.45 — Karantina jaringan penuh">Target: 192.168.10.45 — Karantina jaringan penuh</p>
+            </div>
+            <span class="badge-pending" id="badge-2" data-en="Awaiting approval" data-id="Menunggu persetujuan">Menunggu persetujuan</span>
+          </div>
+          <div class="ss-hitl-context">
+            <p class="t-small">
+              <strong class="t" data-en="AI recommendation:" data-id="Rekomendasi AI:">Rekomendasi AI:</strong>
+              <span class="t" data-en="Isolation recommended — recon + brute force pattern consistent with persistent threat actor." data-id="Isolasi direkomendasikan — pola recon + brute force konsisten dengan pelaku ancaman persisten.">Isolasi direkomendasikan — pola recon + brute force konsisten dengan pelaku ancaman persisten.</span>
+            </p>
+          </div>
+          <div class="ss-hitl-actions" id="actions-2">
+            <button class="ss-btn-approve" onclick="approveAction('2')" data-en="Approve" data-id="Setujui">Setujui</button>
+            <button class="ss-btn-reject"  onclick="rejectAction('2')"  data-en="Reject"  data-id="Tolak">Tolak</button>
+            <button class="ss-btn-ghost"   onclick="askAI('2')"
+                    data-en="Ask AI for more info ↗" data-id="Minta info lebih dari AI ↗">Minta info lebih dari AI ↗</button>
+          </div>
+        </div>
+
+        <!-- Step 4: HITL — Create ticket -->
+        <div class="ss-hitl-card" id="hitl-3">
+          <div class="ss-hitl-card__header">
+            <span class="ss-hitl-icon">⏸</span>
+            <div>
+              <p class="ss-hitl-title t" data-en="Create incident ticket" data-id="Buat tiket insiden">Buat tiket insiden</p>
+              <p class="t-muted t-small t" data-en="Severity: Critical — Assign to Tier 2 analyst" data-id="Tingkat keparahan: Kritis — Tugaskan ke analis Tier 2">Tingkat keparahan: Kritis — Tugaskan ke analis Tier 2</p>
+            </div>
+            <span class="badge-pending" id="badge-3" data-en="Awaiting approval" data-id="Menunggu persetujuan">Menunggu persetujuan</span>
+          </div>
+          <div class="ss-hitl-context">
+            <p class="t-small">
+              <strong class="t" data-en="AI recommendation:" data-id="Rekomendasi AI:">Rekomendasi AI:</strong>
+              <span class="t" data-en="Ticket creation recommended for audit trail and Tier 2 handoff." data-id="Pembuatan tiket direkomendasikan untuk jejak audit dan serah terima Tier 2.">Pembuatan tiket direkomendasikan untuk jejak audit dan serah terima Tier 2.</span>
+            </p>
+          </div>
+          <div class="ss-hitl-actions" id="actions-3">
+            <button class="ss-btn-approve" onclick="approveAction('3')" data-en="Approve" data-id="Setujui">Setujui</button>
+            <button class="ss-btn-reject"  onclick="rejectAction('3')"  data-en="Reject"  data-id="Tolak">Tolak</button>
+            <button class="ss-btn-ghost"   onclick="askAI('3')"
+                    data-en="Ask AI for more info ↗" data-id="Minta info lebih dari AI ↗">Minta info lebih dari AI ↗</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Blocked until ticket created -->
+        <div class="pb-step-blocked" id="step-notify">
+          <div class="step-block-icon">○</div>
+          <span class="step-label t" data-en="Notify Tier 2 — blocked until ticket is created" data-id="Notifikasi Tier 2 — diblokir hingga tiket dibuat">Notifikasi Tier 2 — diblokir hingga tiket dibuat</span>
+        </div>
+
+      </div><!-- /pb-steps -->
+
+      <!-- Audit trail -->
+      <div style="padding: 0 var(--gap-md) var(--gap-md)">
+        <details class="ss-audit-panel">
+          <summary class="ss-audit-toggle t" data-en="Audit trail (this session)" data-id="Jejak audit (sesi ini)">Jejak audit (sesi ini)</summary>
+          <ul id="ss-audit-log" class="ss-audit-list">
+            <li class="t-small">14:22 — <span class="t" data-en="Read-only: IP threat intel lookup completed" data-id="Hanya baca: Pencarian threat intel IP selesai">Hanya baca: Pencarian threat intel IP selesai</span></li>
+            <li class="t-small">14:20 — <span class="t" data-en="AI triage: SSH brute force playbook triggered" data-id="Triase AI: Playbook brute force SSH dipicu">Triase AI: Playbook brute force SSH dipicu</span></li>
+          </ul>
+        </details>
+      </div>
+
+    </div><!-- /playbook panel -->
+  </div><!-- /grid-2 -->
+</div><!-- /page-shell -->
+
+<script>
+// ── Language ──
+function toggleLang() {
+  const current = document.documentElement.getAttribute('data-lang');
+  const next = current === 'id' ? 'en' : 'id';
+  document.documentElement.setAttribute('data-lang', next);
+  localStorage.setItem('ss-lang', next);
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = next === 'en' ? el.dataset.en : el.dataset.id;
+  });
+  document.getElementById('lang-btn').textContent = next === 'en' ? 'ID' : 'EN';
+}
+document.querySelectorAll('[data-en]').forEach(el => {
+  if (lang === 'en') el.textContent = el.dataset.en;
+});
+if (lang === 'en') document.getElementById('lang-btn').textContent = 'ID';
+
+// ── Pipeline animation ──
+const targets = { 'p-in':1847, 'p-proc':1847, 'p-fp':1702, 'p-watch':133, 'p-esc':12 };
+Object.entries(targets).forEach(([id, target]) => {
+  let n = 0; const step = Math.ceil(target / 28);
+  const t = setInterval(() => {
+    n = Math.min(n + step, target);
+    document.getElementById(id).textContent = n.toLocaleString();
+    if (n >= target) clearInterval(t);
+  }, 35);
+});
+
+// ── Triage feed ──
+const feedData = [
+  { name_id:"Login gagal — portal admin",       name_en:"Failed login — admin portal",      meta:"10.0.0.22",          type:"fp"   },
+  { name_id:"PowerShell mencurigakan",           name_en:"Suspicious PowerShell",             meta:"dev-pc-07",          type:"esc"  },
+  { name_id:"Port scan internal",                name_en:"Internal port scan",                meta:"192.168.1.105",      type:"watch"},
+  { name_id:"Pola DNS beacon terdeteksi",        name_en:"DNS beacon pattern detected",       meta:"ws-finance-04",      type:"esc"  },
+  { name_id:"Unduhan file besar",                name_en:"Large file download",               meta:"joko@corp.id 2.1GB", type:"watch"},
+  { name_id:"Pemblokiran firewall berulang",     name_en:"Repeated firewall block",           meta:"5.196.33.1:8080",    type:"auto" },
+  { name_id:"Pemindaian antivirus dipicu",       name_en:"Antivirus scan triggered",          meta:"hr-laptop-09",       type:"fp"   },
+  { name_id:"Login dari negara baru",            name_en:"Login from new country",            meta:"budi@corp.id — SG",  type:"esc"  },
+  { name_id:"Lonjakan error SQL",                name_en:"SQL error spike",                   meta:"db-prod-01",         type:"fp"   },
+  { name_id:"Lalu lintas IRC keluar",            name_en:"Outbound IRC traffic",              meta:"10.0.0.88:6667",     type:"esc"  },
+];
+const typeStyle = {
+  fp:    { bar:'#97C459', cls:'tr-fp',  label_id:'False positive', label_en:'False positive' },
+  esc:   { bar:'#E24B4A', cls:'tr-esc', label_id:'Dieskalasi →',   label_en:'Escalated →'   },
+  watch: { bar:'#EF9F27', cls:'tr-wch', label_id:'Dipantau',       label_en:'Watching'      },
+  auto:  { bar:'#1D9E75', cls:'tr-auto',label_id:'Otomatis',       label_en:'Auto-closed'   },
+};
+let feedIdx = 0;
+function addFeedItem() {
+  const item = feedData[feedIdx++ % feedData.length];
+  const s = typeStyle[item.type];
+  const l = lang;
+  const feed = document.getElementById('feed');
+  const d = document.createElement('div');
+  d.className = 'triage-item';
+  d.innerHTML = `<div class="ti-bar" style="background:${s.bar}"></div>
+    <div><div class="ti-name">${l==='en'?item.name_en:item.name_id}</div><div class="ti-meta">${item.meta}</div></div>
+    <div class="ti-result ${s.cls}">${l==='en'?s.label_en:s.label_id}</div>`;
+  feed.insertBefore(d, feed.firstChild);
+  if (feed.children.length > 10) feed.removeChild(feed.lastChild);
+}
+for (let i = 0; i < 7; i++) addFeedItem();
+setInterval(addFeedItem, 3200);
+
+// ── HITL approve/reject ──
+function approveAction(id) {
+  const card    = document.getElementById('hitl-' + id);
+  const badge   = document.getElementById('badge-' + id);
+  const actions = document.getElementById('actions-' + id);
+  const title   = card.querySelector('.ss-hitl-title');
+  const l = document.documentElement.getAttribute('data-lang');
+  const time = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+
+  badge.textContent = l === 'en' ? 'Approved' : 'Disetujui';
+  badge.style.background = '#EAF3DE';
+  badge.style.color = '#3B6D11';
+  badge.style.borderColor = '#97C459';
+
+  actions.innerHTML = `<p class="t-small t-muted">${l==='en'?'Approved by analyst':'Disetujui oleh analis'} · ${time} WIB</p>`;
+
+  card.style.borderColor = '#97C459';
+  card.style.background = 'rgba(151,196,89,0.06)';
+
+  addAuditEntry((l==='en'?'Approved: ':'Disetujui: ') + title.textContent);
+
+  // Unblock notify step if ticket approved
+  if (id === '3') {
+    const notifyEl = document.getElementById('step-notify');
+    notifyEl.classList.remove('pb-step-blocked');
+    notifyEl.classList.add('pb-step-auto');
+    notifyEl.querySelector('.step-block-icon')?.remove();
+    notifyEl.insertAdjacentHTML('afterbegin', '<div class="step-check">✓</div>');
+    notifyEl.querySelector('.step-label').textContent = l === 'en' ? 'Notify Tier 2 — ticket created' : 'Notifikasi Tier 2 — tiket dibuat';
+    notifyEl.style.opacity = '1';
+  }
+}
+
+function rejectAction(id) {
+  const card    = document.getElementById('hitl-' + id);
+  const badge   = document.getElementById('badge-' + id);
+  const actions = document.getElementById('actions-' + id);
+  const title   = card.querySelector('.ss-hitl-title');
+  const l = document.documentElement.getAttribute('data-lang');
+  const time = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+
+  badge.textContent = l === 'en' ? 'Rejected' : 'Ditolak';
+  badge.style.background = '#FCEBEB';
+  badge.style.color = '#A32D2D';
+  badge.style.borderColor = '#F09595';
+
+  actions.innerHTML = `<p class="t-small t-muted">${l==='en'?'Rejected by analyst':'Ditolak oleh analis'} · ${time} WIB</p>`;
+
+  card.style.borderColor = '#F09595';
+  card.style.background = 'rgba(240,149,149,0.06)';
+
+  addAuditEntry((l==='en'?'Rejected: ':'Ditolak: ') + title.textContent);
+}
+
+function askAI(id) {
+  window.location.href = '/agentic-soc/investigate/';
+}
+
+function addAuditEntry(message) {
+  const log = document.getElementById('ss-audit-log');
+  if (!log) return;
+  const entry = document.createElement('li');
+  entry.className = 't-small';
+  const time = new Date().toLocaleTimeString('id-ID');
+  entry.textContent = time + ' — ' + message;
+  log.insertBefore(entry, log.firstChild);
+}
+</script>
+</body>
+</html>
