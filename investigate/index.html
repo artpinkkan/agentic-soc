@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — Investigasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  const lang = localStorage.getItem('ss-lang') || 'id';
+  document.documentElement.setAttribute('data-lang', lang);
+</script>
+<style>
+  :root {
+    --color-brand:       #1D9E75;
+    --color-brand-dark:  #0F6E56;
+    --color-brand-light: #E1F5EE;
+    --color-danger:      #E24B4A;
+    --color-warning:     #EF9F27;
+    --color-neutral-50:  #F1EFE8;
+    --color-neutral-200: #B4B2A9;
+    --color-neutral-700: #444441;
+    --color-neutral-900: #2C2C2A;
+    --color-surface:     #FFFFFF;
+    --color-surface-alt: #F8F7F4;
+    --color-border:      rgba(68,68,65,0.15);
+    --font-sans:         'Inter', system-ui, sans-serif;
+    --font-mono:         'JetBrains Mono', monospace;
+    --radius-sm:         6px;
+    --radius-md:         10px;
+    --radius-lg:         16px;
+    --gap-sm:            8px;
+    --gap-md:            16px;
+    --gap-lg:            24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface-alt);
+    color: var(--color-neutral-900);
+    font-size: 14px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Nav ── */
+  .ss-nav {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gap-lg); height: 52px; flex-shrink: 0; z-index: 100;
+  }
+  .ss-nav__brand { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-nav__logo { font-weight: 600; font-size: 15px; color: var(--color-brand); letter-spacing: -0.3px; }
+  .ss-nav__tier { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+  .ss-nav__tier--free { background: var(--color-brand-light); color: var(--color-brand-dark); }
+  .ss-nav__links { display: flex; align-items: center; gap: 4px; }
+  .ss-nav__links a {
+    font-size: 13px; color: var(--color-neutral-700); text-decoration: none;
+    padding: 5px 10px; border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s;
+  }
+  .ss-nav__links a:hover { background: var(--color-neutral-50); }
+  .ss-nav__links a.active { color: var(--color-brand); font-weight: 500; }
+  .ss-nav__actions { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-btn-ghost {
+    background: none; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+    padding: 5px 12px; font-size: 13px; font-family: var(--font-sans);
+    color: var(--color-neutral-700); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-ghost:hover { background: var(--color-neutral-50); }
+
+  /* ── Two-panel layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* ── Alert sidebar ── */
+  .sidebar {
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .sb-top {
+    padding: 14px 16px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;
+  }
+  .section-label {
+    font-size: 10px; font-weight: 600; color: var(--color-neutral-200);
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
+  }
+  .alert-title-big { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 8px; }
+  .sev-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+    background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595;
+  }
+  .sev-dot { width: 6px; height: 6px; border-radius: 50%; background: #E24B4A; }
+  .sb-scroll { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .sb-scroll::-webkit-scrollbar { width: 3px; }
+  .sb-scroll::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+  .kv { margin-bottom: 14px; }
+  .kv-key { font-size: 10px; font-weight: 600; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .kv-val { font-size: 12px; font-family: var(--font-mono); color: var(--color-neutral-900); }
+  .kv-val.danger { color: var(--color-danger); }
+  .log-sample {
+    background: var(--color-surface-alt); border-left: 3px solid var(--color-danger);
+    border-radius: 0 6px 6px 0; padding: 8px 12px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-neutral-700); line-height: 1.7;
+  }
+  .related-alert {
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    border-radius: 6px; padding: 9px 11px; margin-bottom: 6px; cursor: pointer; transition: border-color .12s;
+  }
+  .related-alert:hover { border-color: var(--color-brand); }
+  .related-alert.active { border-color: var(--color-brand); background: var(--color-brand-light); }
+  .ra-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .ra-name { font-size: 12px; font-weight: 500; }
+  .ra-sev { font-size: 10px; font-weight: 600; font-family: var(--font-mono); padding: 1px 6px; border-radius: 4px; }
+  .ra-meta { font-size: 11px; color: var(--color-neutral-200); font-family: var(--font-mono); }
+
+  /* ── Chat panel ── */
+  .chat-panel { display: flex; flex-direction: column; overflow: hidden; background: var(--color-surface-alt); }
+
+  .chat-topbar {
+    padding: 12px 20px; background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .ai-identity { display: flex; align-items: center; gap: 10px; }
+  .ai-avatar {
+    width: 36px; height: 36px; background: var(--color-brand); border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: white;
+  }
+  .ai-name-txt { font-size: 14px; font-weight: 600; }
+  .ai-desc-txt { font-size: 11px; color: var(--color-neutral-200); }
+  .ctx-chip {
+    font-size: 11px; font-family: var(--font-mono); color: var(--color-brand);
+    background: var(--color-brand-light); padding: 3px 10px; border-radius: 999px;
+    border: 1px solid rgba(29,158,117,0.35); display: flex; align-items: center; gap: 5px;
+  }
+  .ctx-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-brand); }
+
+  /* ── Messages ── */
+  .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+
+  .system-note {
+    align-self: center; font-size: 11px; font-family: var(--font-mono); color: var(--color-neutral-200);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    padding: 4px 14px; border-radius: 999px;
+  }
+
+  /* User message */
+  .msg-user { display: flex; justify-content: flex-end; animation: fadeUp .2s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+  .user-bubble {
+    background: var(--color-brand); color: white; border-radius: 12px 2px 12px 12px;
+    padding: 10px 14px; font-size: 13px; line-height: 1.6; max-width: 480px;
+  }
+  .msg-time-user { font-size: 10px; color: var(--color-neutral-200); font-family: var(--font-mono); margin-top: 4px; text-align: right; }
+
+  /* ── Structured AI message ── */
+  .ss-ai-message {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 2px var(--radius-lg) var(--radius-lg) var(--radius-lg);
+    max-width: 680px; animation: fadeUp .2s ease;
+    overflow: hidden;
+  }
+  .ss-ai-meta {
+    display: flex; align-items: center; gap: var(--gap-sm);
+    padding: 8px 14px; border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-alt);
+  }
+  .ss-model-badge {
+    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px;
+  }
+  .ss-model-badge--local  { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #5DCAA5; }
+  .ss-model-badge--cloud  { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+  .ss-meta-time { font-size: 11px; color: var(--color-neutral-200); font-family: var(--font-mono); flex: 1; }
+  .ss-inspect-link {
+    font-size: 11px; color: var(--color-brand); text-decoration: none; font-weight: 500;
+  }
+  .ss-inspect-link:hover { text-decoration: underline; }
+
+  .ss-section { padding: 10px 14px; border-bottom: 1px solid var(--color-border); }
+  .ss-section:last-child { border-bottom: none; }
+  .ss-section-label {
+    font-size: 10px; font-weight: 600; color: var(--color-neutral-200);
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px;
+  }
+  .ss-section p { font-size: 13px; line-height: 1.6; color: var(--color-neutral-900); }
+  .ss-section ul, .ss-section ol { padding-left: 18px; font-size: 13px; line-height: 1.8; color: var(--color-neutral-700); }
+  .ss-section ul cite, .ss-section ol cite { font-style: normal; font-weight: 500; color: var(--color-neutral-900); }
+  .ss-section code {
+    background: var(--color-surface-alt); padding: 1px 5px; border-radius: 3px;
+    font-size: 11px; font-family: var(--font-mono);
+  }
+
+  .ss-risk-row { display: flex; flex-wrap: wrap; gap: var(--gap-sm); margin-top: 4px; }
+  .ss-risk-item {
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 4px 10px; font-size: 12px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ss-risk-item .t-muted { font-size: 11px; color: var(--color-neutral-200); }
+
+  .ss-control-tag {
+    display: inline-block; font-size: 10px; font-weight: 500;
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    border-radius: 3px; padding: 1px 6px; margin-left: 6px;
+    color: var(--color-neutral-700); font-family: var(--font-mono); vertical-align: middle;
+  }
+
+  .ss-ai-footer {
+    display: flex; flex-wrap: wrap; gap: 12px; padding: 10px 14px;
+    border-top: 1px solid var(--color-border); background: var(--color-surface-alt);
+    align-items: center;
+  }
+  .ss-footer-item { display: flex; align-items: center; gap: 6px; }
+  .ss-footer-item .t-muted { font-size: 11px; color: var(--color-neutral-200); }
+  .ss-footer-item--assumptions { flex: 1; }
+  .t-small { font-size: 11px; color: var(--color-neutral-700); }
+
+  /* Confidence + review badges */
+  .badge-confidence, .badge-review {
+    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px;
+  }
+  .badge-confidence--high   { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+  .badge-confidence--medium { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-confidence--low    { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .badge-review--yes { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-review--no  { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+
+  /* Chips inside AI message */
+  .ss-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 14px 10px; }
+  .chip {
+    font-size: 11px; font-family: var(--font-mono); padding: 4px 10px; border-radius: 6px;
+    border: 1px solid var(--color-border); background: var(--color-surface-alt);
+    color: var(--color-neutral-700); cursor: pointer; transition: all .12s; font-weight: 500;
+  }
+  .chip:hover { border-color: var(--color-brand); color: var(--color-brand); background: var(--color-brand-light); }
+  .chip.danger { border-color: #F09595; color: #A32D2D; background: #FCEBEB; }
+  .chip.danger:hover { border-color: #E24B4A; }
+
+  /* Typing indicator */
+  .typing-wrap { max-width: 680px; }
+  .typing-bubble { display: flex; align-items: center; gap: 4px; padding: 12px 14px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .typing-bubble span { width: 6px; height: 6px; border-radius: 50%; background: var(--color-neutral-200); animation: tb .7s infinite; }
+  .typing-bubble span:nth-child(2) { animation-delay: .15s; }
+  .typing-bubble span:nth-child(3) { animation-delay: .3s; }
+  @keyframes tb { 0%,100%{opacity:.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-3px)} }
+
+  /* ── Input area ── */
+  .input-area {
+    padding: 12px 20px; background: var(--color-surface);
+    border-top: 1px solid var(--color-border); flex-shrink: 0;
+  }
+  .ss-chat-mode-bar {
+    display: flex; align-items: center; gap: var(--gap-sm); margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .ss-chat-mode-bar .t-muted { font-size: 12px; color: var(--color-neutral-200); }
+  .ss-mode-btn {
+    font-size: 12px; font-weight: 500; font-family: var(--font-sans);
+    padding: 3px 12px; border-radius: 999px; border: 1px solid var(--color-border);
+    background: none; color: var(--color-neutral-700); cursor: pointer; transition: all .12s;
+  }
+  .ss-mode-btn:hover { border-color: var(--color-brand); color: var(--color-brand); }
+  .ss-mode-btn--active { background: var(--color-brand); color: white; border-color: var(--color-brand); }
+
+  .quick-row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .qchip {
+    font-size: 11px; font-family: var(--font-mono); padding: 4px 10px; border-radius: 6px;
+    border: 1px solid var(--color-border); background: var(--color-surface-alt);
+    color: var(--color-neutral-700); cursor: pointer; transition: all .12s; text-decoration: none;
+    display: inline-flex; align-items: center;
+  }
+  .qchip:hover { border-color: var(--color-brand); color: var(--color-brand); background: var(--color-brand-light); }
+
+  .input-row { display: flex; gap: 10px; align-items: center; }
+  .txt-input {
+    flex: 1; height: 40px; padding: 0 14px; border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 13px;
+    color: var(--color-neutral-900); background: var(--color-surface); outline: none; transition: border-color .12s;
+  }
+  .txt-input:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+  .txt-input::placeholder { color: var(--color-neutral-200); }
+  .send-btn {
+    width: 40px; height: 40px; background: var(--color-brand); border: none; border-radius: var(--radius-sm);
+    color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: opacity .12s; flex-shrink: 0;
+  }
+  .send-btn:hover { opacity: .85; }
+
+  /* Summary mode variants (audience swap) */
+  .mode-summary { display: none; }
+  .mode-summary.visible { display: block; }
+
+  /* Severity badges (shared token) */
+  .badge-critical { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .badge-high     { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-medium   { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+  .badge-low      { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="ss-nav">
+  <div class="ss-nav__brand">
+    <span class="ss-nav__logo">Shannon Sentinel</span>
+    <span class="ss-nav__tier ss-nav__tier--free t" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+  </div>
+  <div class="ss-nav__links">
+    <a href="/agentic-soc/onboarding/" class="t" data-en="Setup" data-id="Pengaturan">Pengaturan</a>
+    <a href="/agentic-soc/dashboard/" class="t" data-en="Dashboard" data-id="Dasbor">Dasbor</a>
+    <a href="/agentic-soc/investigate/" class="active t" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+    <a href="/agentic-soc/triage/" class="t" data-en="Triage" data-id="Triase">Triase</a>
+    <a href="/agentic-soc/reports/" class="t" data-en="Reports" data-id="Laporan">Laporan</a>
+    <a href="/agentic-soc/inspector/" class="t" data-en="Inspector" data-id="Inspektor">Inspektor</a>
+  </div>
+  <div class="ss-nav__actions">
+    <button onclick="toggleLang()" id="lang-btn" class="ss-btn-ghost">EN</button>
+    <button class="ss-btn-ghost t" data-en="Settings" data-id="Setelan">Setelan</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ── Alert context sidebar ── -->
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="section-label t" data-en="Active Alert" data-id="Peringatan Aktif">Peringatan Aktif</div>
+      <div class="alert-title-big t" data-en="SSH Brute Force Attack" data-id="Serangan Brute Force SSH">Serangan Brute Force SSH</div>
+      <span class="sev-pill"><span class="sev-dot"></span><span class="t" data-en="Critical" data-id="Kritis">Kritis</span></span>
+    </div>
+    <div class="sb-scroll">
+      <div class="kv">
+        <div class="kv-key t" data-en="Source Host" data-id="Host Sumber">Host Sumber</div>
+        <div class="kv-val danger">192.168.10.45</div>
+      </div>
+      <div class="kv">
+        <div class="kv-key t" data-en="Target" data-id="Target">Target</div>
+        <div class="kv-val">auth-server-01</div>
+      </div>
+      <div class="kv">
+        <div class="kv-key t" data-en="Detection Time" data-id="Waktu Deteksi">Waktu Deteksi</div>
+        <div class="kv-val">14:28:03 WIB</div>
+      </div>
+      <div class="kv">
+        <div class="kv-key t" data-en="Event Count" data-id="Jumlah Event">Jumlah Event</div>
+        <div class="kv-val danger t" data-en="340 attempts / 2 min" data-id="340 percobaan / 2 menit">340 percobaan / 2 menit</div>
+      </div>
+      <div class="kv">
+        <div class="kv-key t" data-en="Data Source" data-id="Sumber Data">Sumber Data</div>
+        <div class="kv-val">EDR + Firewall Logs</div>
+      </div>
+      <div class="kv">
+        <div class="kv-key t" data-en="Raw Log Sample" data-id="Contoh Log Raw">Contoh Log Raw</div>
+        <div class="log-sample">Failed password for root<br>from 192.168.10.45 port 52341<br>ssh2 [repeated 340×]</div>
+      </div>
+      <div class="section-label t" data-en="Related Alerts" data-id="Peringatan Terkait">Peringatan Terkait</div>
+      <div class="related-alert active">
+        <div class="ra-row">
+          <div class="ra-name t" data-en="Lateral Movement" data-id="Pergerakan Lateral">Pergerakan Lateral</div>
+          <span class="ra-sev badge-critical">KRITIS</span>
+        </div>
+        <div class="ra-meta">AD01 → 3 internal hosts</div>
+      </div>
+      <div class="related-alert">
+        <div class="ra-row">
+          <div class="ra-name t" data-en="Port Scan" data-id="Pemindaian Port">Pemindaian Port</div>
+          <span class="ra-sev badge-low">RENDAH</span>
+        </div>
+        <div class="ra-meta t" data-en="Same IP — 20 min prior" data-id="IP sama — 20 menit sebelumnya">IP sama — 20 menit sebelumnya</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Chat panel ── -->
+  <div class="chat-panel">
+    <div class="chat-topbar">
+      <div class="ai-identity">
+        <div class="ai-avatar">AI</div>
+        <div>
+          <div class="ai-name-txt">Shannon AI Agent</div>
+          <div class="ai-desc-txt t" data-en="Security investigation assistant" data-id="Asisten investigasi keamanan">Asisten investigasi keamanan</div>
+        </div>
+      </div>
+      <span class="ctx-chip">
+        <span class="ctx-dot"></span>
+        <span class="t" data-en="Alert context loaded" data-id="Konteks peringatan dimuat">Konteks peringatan dimuat</span>
+      </span>
+    </div>
+
+    <div class="messages" id="messages">
+
+      <div class="system-note t" data-en="Alert context auto-injected — SSH Brute Force / 192.168.10.45" data-id="Konteks peringatan disuntikkan — Brute Force SSH / 192.168.10.45">
+        Konteks peringatan disuntikkan — Brute Force SSH / 192.168.10.45
+      </div>
+
+      <!-- AI message 1: Initial assessment -->
+      <div class="ss-ai-message">
+        <div class="ss-ai-meta">
+          <span class="ss-model-badge ss-model-badge--local">Qwen 2.5 7B</span>
+          <span class="ss-meta-time">14:28 · AI Agent</span>
+          <a href="/agentic-soc/inspector/?response=1" class="ss-inspect-link t" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Summary" data-id="Ringkasan">Ringkasan</p>
+          <!-- Mode-aware summaries -->
+          <p class="mode-summary visible" data-mode="it">
+            IP 192.168.10.45 melakukan 340 percobaan login SSH dalam 2 menit — pola brute force otomatis yang jelas, didahului oleh pemindaian port 20 menit sebelumnya.
+          </p>
+          <p class="mode-summary" data-mode="direktur">
+            Sebuah komputer luar mencoba masuk ke server autentikasi perusahaan ratusan kali dalam hitungan menit. Ancaman ini telah terdeteksi dan belum berhasil.
+          </p>
+          <p class="mode-summary" data-mode="finance">
+            Upaya akses tidak sah ke sistem autentikasi terdeteksi. Tidak ada sistem keuangan yang terdampak saat ini, namun tindakan pencegahan segera diperlukan.
+          </p>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Evidence & Citations" data-id="Bukti & Kutipan">Bukti & Kutipan</p>
+          <ul>
+            <li><cite>AbuseIPDB</cite> — 47 <span class="t" data-en="abuse reports in last 30 days, 94% malicious confidence" data-id="laporan penyalahgunaan dalam 30 hari terakhir, kepercayaan 94% berbahaya">laporan penyalahgunaan dalam 30 hari terakhir, kepercayaan 94% berbahaya</span></li>
+            <li><cite>EDR Log</cite> — 340 <span class="t" data-en="authentication failures from port 52341 to auth-server-01" data-id="kegagalan autentikasi dari port 52341 ke auth-server-01">kegagalan autentikasi dari port 52341 ke auth-server-01</span></li>
+            <li><cite>AlienVault OTX</cite> — <span class="t" data-en="last seen 6 hours ago, tags: scanner, brute-force" data-id="terakhir terlihat 6 jam lalu, tag: scanner, brute-force">terakhir terlihat 6 jam lalu, tag: scanner, brute-force</span></li>
+          </ul>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Risk Assessment" data-id="Penilaian Risiko">Penilaian Risiko</p>
+          <div class="ss-risk-row">
+            <span class="ss-risk-item"><span class="t-muted">CVSS</span> 9.8</span>
+            <span class="ss-risk-item"><span class="t-muted">KEV</span> <span class="t" data-en="None" data-id="Tidak ada">Tidak ada</span></span>
+            <span class="ss-risk-item"><span class="t-muted">EPSS</span> 0.82</span>
+            <span class="ss-risk-item"><span class="t-muted t" data-en="Exposure" data-id="Eksposur">Eksposur</span>&nbsp;Internet-facing</span>
+          </div>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Affected Assets" data-id="Aset Terdampak">Aset Terdampak</p>
+          <ul>
+            <li>auth-server-01 (<span class="t" data-en="target" data-id="target">target</span>)</li>
+            <li>192.168.10.45 (<span class="t" data-en="source" data-id="sumber">sumber</span>)</li>
+          </ul>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Recommended Actions" data-id="Tindakan Defensif">Tindakan Defensif</p>
+          <ol>
+            <li>
+              <span class="t" data-en="Block IP 192.168.10.45 at the perimeter firewall" data-id="Blokir IP 192.168.10.45 di firewall perimeter">Blokir IP 192.168.10.45 di firewall perimeter</span>
+              <span class="ss-control-tag">D3FEND: Network Traffic Filtering</span>
+            </li>
+            <li>
+              <span class="t" data-en="Reset credentials for targeted accounts (root, admin)" data-id="Reset kredensial untuk akun yang ditarget (root, admin)">Reset kredensial untuk akun yang ditarget (root, admin)</span>
+              <span class="ss-control-tag">NIST: AC-2</span>
+            </li>
+            <li>
+              <span class="t" data-en="Enable MFA on SSH access" data-id="Aktifkan MFA pada akses SSH">Aktifkan MFA pada akses SSH</span>
+              <span class="ss-control-tag">NIST: IA-2</span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="ss-ai-footer">
+          <div class="ss-footer-item">
+            <span class="t-muted t" data-en="Confidence" data-id="Kepercayaan">Kepercayaan</span>
+            <span class="badge-confidence badge-confidence--high t" data-en="High" data-id="Tinggi">Tinggi</span>
+          </div>
+          <div class="ss-footer-item">
+            <span class="t-muted t" data-en="Human Review Required" data-id="Perlu Tinjauan Manusia">Perlu Tinjauan Manusia</span>
+            <span class="badge-review badge-review--yes t" data-en="Yes" data-id="Ya">Ya</span>
+          </div>
+          <div class="ss-footer-item ss-footer-item--assumptions">
+            <span class="t-muted t" data-en="Assumptions" data-id="Asumsi">Asumsi</span>
+            <span class="t-small t" data-en="No confirmed successful logins" data-id="Tidak ada login sukses yang dikonfirmasi">Tidak ada login sukses yang dikonfirmasi</span>
+          </div>
+        </div>
+
+        <div class="ss-chips">
+          <div class="chip danger" onclick="sendMsg(lang==='en'?'Isolate 192.168.10.45 now':'Isolasi 192.168.10.45 sekarang')">
+            🔴 <span class="t" data-en="Isolate host" data-id="Isolasi host">Isolasi host</span>
+          </div>
+          <div class="chip" onclick="sendMsg(lang==='en'?'Is this IP in threat intel?':'Apakah IP ini ada di threat intel?')">
+            <span class="t" data-en="Check threat intel" data-id="Periksa threat intel">Periksa threat intel</span>
+          </div>
+          <div class="chip" onclick="sendMsg(lang==='en'?'Which accounts were targeted?':'Akun mana yang ditarget?')">
+            <span class="t" data-en="Targeted accounts" data-id="Akun yang ditarget">Akun yang ditarget</span>
+          </div>
+          <div class="chip" onclick="sendMsg(lang==='en'?'Show full attack timeline':'Tampilkan timeline serangan lengkap')">
+            <span class="t" data-en="Full timeline" data-id="Timeline lengkap">Timeline lengkap</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- User message -->
+      <div class="msg-user">
+        <div>
+          <div class="user-bubble t" data-en="Is this IP in threat intelligence? Any history?" data-id="Apakah IP ini ada di threat intelligence? Ada riwayat?">Apakah IP ini ada di threat intelligence? Ada riwayat?</div>
+          <div class="msg-time-user">14:29 · Analyst Kurniawan</div>
+        </div>
+      </div>
+
+      <!-- AI message 2: Threat intel (cloud fallback) -->
+      <div class="ss-ai-message">
+        <div class="ss-ai-meta">
+          <span class="ss-model-badge ss-model-badge--cloud">Claude (fallback)</span>
+          <span class="ss-meta-time">14:29 · AI Agent</span>
+          <a href="/agentic-soc/inspector/?response=2" class="ss-inspect-link t" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Summary" data-id="Ringkasan">Ringkasan</p>
+          <p class="mode-summary visible" data-mode="it">
+            IP dikonfirmasi berbahaya di 2 sumber threat intelligence. Ini adalah scanner SSH aktif yang diketahui secara global.
+          </p>
+          <p class="mode-summary" data-mode="direktur">
+            Komputer penyerang ini dikenal sebagai ancaman oleh basis data keamanan global — bukan serangan acak, melainkan pelaku yang aktif beroperasi.
+          </p>
+          <p class="mode-summary" data-mode="finance">
+            Sumber serangan adalah pelaku ancaman yang diketahui. Risiko terhadap sistem keuangan perlu segera dimitigasi.
+          </p>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Evidence & Citations" data-id="Bukti & Kutipan">Bukti & Kutipan</p>
+          <ul>
+            <li>
+              <cite>AbuseIPDB</cite> — <span class="t" data-en="Confidence: 94% malicious · 47 reports (last 30 days) · Category: Brute-Force, SSH Scanner" data-id="Kepercayaan: 94% berbahaya · 47 laporan (30 hari terakhir) · Kategori: Brute-Force, SSH Scanner">Kepercayaan: 94% berbahaya · 47 laporan (30 hari terakhir) · Kategori: Brute-Force, SSH Scanner</span>
+            </li>
+            <li>
+              <cite>AlienVault OTX</cite> — <span class="t" data-en="Tags: scanner, brute-force · Last seen: 6 hours ago" data-id="Tag: scanner, brute-force · Terakhir terlihat: 6 jam lalu">Tag: scanner, brute-force · Terakhir terlihat: 6 jam lalu</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Risk Assessment" data-id="Penilaian Risiko">Penilaian Risiko</p>
+          <div class="ss-risk-row">
+            <span class="ss-risk-item"><span class="t-muted">CVSS</span> 9.8</span>
+            <span class="ss-risk-item"><span class="t-muted">KEV</span> <span class="t" data-en="None" data-id="Tidak ada">Tidak ada</span></span>
+            <span class="ss-risk-item"><span class="t-muted">EPSS</span> 0.82</span>
+            <span class="ss-risk-item"><span class="t-muted t" data-en="Reputation" data-id="Reputasi">Reputasi</span>&nbsp;<span class="t" data-en="Known malicious" data-id="Dikenal berbahaya">Dikenal berbahaya</span></span>
+          </div>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Affected Assets" data-id="Aset Terdampak">Aset Terdampak</p>
+          <ul>
+            <li>auth-server-01</li>
+            <li>192.168.10.45 (<span class="t" data-en="known malicious actor" data-id="pelaku ancaman yang diketahui">pelaku ancaman yang diketahui</span>)</li>
+          </ul>
+        </div>
+
+        <div class="ss-section">
+          <p class="ss-section-label t" data-en="Recommended Actions" data-id="Tindakan Defensif">Tindakan Defensif</p>
+          <ol>
+            <li>
+              <span class="t" data-en="Immediately block IP at perimeter firewall — known malicious" data-id="Blokir IP segera di firewall perimeter — dikenal berbahaya">Blokir IP segera di firewall perimeter — dikenal berbahaya</span>
+              <span class="ss-control-tag">D3FEND: Network Traffic Filtering</span>
+            </li>
+            <li>
+              <span class="t" data-en="Add to threat intel blocklist for automatic future blocking" data-id="Tambahkan ke daftar blokir threat intel untuk pemblokiran otomatis">Tambahkan ke daftar blokir threat intel untuk pemblokiran otomatis</span>
+              <span class="ss-control-tag">D3FEND: IP Reputation Analysis</span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="ss-ai-footer">
+          <div class="ss-footer-item">
+            <span class="t-muted t" data-en="Confidence" data-id="Kepercayaan">Kepercayaan</span>
+            <span class="badge-confidence badge-confidence--high t" data-en="High" data-id="Tinggi">Tinggi</span>
+          </div>
+          <div class="ss-footer-item">
+            <span class="t-muted t" data-en="Human Review Required" data-id="Perlu Tinjauan Manusia">Perlu Tinjauan Manusia</span>
+            <span class="badge-review badge-review--no t" data-en="No" data-id="Tidak">Tidak</span>
+          </div>
+          <div class="ss-footer-item ss-footer-item--assumptions">
+            <span class="t-muted t" data-en="Assumptions" data-id="Asumsi">Asumsi</span>
+            <span class="t-small t" data-en="Threat intel data current as of scan time" data-id="Data threat intel terkini pada saat pemindaian">Data threat intel terkini pada saat pemindaian</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /messages -->
+
+    <!-- ── Input area ── -->
+    <div class="input-area">
+
+      <!-- Audience mode bar -->
+      <div class="ss-chat-mode-bar">
+        <span class="t-muted t" data-en="Response mode:" data-id="Mode respons:">Mode respons:</span>
+        <button class="ss-mode-btn ss-mode-btn--active" data-mode="it" onclick="setMode('it')">IT</button>
+        <button class="ss-mode-btn" data-mode="direktur" onclick="setMode('direktur')">
+          <span class="t" data-en="Executive" data-id="Direktur">Direktur</span>
+        </button>
+        <button class="ss-mode-btn" data-mode="finance" onclick="setMode('finance')">
+          <span class="t" data-en="Finance" data-id="Keuangan">Keuangan</span>
+        </button>
+      </div>
+
+      <div class="quick-row">
+        <div class="qchip" onclick="fillInput(lang==='en'?'Were any logins successful?':'Apakah ada login yang berhasil?')">
+          <span class="t" data-en="Any successful logins?" data-id="Ada login yang berhasil?">Ada login yang berhasil?</span>
+        </div>
+        <a href="/agentic-soc/reports/" class="qchip">
+          <span class="t" data-en="Generate report ↗" data-id="Buat laporan ↗">Buat laporan ↗</span>
+        </a>
+        <div class="qchip" onclick="fillInput(lang==='en'?'What are the containment steps?':'Apa langkah-langkah penahanan?')">
+          <span class="t" data-en="Containment steps" data-id="Langkah penahanan">Langkah penahanan</span>
+        </div>
+        <div class="qchip" onclick="fillInput(lang==='en'?'Is there lateral movement from this IP?':'Apakah ada pergerakan lateral dari IP ini?')">
+          <span class="t" data-en="Lateral movement?" data-id="Pergerakan lateral?">Pergerakan lateral?</span>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <input class="txt-input" id="inp"
+               placeholder="Tanya tentang peringatan ini… / Ask about this alert…"
+               onkeydown="if(event.key==='Enter') sendMsg()">
+        <button class="send-btn" onclick="sendMsg()">↑</button>
+      </div>
+    </div>
+
+  </div><!-- /chat-panel -->
+</div><!-- /layout -->
+
+<script>
+// ── Language ──
+function toggleLang() {
+  const current = document.documentElement.getAttribute('data-lang');
+  const next = current === 'id' ? 'en' : 'id';
+  document.documentElement.setAttribute('data-lang', next);
+  localStorage.setItem('ss-lang', next);
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = next === 'en' ? el.dataset.en : el.dataset.id;
+  });
+  document.getElementById('lang-btn').textContent = next === 'en' ? 'ID' : 'EN';
+}
+document.querySelectorAll('[data-en]').forEach(el => {
+  if (lang === 'en') el.textContent = el.dataset.en;
+});
+if (lang === 'en') document.getElementById('lang-btn').textContent = 'ID';
+
+// ── Audience mode ──
+let currentMode = 'it';
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.ss-mode-btn').forEach(btn => {
+    btn.classList.toggle('ss-mode-btn--active', btn.dataset.mode === mode);
+  });
+  document.querySelectorAll('.mode-summary').forEach(el => {
+    el.classList.toggle('visible', el.dataset.mode === mode);
+  });
+}
+
+// ── Reply templates ──
+const replies = {
+  isolat: {
+    summary_it: 'Perintah isolasi dikirim ke EDR. Host 192.168.10.45 telah dikarantina — semua sesi aktif diputus. Tiket insiden #INC-2047 dibuat.',
+    summary_direktur: 'Ancaman telah diisolasi. Komputer penyerang tidak lagi dapat mengakses jaringan perusahaan. Tim keamanan sedang menangani insiden ini.',
+    summary_finance: 'Sistem yang diserang telah diamankan. Tidak ada data keuangan yang terdampak dari tindakan isolasi ini.',
+    confidence: 'high', review: 'no',
+    evidence: ['<cite>EDR</cite> — Isolasi berhasil, semua koneksi dari 192.168.10.45 diputus', '<cite>Firewall</cite> — Aturan blokir diterapkan pada semua interface'],
+    actions: [['Pantau log selama 24 jam berikutnya untuk aktivitas mencurigakan lainnya', 'D3FEND: Network Traffic Analysis']],
+    assumption: 'Tidak ada kredensial yang berhasil disusupi sebelum isolasi'
+  },
+  timeline: {
+    summary_it: 'Timeline lengkap serangan menunjukkan pola recon → exploit klasik dalam ~20 menit dari deteksi pertama hingga respons.',
+    summary_direktur: 'Serangan berlangsung sekitar 20 menit sebelum sistem mendeteksi dan merespons secara otomatis.',
+    summary_finance: 'Tidak ada sistem keuangan dalam jalur serangan ini. Timeline menunjukkan serangan dihentikan sebelum eskalasi.',
+    confidence: 'high', review: 'no',
+    evidence: ['<cite>Firewall Log</cite> — Port scan 14:08 WIB', '<cite>EDR Log</cite> — Brute force dimulai 14:26 WIB', '<cite>SIEM</cite> — Alert terpicu 14:28 WIB'],
+    actions: [['Tinjau log selama 1 jam sebelum 14:08 untuk aktivitas recon awal', 'NIST: AU-6'], ['Perbarui aturan deteksi untuk menangkap pola recon lebih awal', 'D3FEND: Network Traffic Analysis']],
+    assumption: 'Semua timestamp dalam WIB (UTC+7)'
+  },
+  account: {
+    summary_it: '0 dari 340 percobaan login berhasil. Akun root dan admin menjadi target utama. 2 akun dikunci otomatis.',
+    summary_direktur: 'Tidak ada akun yang berhasil dibobol. Sistem perlindungan akun berfungsi sebagaimana mestinya.',
+    summary_finance: 'Tidak ada akun tim keuangan yang terdampak. Semua percobaan akses gagal.',
+    confidence: 'high', review: 'no',
+    evidence: ['<cite>EDR Log</cite> — 340 kegagalan login, 0 sukses', '<cite>IAM System</cite> — 2 akun dikunci otomatis setelah threshold'],
+    actions: [['Putar kata sandi untuk semua akun yang ditarget sebagai tindakan pencegahan', 'NIST: AC-2'], ['Aktifkan MFA pada akun root dan admin', 'NIST: IA-2']],
+    assumption: 'Log IAM lengkap dan akurat'
+  },
+  default: {
+    summary_it: 'Berdasarkan data peringatan saat ini, 192.168.10.45 adalah bagian dari kampanye pemindaian SSH otomatis. Pola serangan konsisten dengan alat credential stuffing.',
+    summary_direktur: 'Serangan ini merupakan bagian dari aktivitas penyerang yang lebih luas yang menargetkan server di seluruh dunia. Perusahaan Anda adalah salah satu target.',
+    summary_finance: 'Risiko finansial langsung rendah saat ini, namun akses tidak sah yang berhasil dapat membahayakan sistem keuangan.',
+    confidence: 'medium', review: 'yes',
+    evidence: ['<cite>Shannon AI</cite> — Analisis pola serangan dari alert saat ini'],
+    actions: [['Tinjau dan perkuat kebijakan akses SSH', 'NIST: AC-17'], ['Pertimbangkan implementasi fail2ban atau solusi serupa', 'D3FEND: Network Traffic Filtering']],
+    assumption: 'Berdasarkan data peringatan terkini, investigasi lebih lanjut mungkin diperlukan'
+  }
+};
+
+function buildAiMessage(data, modelBadge, modelClass, responseId) {
+  const l = lang;
+  const mode = currentMode;
+  const summaryKey = 'summary_' + mode;
+  const summaryText = data[summaryKey] || data.summary_it;
+  const time = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+
+  const confLabel = { high: {id:'Tinggi',en:'High'}, medium: {id:'Sedang',en:'Medium'}, low: {id:'Rendah',en:'Low'} };
+  const confClass = { high: 'badge-confidence--high', medium: 'badge-confidence--medium', low: 'badge-confidence--low' };
+  const revLabel = data.review === 'no' ? {id:'Tidak',en:'No'} : {id:'Ya',en:'Yes'};
+  const revClass = data.review === 'no' ? 'badge-review--no' : 'badge-review--yes';
+
+  const evHtml = data.evidence.map(e => `<li>${e}</li>`).join('');
+  const actHtml = data.actions.map(([txt, ctrl]) => `<li>${txt} <span class="ss-control-tag">${ctrl}</span></li>`).join('');
+
+  return `
+    <div class="ss-ai-message">
+      <div class="ss-ai-meta">
+        <span class="ss-model-badge ${modelClass}">${modelBadge}</span>
+        <span class="ss-meta-time">${time} · AI Agent</span>
+        <a href="/agentic-soc/inspector/?response=${responseId}" class="ss-inspect-link">${l==='en'?'Inspect →':'Periksa →'}</a>
+      </div>
+      <div class="ss-section">
+        <p class="ss-section-label">${l==='en'?'Summary':'Ringkasan'}</p>
+        <p>${summaryText}</p>
+      </div>
+      <div class="ss-section">
+        <p class="ss-section-label">${l==='en'?'Evidence &amp; Citations':'Bukti &amp; Kutipan'}</p>
+        <ul>${evHtml}</ul>
+      </div>
+      <div class="ss-section">
+        <p class="ss-section-label">${l==='en'?'Recommended Actions':'Tindakan Defensif'}</p>
+        <ol>${actHtml}</ol>
+      </div>
+      <div class="ss-ai-footer">
+        <div class="ss-footer-item">
+          <span class="t-muted">${l==='en'?'Confidence':'Kepercayaan'}</span>
+          <span class="badge-confidence ${confClass[data.confidence]}">${l==='en'?confLabel[data.confidence].en:confLabel[data.confidence].id}</span>
+        </div>
+        <div class="ss-footer-item">
+          <span class="t-muted">${l==='en'?'Human Review Required':'Perlu Tinjauan Manusia'}</span>
+          <span class="badge-review ${revClass}">${l==='en'?revLabel.en:revLabel.id}</span>
+        </div>
+        <div class="ss-footer-item ss-footer-item--assumptions">
+          <span class="t-muted">${l==='en'?'Assumptions':'Asumsi'}</span>
+          <span class="t-small">${data.assumption}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getReplyData(msg) {
+  const m = msg.toLowerCase();
+  if (m.includes('isolat') || m.includes('block') || m.includes('quarantin') || m.includes('karantin') || m.includes('blokir')) return [replies.isolat, 'Qwen 2.5 7B', 'ss-model-badge--local'];
+  if (m.includes('timeline') || m.includes('history') || m.includes('riwayat') || m.includes('kronologi')) return [replies.timeline, 'Qwen 2.5 7B', 'ss-model-badge--local'];
+  if (m.includes('account') || m.includes('akun') || m.includes('success') || m.includes('berhasil') || m.includes('comprom')) return [replies.account, 'Qwen 2.5 7B', 'ss-model-badge--local'];
+  return [replies.default, 'Claude (fallback)', 'ss-model-badge--cloud'];
+}
+
+let responseCounter = 3;
+
+function sendMsg(txt) {
+  const inp = document.getElementById('inp');
+  const msg = txt || inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+
+  const c = document.getElementById('messages');
+  const time = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+
+  // User bubble
+  const userEl = document.createElement('div');
+  userEl.className = 'msg-user';
+  userEl.innerHTML = `<div><div class="user-bubble">${msg}</div><div class="msg-time-user">${time} · Analyst Kurniawan</div></div>`;
+  c.appendChild(userEl);
+  c.scrollTop = c.scrollHeight;
+
+  // Typing
+  const typingEl = document.createElement('div');
+  typingEl.className = 'typing-wrap';
+  typingEl.id = 'typing';
+  typingEl.innerHTML = `<div class="typing-bubble"><span></span><span></span><span></span></div>`;
+  c.appendChild(typingEl);
+  c.scrollTop = c.scrollHeight;
+
+  setTimeout(() => {
+    document.getElementById('typing')?.remove();
+    const [data, badge, cls] = getReplyData(msg);
+    const html = buildAiMessage(data, badge, cls, responseCounter++);
+    const aiEl = document.createElement('div');
+    aiEl.innerHTML = html.trim();
+    c.appendChild(aiEl.firstElementChild);
+    c.scrollTop = c.scrollHeight;
+  }, 1200);
+}
+
+function fillInput(t) {
+  document.getElementById('inp').value = t;
+  document.getElementById('inp').focus();
+}
+</script>
+</body>
+</html>
