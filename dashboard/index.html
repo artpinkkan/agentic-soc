@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  const lang = localStorage.getItem('ss-lang') || 'id';
+  document.documentElement.setAttribute('data-lang', lang);
+</script>
+<style>
+  :root {
+    --color-brand:       #1D9E75;
+    --color-brand-dark:  #0F6E56;
+    --color-brand-light: #E1F5EE;
+    --color-danger:      #E24B4A;
+    --color-warning:     #EF9F27;
+    --color-neutral-50:  #F1EFE8;
+    --color-neutral-200: #B4B2A9;
+    --color-neutral-700: #444441;
+    --color-neutral-900: #2C2C2A;
+    --color-surface:     #FFFFFF;
+    --color-surface-alt: #F8F7F4;
+    --color-border:      rgba(68,68,65,0.15);
+    --font-sans:         'Inter', system-ui, sans-serif;
+    --font-mono:         'JetBrains Mono', monospace;
+    --radius-sm:         6px;
+    --radius-md:         10px;
+    --radius-lg:         16px;
+    --gap-sm:            8px;
+    --gap-md:            16px;
+    --gap-lg:            24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface-alt);
+    color: var(--color-neutral-900);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  .ss-nav {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gap-lg); height: 52px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .ss-nav__brand { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-nav__logo { font-weight: 600; font-size: 15px; color: var(--color-brand); letter-spacing: -0.3px; }
+  .ss-nav__tier { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+  .ss-nav__tier--free { background: var(--color-brand-light); color: var(--color-brand-dark); }
+  .ss-nav__links { display: flex; align-items: center; gap: 4px; }
+  .ss-nav__links a {
+    font-size: 13px; color: var(--color-neutral-700); text-decoration: none;
+    padding: 5px 10px; border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s;
+  }
+  .ss-nav__links a:hover { background: var(--color-neutral-50); }
+  .ss-nav__links a.active { color: var(--color-brand); font-weight: 500; }
+  .ss-nav__actions { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-btn-ghost {
+    background: none; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+    padding: 5px 12px; font-size: 13px; font-family: var(--font-sans);
+    color: var(--color-neutral-700); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-ghost:hover { background: var(--color-neutral-50); }
+
+  /* ── Page shell ── */
+  .page-shell { max-width: 900px; margin: 0 auto; padding: 36px var(--gap-lg) 64px; }
+
+  /* ── Page header ── */
+  .ss-page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: var(--gap-lg); gap: var(--gap-md);
+  }
+  .ss-page-header h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .t-muted { font-size: 13px; color: var(--color-neutral-700); }
+  .badge-free {
+    font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 999px;
+    background: var(--color-brand-light); color: var(--color-brand-dark);
+    border: 1px solid rgba(29,158,117,0.25); white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ── Audience switcher ── */
+  .audience-switcher {
+    display: flex; gap: 4px; margin-bottom: var(--gap-lg);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); padding: 4px; width: fit-content;
+  }
+  .aud-tab {
+    padding: 7px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+    color: var(--color-neutral-700); cursor: pointer; border: none; background: none;
+    font-family: var(--font-sans); transition: background 0.12s, color 0.12s; white-space: nowrap;
+  }
+  .aud-tab:hover { background: var(--color-neutral-50); }
+  .aud-tab.active { background: var(--color-brand); color: white; }
+
+  /* ── Cards grid ── */
+  .cards-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-md);
+    margin-bottom: var(--gap-lg);
+  }
+  .card-full { grid-column: 1 / -1; }
+
+  .q-card {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--gap-lg); display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .q-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--gap-md); }
+  .q-question { font-size: 15px; font-weight: 500; line-height: 1.4; flex: 1; }
+
+  /* ── RAG status pills ── */
+  .rag-pill {
+    font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .rag-red    { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .rag-amber  { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .rag-green  { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+
+  .q-finding { font-size: 13px; color: var(--color-neutral-700); line-height: 1.6; }
+
+  /* ── Collapsible technical detail ── */
+  .tech-detail { border-top: 1px solid var(--color-border); padding-top: 12px; }
+  .tech-toggle {
+    background: none; border: none; font-size: 12px; color: var(--color-brand);
+    cursor: pointer; font-family: var(--font-sans); padding: 0; display: flex;
+    align-items: center; gap: 4px;
+  }
+  .tech-toggle:hover { color: var(--color-brand-dark); }
+  .tech-toggle .arrow { transition: transform 0.15s; display: inline-block; }
+  .tech-toggle.open .arrow { transform: rotate(90deg); }
+  .tech-body {
+    display: none; margin-top: 10px;
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 10px 12px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--color-neutral-700);
+    line-height: 1.8; white-space: pre;
+  }
+  .tech-body.open { display: block; }
+
+  /* ── Card 5: Priority actions ── */
+  .actions-list { display: flex; flex-direction: column; gap: 12px; }
+  .action-item { display: flex; align-items: flex-start; gap: 10px; }
+  .action-num {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--color-neutral-50);
+    border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--color-neutral-700); flex-shrink: 0; margin-top: 1px;
+  }
+  .action-body { flex: 1; }
+  .action-meta { display: flex; align-items: center; gap: var(--gap-sm); margin-bottom: 2px; }
+  .action-badge {
+    font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 999px; text-transform: uppercase;
+  }
+  .action-badge.high   { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .action-badge.medium { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .action-effort { font-size: 11px; color: var(--color-neutral-200); }
+  .action-text { font-size: 13px; color: var(--color-neutral-700); line-height: 1.5; }
+
+  /* ── Export bar ── */
+  .ss-export-bar {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--gap-lg);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md);
+    margin-bottom: var(--gap-lg);
+  }
+  .t-label { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .ss-btn-secondary {
+    background: none; border: 1px solid var(--color-brand); color: var(--color-brand);
+    border-radius: var(--radius-sm); padding: 9px 20px; font-size: 13px; font-weight: 500;
+    font-family: var(--font-sans); cursor: pointer; white-space: nowrap; transition: background 0.12s;
+  }
+  .ss-btn-secondary:hover { background: var(--color-brand-light); }
+
+  /* ── Upgrade CTA ── */
+  .upgrade-banner {
+    background: var(--color-brand-light); border: 1px solid rgba(29,158,117,0.25);
+    border-radius: var(--radius-lg); padding: var(--gap-lg) var(--gap-lg);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md);
+  }
+  .upgrade-title { font-size: 16px; font-weight: 500; color: var(--color-brand-dark); margin-bottom: 4px; }
+  .upgrade-sub { font-size: 13px; color: var(--color-brand-dark); opacity: 0.85; }
+  .btn-upgrade {
+    background: var(--color-brand); color: white; border: none;
+    border-radius: var(--radius-sm); padding: 10px 22px; font-size: 14px; font-weight: 500;
+    font-family: var(--font-sans); cursor: pointer; white-space: nowrap; transition: background 0.15s;
+  }
+  .btn-upgrade:hover { background: var(--color-brand-dark); }
+
+  /* ── Severity badges (shared token) ── */
+  .badge-critical { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .badge-high     { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-medium   { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+  .badge-low      { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="ss-nav">
+  <div class="ss-nav__brand">
+    <span class="ss-nav__logo">Shannon Sentinel</span>
+    <span class="ss-nav__tier ss-nav__tier--free t" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+  </div>
+  <div class="ss-nav__links">
+    <a href="/agentic-soc/onboarding/" class="t" data-en="Setup" data-id="Pengaturan">Pengaturan</a>
+    <a href="/agentic-soc/dashboard/" class="active t" data-en="Dashboard" data-id="Dasbor">Dasbor</a>
+    <a href="/agentic-soc/investigate/" class="t" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+    <a href="/agentic-soc/triage/" class="t" data-en="Triage" data-id="Triase">Triase</a>
+    <a href="/agentic-soc/reports/" class="t" data-en="Reports" data-id="Laporan">Laporan</a>
+    <a href="/agentic-soc/inspector/" class="t" data-en="Inspector" data-id="Inspektor">Inspektor</a>
+  </div>
+  <div class="ss-nav__actions">
+    <button onclick="toggleLang()" id="lang-btn" class="ss-btn-ghost">EN</button>
+    <button class="ss-btn-ghost t" data-en="Settings" data-id="Setelan">Setelan</button>
+  </div>
+</nav>
+
+<!-- ── Page shell ── -->
+<div class="page-shell">
+
+  <!-- Company header -->
+  <div class="ss-page-header">
+    <div>
+      <h1 id="company-heading">
+        <span class="t" data-en="Security Report" data-id="Laporan Keamanan">Laporan Keamanan</span>
+        <span id="company-name"></span>
+      </h1>
+      <p class="t-muted">
+        <span class="t" data-en="Scan completed" data-id="Pemindaian selesai">Pemindaian selesai</span>
+        &nbsp;25 Apr 2026 · 14:32 WIB
+      </p>
+    </div>
+    <span class="badge-free t" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
+  </div>
+
+  <!-- Audience switcher -->
+  <div class="audience-switcher" id="audience-switcher">
+    <button class="aud-tab active" data-aud="direktur" onclick="setAudience('direktur')">
+      <span class="t" data-en="Executive Director" data-id="Direktur">Direktur</span>
+    </button>
+    <button class="aud-tab" data-aud="it" onclick="setAudience('it')">
+      <span class="t" data-en="IT Manager" data-id="Manajer IT">Manajer IT</span>
+    </button>
+    <button class="aud-tab" data-aud="finance" onclick="setAudience('finance')">
+      <span class="t" data-en="Finance" data-id="Keuangan">Keuangan</span>
+    </button>
+    <button class="aud-tab" data-aud="auditor" onclick="setAudience('auditor')">
+      <span class="t" data-en="Auditor" data-id="Auditor">Auditor</span>
+    </button>
+  </div>
+
+  <!-- Cards grid -->
+  <div class="cards-grid">
+
+    <!-- Card 1: Email impersonation -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <p class="q-question aud-text"
+           data-direktur-id="Bisakah penyerang menyamar sebagai email perusahaan Anda?"
+           data-direktur-en="Can attackers impersonate your company email?"
+           data-it-id="Apakah konfigurasi SPF, DKIM, dan DMARC sudah benar?"
+           data-it-en="Are SPF, DKIM, and DMARC configured correctly?"
+           data-finance-id="Apakah email tagihan kami rentan dipalsukan?"
+           data-finance-en="Are our invoice emails vulnerable to spoofing?"
+           data-auditor-id="Apakah kontrol autentikasi email terdokumentasi?"
+           data-auditor-en="Are email authentication controls documented?">
+          Bisakah penyerang menyamar sebagai email perusahaan Anda?
+        </p>
+        <span class="rag-pill rag-red t" data-en="At Risk" data-id="Berisiko">Berisiko</span>
+      </div>
+      <p class="q-finding aud-text"
+         data-direktur-id="Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda kepada pelanggan atau mitra."
+         data-direktur-en="Your domain has no DMARC policy. Attackers can send emails that appear to come from your company."
+         data-it-id="DKIM selector tidak ditemukan dan tidak ada TXT record _dmarc. SPF ditemukan tetapi konfigurasi DMARC diperlukan untuk perlindungan penuh."
+         data-it-en="No DKIM selector found and no _dmarc TXT record. SPF is present but DMARC configuration is needed for full protection."
+         data-finance-id="Tanpa DMARC, email invoice Anda dapat dipalsukan oleh penyerang untuk menipu vendor atau pelanggan."
+         data-finance-en="Without DMARC, your invoice emails can be spoofed by attackers to deceive vendors or customers."
+         data-auditor-id="Kontrol autentikasi email tidak lengkap: DKIM dan DMARC tidak terdokumentasi atau diimplementasikan."
+         data-auditor-en="Email authentication controls are incomplete: DKIM and DMARC are not documented or implemented.">
+        Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda kepada pelanggan atau mitra.
+      </p>
+      <div class="tech-detail">
+        <button class="tech-toggle" onclick="toggleTech(this)">
+          <span class="arrow">▶</span>
+          <span class="t" data-en="Technical detail" data-id="Detail teknis">Detail teknis</span>
+        </button>
+        <pre class="tech-body">SPF:   ✓ Found  — v=spf1 include:_spf.google.com ~all
+DKIM:  ✗ Missing — No DKIM selector found
+DMARC: ✗ Missing — No _dmarc TXT record</pre>
+      </div>
+    </div>
+
+    <!-- Card 2: Exposed systems -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <p class="q-question aud-text"
+           data-direktur-id="Apakah sistem Anda terekspos ke internet?"
+           data-direktur-en="Are your systems exposed to the internet?"
+           data-it-id="Port dan layanan apa yang terbuka dari luar?"
+           data-it-en="Which ports and services are exposed externally?"
+           data-finance-id="Apakah sistem pembayaran kami dapat diakses dari luar?"
+           data-finance-en="Are our payment systems accessible externally?"
+           data-auditor-id="Apakah permukaan serangan eksternal telah dipetakan?"
+           data-auditor-en="Has the external attack surface been mapped?">
+          Apakah sistem Anda terekspos ke internet?
+        </p>
+        <span class="rag-pill rag-amber t" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
+      </div>
+      <p class="q-finding aud-text"
+         data-direktur-id="3 layanan ditemukan terbuka di internet, termasuk panel admin. Ini meningkatkan risiko serangan dari luar."
+         data-direktur-en="3 services found open on the internet, including an admin panel. This increases external attack risk."
+         data-it-id="Port 8080 pada admin.corp.co.id terbuka tanpa enkripsi. Port 22 (SSH) pada api.corp.co.id terbuka ke internet publik."
+         data-it-en="Port 8080 on admin.corp.co.id is open without encryption. Port 22 (SSH) on api.corp.co.id is open to the public internet."
+         data-finance-id="Panel admin keuangan dapat diakses dari internet tanpa enkripsi, meningkatkan risiko akses tidak sah."
+         data-finance-en="The finance admin panel is accessible from the internet without encryption, raising the risk of unauthorised access."
+         data-auditor-id="Permukaan serangan eksternal terpetakan sebagian: 3 layanan teridentifikasi, 2 memerlukan remediasi segera untuk kepatuhan."
+         data-auditor-en="External attack surface is partially mapped: 3 services identified, 2 require immediate remediation for compliance.">
+        3 layanan ditemukan terbuka di internet, termasuk panel admin. Ini meningkatkan risiko serangan dari luar.
+      </p>
+      <div class="tech-detail">
+        <button class="tech-toggle" onclick="toggleTech(this)">
+          <span class="arrow">▶</span>
+          <span class="t" data-en="Technical detail" data-id="Detail teknis">Detail teknis</span>
+        </button>
+        <pre class="tech-body">corp.co.id       443 (HTTPS) — OK
+admin.corp.co.id 8080 (HTTP) — ⚠ Unencrypted admin panel
+api.corp.co.id   22 (SSH)    — ⚠ Open to internet</pre>
+      </div>
+    </div>
+
+    <!-- Card 3: Evidence readiness -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <p class="q-question aud-text"
+           data-direktur-id="Apakah kami bisa membuktikan apa yang terjadi jika terkena serangan?"
+           data-direktur-en="Can we prove what happened if we are attacked?"
+           data-it-id="Apakah log disimpan cukup lama untuk investigasi?"
+           data-it-en="Are logs retained long enough for investigation?"
+           data-finance-id="Apakah ada jejak audit untuk transaksi keuangan?"
+           data-finance-en="Is there an audit trail for financial transactions?"
+           data-auditor-id="Apakah retensi log memenuhi persyaratan OJK?"
+           data-auditor-en="Does log retention meet OJK requirements?">
+          Apakah kami bisa membuktikan apa yang terjadi jika terkena serangan?
+        </p>
+        <span class="rag-pill rag-red t" data-en="At Risk" data-id="Berisiko">Berisiko</span>
+      </div>
+      <p class="q-finding aud-text"
+         data-direktur-id="Retensi log hanya 3 hari. Regulasi OJK merekomendasikan minimal 90 hari. Jika insiden terjadi bulan lalu, kami tidak bisa menyelidikinya."
+         data-direktur-en="Log retention is only 3 days. OJK recommends a minimum of 90 days. If an incident occurred last month, we cannot investigate it."
+         data-it-id="Konfigurasi retensi log saat ini diatur ke 3 hari. Target OJK adalah 90 hari. Skor bukti: 12/100."
+         data-it-en="Current log retention is configured to 3 days. OJK target is 90 days. Evidence score: 12/100."
+         data-finance-id="Jejak audit transaksi hanya tersedia untuk 3 hari terakhir, tidak mencukupi untuk rekonsiliasi atau investigasi penipuan."
+         data-finance-en="Transaction audit trails are only available for the last 3 days — insufficient for reconciliation or fraud investigation."
+         data-auditor-id="Retensi log 3 hari tidak memenuhi rekomendasi OJK 90 hari. Temuan ini harus segera diremediasi sebelum audit berikutnya."
+         data-auditor-en="Log retention of 3 days does not meet the OJK 90-day recommendation. This finding must be remediated before the next audit.">
+        Retensi log hanya 3 hari. Regulasi OJK merekomendasikan minimal 90 hari. Jika insiden terjadi bulan lalu, kami tidak bisa menyelidikinya.
+      </p>
+      <div class="tech-detail">
+        <button class="tech-toggle" onclick="toggleTech(this)">
+          <span class="arrow">▶</span>
+          <span class="t" data-en="Technical detail" data-id="Detail teknis">Detail teknis</span>
+        </button>
+        <pre class="tech-body">Current log retention:  3 days
+OJK recommendation:    90 days
+Evidence score:        12 / 100</pre>
+      </div>
+    </div>
+
+    <!-- Card 4: User protection -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <p class="q-question aud-text"
+           data-direktur-id="Apakah pengguna keuangan dan admin kami terlindungi?"
+           data-direktur-en="Are our finance and admin users protected?"
+           data-it-id="Apakah MFA aktif di semua akun privileged?"
+           data-it-en="Is MFA enabled on all privileged accounts?"
+           data-finance-id="Apakah akun tim keuangan menggunakan autentikasi dua faktor?"
+           data-finance-en="Do finance team accounts use two-factor authentication?"
+           data-auditor-id="Apakah kontrol akses privileged terdokumentasi dan diaudit?"
+           data-auditor-en="Are privileged access controls documented and audited?">
+          Apakah pengguna keuangan dan admin kami terlindungi?
+        </p>
+        <span class="rag-pill rag-amber t" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
+      </div>
+      <p class="q-finding aud-text"
+         data-direktur-id="4 dari 12 akun admin tidak menggunakan autentikasi dua faktor. Akun-akun ini menjadi target utama penyerang."
+         data-direktur-en="4 of 12 admin accounts do not use two-factor authentication. These accounts are primary targets for attackers."
+         data-it-id="MFA hanya aktif pada 4 dari 8 akun admin yang diperiksa. 4 akun yang tersisa memerlukan aktivasi segera."
+         data-it-en="MFA is only active on 4 of 8 checked admin accounts. The remaining 4 require immediate activation."
+         data-finance-id="Beberapa akun tim keuangan tidak menggunakan 2FA, meningkatkan risiko pengambilalihan akun dan penipuan transfer."
+         data-finance-en="Several finance team accounts lack 2FA, raising the risk of account takeover and transfer fraud."
+         data-auditor-id="Kontrol akses privileged tidak sepenuhnya diaudit: 50% akun admin tidak memiliki MFA aktif, tidak ada bukti review periodik."
+         data-auditor-en="Privileged access controls are not fully audited: 50% of admin accounts lack active MFA, with no evidence of periodic review.">
+        4 dari 12 akun admin tidak menggunakan autentikasi dua faktor. Akun-akun ini menjadi target utama penyerang.
+      </p>
+      <div class="tech-detail">
+        <button class="tech-toggle" onclick="toggleTech(this)">
+          <span class="arrow">▶</span>
+          <span class="t" data-en="Technical detail" data-id="Detail teknis">Detail teknis</span>
+        </button>
+        <pre class="tech-body">Endpoints checked:  8
+MFA enabled:        4 / 8 admin accounts
+Endpoint score:     55 / 100</pre>
+      </div>
+    </div>
+
+    <!-- Card 5: Priority actions (full width) -->
+    <div class="q-card card-full">
+      <div class="q-card-header">
+        <p class="q-question aud-text"
+           data-direktur-id="Apa yang harus kami perbaiki minggu ini?"
+           data-direktur-en="What should we fix this week?"
+           data-it-id="Apa 3 remediasi prioritas tertinggi?"
+           data-it-en="What are the top 3 highest-priority remediations?"
+           data-finance-id="Apa risiko keuangan terbesar yang bisa diatasi segera?"
+           data-finance-en="What is the biggest financial risk we can address immediately?"
+           data-auditor-id="Tindakan apa yang diperlukan untuk kepatuhan OJK?"
+           data-auditor-en="What actions are required for OJK compliance?">
+          Apa yang harus kami perbaiki minggu ini?
+        </p>
+      </div>
+      <div class="actions-list">
+
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-body">
+            <div class="action-meta">
+              <span class="action-badge high t" data-en="HIGH" data-id="TINGGI">TINGGI</span>
+              <span class="action-effort t" data-en="~1 hour" data-id="~1 jam">~1 jam</span>
+            </div>
+            <p class="action-text aud-text"
+               data-direktur-id="Aktifkan kebijakan DMARC pada domain Anda. Cegah spoofing email."
+               data-direktur-en="Enable a DMARC policy on your domain. Prevent email spoofing."
+               data-it-id="Tambahkan TXT record _dmarc ke DNS dengan policy p=quarantine. Pastikan DKIM selector terkonfigurasi."
+               data-it-en="Add a _dmarc TXT record to DNS with policy p=quarantine. Ensure DKIM selector is configured."
+               data-finance-id="Aktifkan DMARC untuk melindungi email invoice dari pemalsuan oleh pihak eksternal."
+               data-finance-en="Enable DMARC to protect invoice emails from being spoofed by external parties."
+               data-auditor-id="Implementasi DMARC diperlukan untuk memenuhi kontrol autentikasi email OJK."
+               data-auditor-en="DMARC implementation is required to satisfy OJK email authentication controls.">
+              Aktifkan kebijakan DMARC pada domain Anda. Cegah spoofing email.
+            </p>
+          </div>
+        </div>
+
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-body">
+            <div class="action-meta">
+              <span class="action-badge high t" data-en="HIGH" data-id="TINGGI">TINGGI</span>
+              <span class="action-effort t" data-en="~1 day" data-id="~1 hari">~1 hari</span>
+            </div>
+            <p class="action-text aud-text"
+               data-direktur-id="Aktifkan MFA pada semua 4 akun admin yang belum terlindungi."
+               data-direktur-en="Enable MFA on all 4 admin accounts that are not yet protected."
+               data-it-id="Enforce MFA pada 4 akun privileged yang tersisa melalui identity provider."
+               data-it-en="Enforce MFA on the remaining 4 privileged accounts via the identity provider."
+               data-finance-id="Aktifkan 2FA pada akun tim keuangan untuk mencegah pengambilalihan akun."
+               data-finance-en="Activate 2FA on finance team accounts to prevent account takeover."
+               data-auditor-id="Terapkan MFA pada semua akun privileged dan dokumentasikan sebagai kontrol akses untuk audit OJK."
+               data-auditor-en="Apply MFA to all privileged accounts and document as an access control for OJK audit.">
+              Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.
+            </p>
+          </div>
+        </div>
+
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-body">
+            <div class="action-meta">
+              <span class="action-badge medium t" data-en="MEDIUM" data-id="SEDANG">SEDANG</span>
+              <span class="action-effort t" data-en="~1 week" data-id="~1 minggu">~1 minggu</span>
+            </div>
+            <p class="action-text aud-text"
+               data-direktur-id="Perpanjang retensi log ke minimum 90 hari sesuai rekomendasi OJK."
+               data-direktur-en="Extend log retention to a minimum of 90 days per OJK recommendation."
+               data-it-id="Konfigurasi ulang log aggregator untuk retensi 90 hari. Pertimbangkan cold storage untuk efisiensi biaya."
+               data-it-en="Reconfigure the log aggregator for 90-day retention. Consider cold storage for cost efficiency."
+               data-finance-id="Perpanjang retensi log transaksi ke 90 hari untuk memenuhi kebutuhan rekonsiliasi dan investigasi penipuan."
+               data-finance-en="Extend transaction log retention to 90 days to meet reconciliation and fraud investigation needs."
+               data-auditor-id="Perpanjang retensi log ke 90 hari dan dokumentasikan kebijakan retensi untuk kepatuhan OJK."
+               data-auditor-en="Extend log retention to 90 days and document the retention policy for OJK compliance.">
+              Perpanjang retensi log ke minimum 90 hari sesuai rekomendasi OJK.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /cards-grid -->
+
+  <!-- Export PDF bar -->
+  <div class="ss-export-bar">
+    <div>
+      <p class="t-label t" data-en="Free Tier report includes a watermark." data-id="Laporan Tier Gratis menyertakan tanda air.">Laporan Tier Gratis menyertakan tanda air.</p>
+      <p class="t-muted t" data-en="Upgrade to get a clean, audit-ready PDF." data-id="Upgrade untuk mendapatkan PDF bersih siap audit.">Upgrade untuk mendapatkan PDF bersih siap audit.</p>
+    </div>
+    <button class="ss-btn-secondary t"
+            onclick="alert(lang === 'en' ? 'Generating watermarked preview PDF...' : 'Membuat PDF pratinjau dengan tanda air...')"
+            data-en="Download Preview PDF"
+            data-id="Unduh PDF Pratinjau">
+      Unduh PDF Pratinjau
+    </button>
+  </div>
+
+  <!-- Upgrade CTA -->
+  <div class="upgrade-banner">
+    <div>
+      <p class="upgrade-title t"
+         data-en="Found your gaps. Now close them."
+         data-id="Temukan celah. Sekarang tutup celahnya.">
+        Temukan celah. Sekarang tutup celahnya.
+      </p>
+      <p class="upgrade-sub t"
+         data-en="30-Day Sprint: Rp 35–75 jt — Our team helps you fix all the red findings above."
+         data-id="Sprint 30-Hari: Rp 35–75 jt — Tim kami membantu Anda memperbaiki semua temuan merah di atas.">
+        Sprint 30-Hari: Rp 35–75 jt — Tim kami membantu Anda memperbaiki semua temuan merah di atas.
+      </p>
+    </div>
+    <button class="btn-upgrade t" data-en="Contact Us →" data-id="Hubungi Kami →">Hubungi Kami →</button>
+  </div>
+
+</div><!-- /page-shell -->
+
+<script>
+// ── Language toggle ──
+function toggleLang() {
+  const current = document.documentElement.getAttribute('data-lang');
+  const next = current === 'id' ? 'en' : 'id';
+  document.documentElement.setAttribute('data-lang', next);
+  localStorage.setItem('ss-lang', next);
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = next === 'en' ? el.dataset.en : el.dataset.id;
+  });
+  document.getElementById('lang-btn').textContent = next === 'en' ? 'ID' : 'EN';
+  applyAudienceText(currentAudience);
+}
+// Apply on load
+document.querySelectorAll('[data-en]').forEach(el => {
+  if (lang === 'en') el.textContent = el.dataset.en;
+});
+if (lang === 'en') document.getElementById('lang-btn').textContent = 'ID';
+
+// ── Company name from localStorage ──
+(function() {
+  const company = localStorage.getItem('ss-company') || '';
+  const nameEl = document.getElementById('company-name');
+  if (company) nameEl.textContent = ' ' + company;
+})();
+
+// ── Audience switcher ──
+let currentAudience = localStorage.getItem('ss-audience') || 'direktur';
+
+function setAudience(aud) {
+  currentAudience = aud;
+  localStorage.setItem('ss-audience', aud);
+  document.querySelectorAll('.aud-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.aud === aud);
+  });
+  applyAudienceText(aud);
+}
+
+function applyAudienceText(aud) {
+  const l = document.documentElement.getAttribute('data-lang') || 'id';
+  document.querySelectorAll('.aud-text').forEach(el => {
+    const key = aud + '-' + l;
+    if (el.dataset[aud + 'Id'] !== undefined) {
+      el.textContent = l === 'en' ? el.dataset[aud + 'En'] : el.dataset[aud + 'Id'];
+    }
+  });
+}
+
+// Init audience on load
+setAudience(currentAudience);
+
+// ── Technical detail toggle ──
+function toggleTech(btn) {
+  btn.classList.toggle('open');
+  const body = btn.parentElement.querySelector('.tech-body');
+  body.classList.toggle('open');
+}
+</script>
+</body>
+</html>
