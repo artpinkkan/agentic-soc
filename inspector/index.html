@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon Sentinel — Inspektor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  const lang = localStorage.getItem('ss-lang') || 'id';
+  document.documentElement.setAttribute('data-lang', lang);
+</script>
+<style>
+  :root {
+    --color-brand:       #1D9E75;
+    --color-brand-dark:  #0F6E56;
+    --color-brand-light: #E1F5EE;
+    --color-danger:      #E24B4A;
+    --color-warning:     #EF9F27;
+    --color-neutral-50:  #F1EFE8;
+    --color-neutral-200: #B4B2A9;
+    --color-neutral-700: #444441;
+    --color-neutral-900: #2C2C2A;
+    --color-surface:     #FFFFFF;
+    --color-surface-alt: #F8F7F4;
+    --color-border:      rgba(68,68,65,0.15);
+    --font-sans:         'Inter', system-ui, sans-serif;
+    --font-mono:         'JetBrains Mono', monospace;
+    --radius-sm:         6px;
+    --radius-md:         10px;
+    --radius-lg:         16px;
+    --gap-sm:            8px;
+    --gap-md:            16px;
+    --gap-lg:            24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface-alt);
+    color: var(--color-neutral-900);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  .ss-nav {
+    background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gap-lg); height: 52px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .ss-nav__brand { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-nav__logo { font-weight: 600; font-size: 15px; color: var(--color-brand); letter-spacing: -0.3px; }
+  .ss-nav__tier { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+  .ss-nav__tier--free { background: var(--color-brand-light); color: var(--color-brand-dark); }
+  .ss-nav__links { display: flex; align-items: center; gap: 4px; }
+  .ss-nav__links a {
+    font-size: 13px; color: var(--color-neutral-700); text-decoration: none;
+    padding: 5px 10px; border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s;
+  }
+  .ss-nav__links a:hover { background: var(--color-neutral-50); }
+  .ss-nav__links a.active { color: var(--color-brand); font-weight: 500; }
+  .ss-nav__actions { display: flex; align-items: center; gap: var(--gap-sm); }
+  .ss-btn-ghost {
+    background: none; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+    padding: 5px 12px; font-size: 13px; font-family: var(--font-sans);
+    color: var(--color-neutral-700); cursor: pointer; transition: background 0.12s;
+  }
+  .ss-btn-ghost:hover { background: var(--color-neutral-50); }
+
+  /* ── Page shell ── */
+  .page-shell { max-width: 900px; margin: 0 auto; padding: 36px var(--gap-lg) 64px; display: flex; flex-direction: column; gap: var(--gap-lg); }
+
+  .page-title { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .page-subtitle { font-size: 14px; color: var(--color-neutral-700); }
+
+  /* ── Card / panel ── */
+  .card {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .card-header {
+    padding: 12px var(--gap-md); border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .08em; }
+  .card-body { padding: var(--gap-md); }
+
+  /* ── Response selector ── */
+  .ss-inspector-selector { display: flex; align-items: center; gap: var(--gap-md); flex-wrap: wrap; }
+  .t-label { font-size: 13px; font-weight: 500; color: var(--color-neutral-700); white-space: nowrap; }
+  .ss-select {
+    flex: 1; min-width: 280px; padding: 8px 12px; border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 13px;
+    color: var(--color-neutral-900); background: var(--color-surface); outline: none;
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .ss-select:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+
+  /* ── Trace card header ── */
+  .ss-trace-header {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gap-md);
+    padding: var(--gap-md); border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-alt);
+  }
+  .trace-field { display: flex; flex-direction: column; gap: 4px; }
+  .trace-field .t-label { font-size: 10px; font-weight: 600; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .06em; }
+  .trace-field p { font-size: 13px; color: var(--color-neutral-900); }
+  .t-mono { font-family: var(--font-mono); font-size: 12px; color: var(--color-neutral-700); }
+  .t-small { font-size: 12px; }
+  .t-muted { color: var(--color-neutral-200); }
+
+  /* Model badges */
+  .ss-model-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+  .ss-model-badge--local { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #5DCAA5; }
+  .ss-model-badge--cloud { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+
+  /* Routing reason box */
+  .routing-box {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 10px 12px; margin: var(--gap-md);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .routing-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .routing-label { font-size: 10px; font-weight: 600; color: var(--color-neutral-200); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .routing-text { font-size: 13px; color: var(--color-neutral-700); }
+
+  /* ── Guardrail table ── */
+  .ss-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .ss-table th {
+    font-size: 10px; font-weight: 600; color: var(--color-neutral-200);
+    text-transform: uppercase; letter-spacing: .06em; padding: 8px 12px;
+    border-bottom: 2px solid var(--color-border); text-align: left; background: var(--color-surface-alt);
+  }
+  .ss-table td {
+    padding: 10px 12px; border-bottom: 1px solid var(--color-border);
+    color: var(--color-neutral-700); vertical-align: middle;
+  }
+  .ss-table tr:last-child td { border-bottom: none; }
+  .ss-table tr:hover td { background: rgba(248,247,244,.6); }
+  .layer-badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    padding: 2px 7px; border-radius: var(--radius-sm);
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    color: var(--color-neutral-700); white-space: nowrap;
+  }
+
+  .badge-pass { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; font-size: 12px; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+  .badge-flag { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; font-size: 12px; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+
+  /* ── Knowledge graph nodes ── */
+  .ss-kg-node-list { display: flex; flex-direction: column; gap: var(--gap-sm); }
+  .ss-kg-node {
+    display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+    background: var(--color-surface-alt); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  .ss-kg-source-badge { font-size: 11px; padding: 2px 8px; border-radius: 100px; font-weight: 500; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+  .ss-kg-source--mitre     { background: #EEEDFE; color: #3C3489; }
+  .ss-kg-source--d3fend    { background: #E1F5EE; color: #0F6E56; }
+  .ss-kg-source--nist      { background: #E6F1FB; color: #0C447C; }
+  .ss-kg-source--abuseipdb { background: #FAEEDA; color: #633806; }
+  .ss-kg-source--edr       { background: #F1EFE8; color: #444441; }
+  .ss-kg-source--otx       { background: #F5F3FF; color: #3C3489; }
+  .ss-kg-source--cve       { background: #FCEBEB; color: #7A1E1E; }
+  .ss-kg-node p { font-size: 13px; color: var(--color-neutral-700); line-height: 1.5; }
+
+  /* ── Raw prompt log ── */
+  .ss-prompt-log {
+    border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden;
+  }
+  .ss-prompt-log summary {
+    padding: 12px var(--gap-md); font-size: 13px; font-weight: 500;
+    color: var(--color-neutral-700); cursor: pointer; list-style: none;
+    background: var(--color-surface-alt); display: flex; align-items: center; gap: var(--gap-sm);
+    user-select: none;
+  }
+  .ss-prompt-log summary::-webkit-details-marker { display: none; }
+  .ss-prompt-log summary::before { content: '▶'; font-size: 10px; color: var(--color-neutral-200); transition: transform 0.15s; }
+  details[open] .ss-prompt-log summary::before,
+  .ss-prompt-log[open] summary::before { transform: rotate(90deg); }
+  details.ss-prompt-log[open] > summary::before { transform: rotate(90deg); }
+  .ss-prompt-content { padding: var(--gap-md); background: var(--color-surface); }
+  .ss-table-sm td { padding: 6px 10px; font-size: 12px; border-bottom: 1px solid var(--color-border); }
+  .ss-table-sm tr:last-child td { border-bottom: none; }
+  .ss-table-sm td:first-child { width: 180px; font-weight: 500; color: var(--color-neutral-700); }
+
+  /* ── OJK governance notice ── */
+  .ojk-notice {
+    background: var(--color-brand-light); border: 1px solid rgba(29,158,117,.25);
+    border-radius: var(--radius-md); padding: var(--gap-md);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .ojk-notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .ojk-notice-title { font-size: 13px; font-weight: 600; color: var(--color-brand-dark); margin-bottom: 3px; }
+  .ojk-notice-text { font-size: 12px; color: var(--color-brand-dark); opacity: 0.85; line-height: 1.5; }
+
+  /* ── Section heading ── */
+  .section-heading {
+    font-size: 14px; font-weight: 500; color: var(--color-neutral-900);
+    padding: var(--gap-md) var(--gap-md) 0;
+  }
+
+  /* Severity badges (shared) */
+  .badge-critical { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  .badge-high     { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+  .badge-medium   { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
+  .badge-low      { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="ss-nav">
+  <div class="ss-nav__brand">
+    <span class="ss-nav__logo">Shannon Sentinel</span>
+    <span class="ss-nav__tier ss-nav__tier--free t" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+  </div>
+  <div class="ss-nav__links">
+    <a href="/agentic-soc/onboarding/" class="t" data-en="Setup" data-id="Pengaturan">Pengaturan</a>
+    <a href="/agentic-soc/dashboard/" class="t" data-en="Dashboard" data-id="Dasbor">Dasbor</a>
+    <a href="/agentic-soc/investigate/" class="t" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+    <a href="/agentic-soc/triage/" class="t" data-en="Triage" data-id="Triase">Triase</a>
+    <a href="/agentic-soc/reports/" class="t" data-en="Reports" data-id="Laporan">Laporan</a>
+    <a href="/agentic-soc/inspector/" class="active t" data-en="Inspector" data-id="Inspektor">Inspektor</a>
+  </div>
+  <div class="ss-nav__actions">
+    <button onclick="toggleLang()" id="lang-btn" class="ss-btn-ghost">EN</button>
+    <button class="ss-btn-ghost t" data-en="Settings" data-id="Setelan">Setelan</button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+  <!-- Header -->
+  <div>
+    <h1 class="page-title t" data-en="SOC Assistant Inspector" data-id="Inspektor Asisten SOC">Inspektor Asisten SOC</h1>
+    <p class="page-subtitle t" data-en="Per-response trace: model routing, guardrail results, knowledge sources, and prompt metadata." data-id="Jejak per-respons: routing model, hasil guardrail, sumber pengetahuan, dan metadata prompt.">Jejak per-respons: routing model, hasil guardrail, sumber pengetahuan, dan metadata prompt.</p>
+  </div>
+
+  <!-- OJK governance notice -->
+  <div class="ojk-notice">
+    <span class="ojk-notice-icon">🏛️</span>
+    <div>
+      <p class="ojk-notice-title t" data-en="OJK AI Governance artefact" data-id="Artefak Tata Kelola AI OJK">Artefak Tata Kelola AI OJK</p>
+      <p class="ojk-notice-text t" data-en="This page is part of the AI governance evidence pack. All guardrail logs and model routing decisions are append-only and available for OJK audit." data-id="Halaman ini merupakan bagian dari paket bukti tata kelola AI. Semua log guardrail dan keputusan routing model bersifat append-only dan tersedia untuk audit OJK.">Halaman ini merupakan bagian dari paket bukti tata kelola AI. Semua log guardrail dan keputusan routing model bersifat append-only dan tersedia untuk audit OJK.</p>
+    </div>
+  </div>
+
+  <!-- Response selector -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title t" data-en="Response selector" data-id="Pemilih respons">Pemilih respons</span>
+    </div>
+    <div class="card-body">
+      <div class="ss-inspector-selector">
+        <label class="t-label t" data-en="Select response to inspect:" data-id="Pilih respons untuk diperiksa:">Pilih respons untuk diperiksa:</label>
+        <select id="ss-response-select" onchange="loadResponse(this.value)" class="ss-select">
+          <option value="1">14:29 — SSH brute force / 192.168.10.45 (Qwen 2.5 7B)</option>
+          <option value="2">14:31 — <span class="t" data-en="Lateral movement query" data-id="Kueri pergerakan lateral">Lateral movement query</span> (Claude fallback)</option>
+          <option value="3">14:35 — <span class="t" data-en="Executive summary generation" data-id="Pembuatan ringkasan eksekutif">Executive summary generation</span> (Claude fallback)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Response trace card -->
+  <div class="card" id="trace-card">
+    <div class="card-header">
+      <span class="card-title t" data-en="Response trace" data-id="Jejak respons">Jejak respons</span>
+      <span class="ss-model-badge ss-model-badge--local" id="ss-resp-model">Qwen 2.5 7B</span>
+    </div>
+
+    <!-- Trace header grid -->
+    <div class="ss-trace-header">
+      <div class="trace-field">
+        <span class="t-label t" data-en="Response ID" data-id="ID Respons">ID Respons</span>
+        <p class="t-mono" id="ss-resp-id">resp-20260425-1429-001</p>
+      </div>
+      <div class="trace-field">
+        <span class="t-label t" data-en="Timestamp" data-id="Waktu">Waktu</span>
+        <p id="ss-resp-ts">25 Apr 2026 · 14:29:07 WIB</p>
+      </div>
+      <div class="trace-field">
+        <span class="t-label t" data-en="Latency" data-id="Latensi">Latensi</span>
+        <p class="t-mono" id="ss-resp-latency">1.24s</p>
+      </div>
+      <div class="trace-field">
+        <span class="t-label t" data-en="Confidence" data-id="Kepercayaan">Kepercayaan</span>
+        <p><span class="badge-pass" id="ss-resp-confidence">Tinggi</span></p>
+      </div>
+      <div class="trace-field">
+        <span class="t-label t" data-en="Human review" data-id="Tinjauan manusia">Tinjauan manusia</span>
+        <p><span class="badge-flag" id="ss-resp-review">Ya</span></p>
+      </div>
+    </div>
+
+    <!-- Routing reason -->
+    <div class="routing-box">
+      <span class="routing-icon">🔀</span>
+      <div>
+        <p class="routing-label t" data-en="Model routing reason" data-id="Alasan routing model">Alasan routing model</p>
+        <p class="routing-text" id="ss-resp-routing">Tingkat keparahan standar — model lokal memadai</p>
+      </div>
+    </div>
+
+    <!-- Guardrail table -->
+    <div class="section-heading t" data-en="Guardrail layers" data-id="Lapisan guardrail">Lapisan guardrail</div>
+    <div style="padding: var(--gap-md);">
+      <table class="ss-table" id="guardrail-table">
+        <thead>
+          <tr>
+            <th class="t" data-en="Layer" data-id="Lapisan">Lapisan</th>
+            <th class="t" data-en="Check" data-id="Pemeriksaan">Pemeriksaan</th>
+            <th class="t" data-en="Result" data-id="Hasil">Hasil</th>
+            <th class="t" data-en="Detail" data-id="Detail">Detail</th>
+          </tr>
+        </thead>
+        <tbody id="guardrail-tbody">
+          <!-- populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Knowledge graph nodes -->
+    <div class="section-heading t" data-en="Retrieved knowledge graph nodes" data-id="Node grafik pengetahuan yang diambil">Node grafik pengetahuan yang diambil</div>
+    <div style="padding: var(--gap-md);">
+      <div class="ss-kg-node-list" id="kg-nodes">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Raw prompt log -->
+    <div style="padding: var(--gap-md);">
+      <details class="ss-prompt-log">
+        <summary class="t-label t" data-en="Raw prompt log (metadata only)" data-id="Log prompt mentah (hanya metadata)">Log prompt mentah (hanya metadata)</summary>
+        <div class="ss-prompt-content">
+          <p class="t-small t-muted" style="margin-bottom:10px" data-en="Full prompt content is not stored by default. Only metadata is logged per tenant privacy settings." data-id="Konten prompt lengkap tidak disimpan secara default. Hanya metadata yang dicatat sesuai pengaturan privasi tenant." class="t">Konten prompt lengkap tidak disimpan secara default. Hanya metadata yang dicatat sesuai pengaturan privasi tenant.</p>
+          <table class="ss-table ss-table-sm" id="prompt-meta-table">
+            <tr><td class="t-label t" data-en="Tenant" data-id="Tenant">Tenant</td><td class="t-mono">tenant-pt-contoh-001</td></tr>
+            <tr><td class="t-label t" data-en="Input tokens" data-id="Token input">Token input</td><td class="t-mono" id="pm-input-tokens">412</td></tr>
+            <tr><td class="t-label t" data-en="Output tokens" data-id="Token output">Token output</td><td class="t-mono" id="pm-output-tokens">287</td></tr>
+            <tr><td class="t-label t" data-en="Temperature" data-id="Temperatur">Temperatur</td><td class="t-mono" id="pm-temperature">0.1</td></tr>
+            <tr><td class="t-label t" data-en="Context window used" data-id="Jendela konteks digunakan">Jendela konteks digunakan</td><td class="t-mono" id="pm-context">699 / 8192 tokens</td></tr>
+            <tr><td class="t-label t" data-en="System prompt version" data-id="Versi prompt sistem">Versi prompt sistem</td><td class="t-mono">sentinel-soc-v1.2</td></tr>
+          </table>
+        </div>
+      </details>
+    </div>
+
+  </div><!-- /trace-card -->
+
+</div><!-- /page-shell -->
+
+<script>
+// ── Language ──
+function toggleLang() {
+  const current = document.documentElement.getAttribute('data-lang');
+  const next = current === 'id' ? 'en' : 'id';
+  document.documentElement.setAttribute('data-lang', next);
+  localStorage.setItem('ss-lang', next);
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = next === 'en' ? el.dataset.en : el.dataset.id;
+  });
+  document.getElementById('lang-btn').textContent = next === 'en' ? 'ID' : 'EN';
+  // Re-render current response with new lang
+  loadResponse(document.getElementById('ss-response-select').value);
+}
+document.querySelectorAll('[data-en]').forEach(el => {
+  if (lang === 'en') el.textContent = el.dataset.en;
+});
+if (lang === 'en') document.getElementById('lang-btn').textContent = 'ID';
+
+// ── Response data ──
+const responses = {
+  '1': {
+    id: 'resp-20260425-1429-001',
+    model: 'Qwen 2.5 7B',
+    modelType: 'local',
+    timestamp: '25 Apr 2026 · 14:29:07 WIB',
+    latency: '1.24s',
+    confidence: { id: 'Tinggi', en: 'High' },
+    confidenceClass: 'badge-pass',
+    humanReview: { id: 'Ya', en: 'Yes' },
+    humanReviewClass: 'badge-flag',
+    routingReason: { id: 'Tingkat keparahan standar — model lokal memadai', en: 'Standard severity — local model sufficient' },
+    promptMeta: { input: '412', output: '287', temp: '0.1', ctx: '699 / 8192 tokens' },
+    guardrails: [
+      { layer: '1 — Input',             check_id: 'Pemindaian jailbreak / injeksi prompt',          check_en: 'Jailbreak / prompt injection scan',      result: 'pass', detail_id: 'Tidak ada pola injeksi terdeteksi',                           detail_en: 'No injection pattern detected' },
+      { layer: '1 — Input',             check_id: 'Pra-pemindaian PII / rahasia',                   check_en: 'PII / secret pre-scan',                  result: 'pass', detail_id: 'Tidak ada PII terdeteksi dalam prompt',                     detail_en: 'No PII detected in prompt' },
+      { layer: '1 — Input',             check_id: 'Pemeriksaan cakupan topik (hanya defensif)',     check_en: 'Topic scope check (defensive only)',      result: 'pass', detail_id: 'Kueri berada dalam cakupan defensif',                       detail_en: 'Query is within defensive scope' },
+      { layer: '2 — Retrieval',         check_id: 'Penandaan konten tidak tepercaya',               check_en: 'Untrusted content tagging',               result: 'pass', detail_id: 'Semua node yang diambil dari sumber tepercaya',             detail_en: 'All retrieved nodes from trusted sources' },
+      { layer: '3 — Output',            check_id: 'Filter penggunaan ganda',                        check_en: 'Dual-use filter',                         result: 'pass', detail_id: 'Tidak ada konten yang dapat dijadikan senjata terdeteksi', detail_en: 'No weaponizable content detected' },
+      { layer: '3 — Output',            check_id: 'Penegakan kutipan',                             check_en: 'Citation enforcement',                    result: 'pass', detail_id: '3 / 3 klaim dikutip ke sumber',                            detail_en: '3 / 3 claims cited to source' },
+      { layer: '4 — Safety classifier', check_id: 'Pemeriksaan output Llama Guard 3',              check_en: 'Llama Guard 3 output check',              result: 'pass', detail_id: 'Output diklasifikasikan: aman',                            detail_en: 'Output classified: safe' },
+    ],
+    kgNodes: [
+      { source: 'AbuseIPDB', cls: 'ss-kg-source--abuseipdb', text: 'IP 192.168.10.45 — 47 abuse reports, 94% malicious confidence' },
+      { source: 'MITRE ATT&CK', cls: 'ss-kg-source--mitre', text: 'T1110 — Brute Force: Password Guessing (Credential Access)' },
+      { source: 'D3FEND', cls: 'ss-kg-source--d3fend', text: 'D3-NTF — Network Traffic Filtering (recommended countermeasure)' },
+      { source: 'NIST', cls: 'ss-kg-source--nist', text: 'AC-2 Account Management, IA-2 Identification and Authentication' },
+      { source: 'EDR Log', cls: 'ss-kg-source--edr', text: '340 auth failures · auth-server-01 · port 52341 · 14:26–14:28 WIB' },
+    ],
+  },
+  '2': {
+    id: 'resp-20260425-1431-002',
+    model: 'Claude (fallback)',
+    modelType: 'cloud',
+    timestamp: '25 Apr 2026 · 14:31:22 WIB',
+    latency: '3.87s',
+    confidence: { id: 'Tinggi', en: 'High' },
+    confidenceClass: 'badge-pass',
+    humanReview: { id: 'Tidak', en: 'No' },
+    humanReviewClass: 'badge-pass',
+    routingReason: { id: 'Pergerakan lateral tingkat tinggi — dieskalasi ke Claude', en: 'High-severity lateral movement — escalated to Claude' },
+    promptMeta: { input: '631', output: '418', temp: '0.1', ctx: '1049 / 32000 tokens' },
+    guardrails: [
+      { layer: '1 — Input',             check_id: 'Pemindaian jailbreak / injeksi prompt',          check_en: 'Jailbreak / prompt injection scan',      result: 'pass', detail_id: 'Tidak ada pola injeksi terdeteksi',                           detail_en: 'No injection pattern detected' },
+      { layer: '1 — Input',             check_id: 'Pra-pemindaian PII / rahasia',                   check_en: 'PII / secret pre-scan',                  result: 'pass', detail_id: 'Tidak ada PII terdeteksi dalam prompt',                     detail_en: 'No PII detected in prompt' },
+      { layer: '1 — Input',             check_id: 'Pemeriksaan cakupan topik (hanya defensif)',     check_en: 'Topic scope check (defensive only)',      result: 'pass', detail_id: 'Kueri berada dalam cakupan defensif',                       detail_en: 'Query is within defensive scope' },
+      { layer: '2 — Retrieval',         check_id: 'Penandaan konten tidak tepercaya',               check_en: 'Untrusted content tagging',               result: 'pass', detail_id: 'Semua node yang diambil dari sumber tepercaya',             detail_en: 'All retrieved nodes from trusted sources' },
+      { layer: '3 — Output',            check_id: 'Filter penggunaan ganda',                        check_en: 'Dual-use filter',                         result: 'flag', detail_id: 'Dieskalasi ke Claude; output ditinjau dan disetujui',       detail_en: 'Escalated to Claude; output reviewed and approved' },
+      { layer: '3 — Output',            check_id: 'Penegakan kutipan',                             check_en: 'Citation enforcement',                    result: 'pass', detail_id: '5 / 5 klaim dikutip ke sumber',                            detail_en: '5 / 5 claims cited to source' },
+      { layer: '4 — Safety classifier', check_id: 'Pemeriksaan output Llama Guard 3',              check_en: 'Llama Guard 3 output check',              result: 'pass', detail_id: 'Output diklasifikasikan: aman',                            detail_en: 'Output classified: safe' },
+    ],
+    kgNodes: [
+      { source: 'MITRE ATT&CK', cls: 'ss-kg-source--mitre', text: 'T1021.002 — Lateral Movement: SMB/Windows Admin Shares' },
+      { source: 'MITRE ATT&CK', cls: 'ss-kg-source--mitre', text: 'T1078 — Valid Accounts: Domain Accounts (Persistence)' },
+      { source: 'CVE', cls: 'ss-kg-source--cve', text: 'CVE-2025-33071 — CVSS 9.8 — AD01 privilege escalation (KEV listed)' },
+      { source: 'D3FEND', cls: 'ss-kg-source--d3fend', text: 'D3-ISOL — Network Isolation (recommended for lateral movement)' },
+      { source: 'EDR Log', cls: 'ss-kg-source--edr', text: 'AD01 → 3 hosts (10.0.0.55, 10.0.0.61, 10.0.0.72) · SMB port 445' },
+    ],
+  },
+  '3': {
+    id: 'resp-20260425-1435-003',
+    model: 'Claude (fallback)',
+    modelType: 'cloud',
+    timestamp: '25 Apr 2026 · 14:35:01 WIB',
+    latency: '4.12s',
+    confidence: { id: 'Tinggi', en: 'High' },
+    confidenceClass: 'badge-pass',
+    humanReview: { id: 'Tidak', en: 'No' },
+    humanReviewClass: 'badge-pass',
+    routingReason: { id: 'Mode ringkasan eksekutif — selalu menggunakan Claude', en: 'Executive summary mode — always uses Claude' },
+    promptMeta: { input: '892', output: '541', temp: '0.3', ctx: '1433 / 32000 tokens' },
+    guardrails: [
+      { layer: '1 — Input',             check_id: 'Pemindaian jailbreak / injeksi prompt',          check_en: 'Jailbreak / prompt injection scan',      result: 'pass', detail_id: 'Tidak ada pola injeksi terdeteksi',                           detail_en: 'No injection pattern detected' },
+      { layer: '1 — Input',             check_id: 'Pra-pemindaian PII / rahasia',                   check_en: 'PII / secret pre-scan',                  result: 'pass', detail_id: 'Nama pengguna samar sebelum dikirim ke model',               detail_en: 'Usernames anonymised before sending to model' },
+      { layer: '1 — Input',             check_id: 'Pemeriksaan cakupan topik (hanya defensif)',     check_en: 'Topic scope check (defensive only)',      result: 'pass', detail_id: 'Permintaan ringkasan dalam cakupan yang diizinkan',          detail_en: 'Summary request within allowed scope' },
+      { layer: '2 — Retrieval',         check_id: 'Penandaan konten tidak tepercaya',               check_en: 'Untrusted content tagging',               result: 'pass', detail_id: 'Semua node yang diambil dari sumber tepercaya',             detail_en: 'All retrieved nodes from trusted sources' },
+      { layer: '3 — Output',            check_id: 'Filter penggunaan ganda',                        check_en: 'Dual-use filter',                         result: 'pass', detail_id: 'Tidak ada konten yang dapat dijadikan senjata terdeteksi', detail_en: 'No weaponizable content detected' },
+      { layer: '3 — Output',            check_id: 'Penegakan kutipan',                             check_en: 'Citation enforcement',                    result: 'pass', detail_id: '4 / 4 klaim dikutip ke sumber',                            detail_en: '4 / 4 claims cited to source' },
+      { layer: '4 — Safety classifier', check_id: 'Pemeriksaan output Llama Guard 3',              check_en: 'Llama Guard 3 output check',              result: 'pass', detail_id: 'Output diklasifikasikan: aman',                            detail_en: 'Output classified: safe' },
+    ],
+    kgNodes: [
+      { source: 'EDR Log', cls: 'ss-kg-source--edr', text: '12 insiden minggu ini — INC-2047 (kritis), INC-2044 (kritis), INC-2041 (tinggi)' },
+      { source: 'AbuseIPDB', cls: 'ss-kg-source--abuseipdb', text: 'IP 192.168.10.45 — sumber serangan brute force SSH utama' },
+      { source: 'AlienVault OTX', cls: 'ss-kg-source--otx', text: 'Kampanye SSH scanner aktif sejak 18 Apr 2026, tag: brute-force' },
+      { source: 'NIST', cls: 'ss-kg-source--nist', text: 'SP 800-61 — Computer Security Incident Handling Guide (referensi SLA)' },
+    ],
+  },
+};
+
+function loadResponse(id) {
+  const r = responses[id];
+  if (!r) return;
+  const l = document.documentElement.getAttribute('data-lang') || 'id';
+
+  // Trace header
+  document.getElementById('ss-resp-id').textContent = r.id;
+  document.getElementById('ss-resp-ts').textContent = r.timestamp;
+  document.getElementById('ss-resp-latency').textContent = r.latency;
+  document.getElementById('ss-resp-routing').textContent = r.routingReason[l];
+
+  const modelBadge = document.getElementById('ss-resp-model');
+  modelBadge.textContent = r.model;
+  modelBadge.className = `ss-model-badge ss-model-badge--${r.modelType}`;
+
+  const confEl = document.getElementById('ss-resp-confidence');
+  confEl.textContent = r.confidence[l];
+  confEl.className = r.confidenceClass;
+
+  const reviewEl = document.getElementById('ss-resp-review');
+  reviewEl.textContent = r.humanReview[l];
+  reviewEl.className = r.humanReviewClass;
+
+  // Prompt metadata
+  document.getElementById('pm-input-tokens').textContent  = r.promptMeta.input;
+  document.getElementById('pm-output-tokens').textContent = r.promptMeta.output;
+  document.getElementById('pm-temperature').textContent   = r.promptMeta.temp;
+  document.getElementById('pm-context').textContent       = r.promptMeta.ctx;
+
+  // Guardrails
+  const tbody = document.getElementById('guardrail-tbody');
+  tbody.innerHTML = r.guardrails.map(g => {
+    const check  = l === 'en' ? g.check_en  : g.check_id;
+    const detail = l === 'en' ? g.detail_en : g.detail_id;
+    const badge  = g.result === 'pass'
+      ? `<span class="badge-pass">${l==='en'?'Pass':'Lulus'}</span>`
+      : `<span class="badge-flag">${l==='en'?'Flagged — reviewed':'Ditandai — ditinjau'}</span>`;
+    return `<tr>
+      <td><span class="layer-badge">${g.layer}</span></td>
+      <td>${check}</td>
+      <td>${badge}</td>
+      <td class="t-small t-muted">${detail}</td>
+    </tr>`;
+  }).join('');
+
+  // Knowledge graph nodes
+  const kgEl = document.getElementById('kg-nodes');
+  kgEl.innerHTML = r.kgNodes.map(n => `
+    <div class="ss-kg-node">
+      <span class="ss-kg-source-badge ${n.cls}">${n.source}</span>
+      <p>${n.text}</p>
+    </div>`).join('');
+}
+
+// Auto-select from URL param ?response=N
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const rid = params.get('response');
+  if (rid && responses[rid]) {
+    document.getElementById('ss-response-select').value = rid;
+    loadResponse(rid);
+  } else {
+    loadResponse('1');
+  }
+})();
+</script>
+</body>
+</html>
