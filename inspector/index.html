@@ -20,7 +20,7 @@
   <style>
     .ss-inspector-grid { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
     @media (min-width: 960px) { .ss-inspector-grid { grid-template-columns: 1fr 1fr; } }
-    .ss-trace-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-trace-card { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
     .ss-trace-card h3 { font-size: 14px; font-weight: 500; margin-bottom: var(--ss-gap-md); color: var(--ss-neutral-700); }
     .ss-trace-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--ss-border); font-size: 13px; }
     .ss-trace-row:last-child { border-bottom: none; }
@@ -48,7 +48,7 @@
     .ss-log-meta-table td:first-child { color: var(--ss-neutral-500); min-width: 100px; }
     .ss-response-selector { display: flex; align-items: center; gap: 12px; margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
     .ss-response-selector label { font-size: 13px; color: var(--ss-neutral-500); }
-    .ss-response-selector select { padding: 7px 12px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); font-size: 13px; font-family: var(--ss-font); background: var(--ss-surface); }
+    .ss-response-selector select { padding: 7px 12px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); font-size: 13px; font-family: var(--ss-font); background: var(--ss-surface-container-lowest); }
   </style>
 </head>
 <body>

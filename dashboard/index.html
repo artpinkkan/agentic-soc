@@ -19,18 +19,18 @@
   </script>
   <style>
     .ss-xray-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-lg); }
-    .ss-xray-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-xray-card { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
     .ss-xray-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
     .ss-xray-card__q { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.4; }
     .ss-xray-card__finding { font-size: 13px; color: var(--ss-neutral-700); line-height: 1.5; margin-bottom: 10px; }
     .ss-xray-card__detail summary { font-size: 12px; color: var(--ss-brand); cursor: pointer; }
     .ss-xray-card__detail pre { margin-top: 8px; font-size: 11px; background: var(--ss-neutral-100); padding: 10px; border-radius: var(--ss-radius-sm); overflow-x: auto; line-height: 1.5; }
-    .ss-actions-panel { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); }
+    .ss-actions-panel { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); }
     .ss-actions-panel h3 { font-size: 16px; font-weight: 500; margin-bottom: var(--ss-gap-md); }
     .ss-actions-list { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-md); }
     .ss-actions-list li { display: flex; align-items: flex-start; gap: 10px; }
     .ss-action-effort { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
-    .ss-export-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); padding: var(--ss-gap-md) var(--ss-gap-lg); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); background: var(--ss-surface); margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
+    .ss-export-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); padding: var(--ss-gap-md) var(--ss-gap-lg); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); background: var(--ss-surface-container-lowest); margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
     .ss-upgrade-banner { background: var(--ss-brand-light); border: 0.5px solid #5DCAA5; border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-xl); flex-wrap: wrap; }
   </style>
 </head>

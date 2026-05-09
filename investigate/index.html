@@ -24,7 +24,7 @@
     .ss-msg--ai { align-self: flex-start; }
     .ss-msg--user { align-self: flex-end; }
     .ss-msg__bubble { padding: 12px 16px; border-radius: var(--ss-radius-md); font-size: 13px; line-height: 1.6; }
-    .ss-msg--ai .ss-msg__bubble { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: 0 var(--ss-radius-md) var(--ss-radius-md) var(--ss-radius-md); }
+    .ss-msg--ai .ss-msg__bubble { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: 0 var(--ss-radius-md) var(--ss-radius-md) var(--ss-radius-md); }
     .ss-msg--user .ss-msg__bubble { background: var(--ss-brand); color: #fff; border-radius: var(--ss-radius-md) 0 var(--ss-radius-md) var(--ss-radius-md); }
     .ss-msg__meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
     .ss-meta-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 7px; border-radius: 4px; }
@@ -36,15 +36,15 @@
     .ss-ai-section { margin-bottom: 8px; }
     .ss-ai-section__label { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
     .ss-ai-section__body { font-size: 13px; color: var(--ss-neutral-900); }
-    .ss-chat-input-wrap { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-end; margin-top: var(--ss-gap-md); }
+    .ss-chat-input-wrap { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-end; margin-top: var(--ss-gap-md); }
     .ss-chat-input-wrap textarea { flex: 1; border: none; outline: none; resize: none; font-family: var(--ss-font); font-size: 14px; color: var(--ss-neutral-900); background: none; min-height: 40px; max-height: 120px; line-height: 1.5; }
     .ss-quick-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--ss-gap-md); }
-    .ss-quick-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-sm); background: var(--ss-surface); color: var(--ss-neutral-700); cursor: pointer; transition: background 0.15s; }
+    .ss-quick-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-sm); background: var(--ss-surface-container-lowest); color: var(--ss-neutral-700); cursor: pointer; transition: background 0.15s; }
     .ss-quick-btn:hover { background: var(--ss-neutral-100); }
     .ss-chat-layout { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
     @media (min-width: 960px) { .ss-chat-layout { grid-template-columns: 1fr 280px; } }
     .ss-context-panel { display: flex; flex-direction: column; gap: var(--ss-gap-md); }
-    .ss-context-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md); }
+    .ss-context-card { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md); }
     .ss-context-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--ss-neutral-700); }
     .ss-context-item { font-size: 12px; padding: 5px 0; border-bottom: 0.5px solid var(--ss-border); display: flex; justify-content: space-between; align-items: center; }
     .ss-context-item:last-child { border-bottom: none; }
