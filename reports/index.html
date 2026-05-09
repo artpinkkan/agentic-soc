@@ -389,14 +389,16 @@
 }
 .ss-user-menu a:hover, .ss-user-menu button:hover { background: var(--color-neutral-50); text-decoration: none; }
 .ss-user-menu hr { border: none; border-top: 1px solid var(--color-border); margin: 4px 0; }
-.ss-nav__tier--sprint { background: #EEEDFE; color: #3C3489; }
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; border: 0.5px solid; white-space: nowrap; }
+.badge-free { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+.badge-sprint { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
 </style>
 
 <!-- ── Nav ── -->
 <nav class="ss-nav">
   <div class="ss-nav__brand">
     <a href="/agentic-soc/dashboard/" class="ss-nav__logo">Shannon Sentinel</a>
-    <span id="nav-tier-badge" class="ss-nav__tier ss-nav__tier--free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
   </div>
   <div class="ss-nav__links">
     <a href="/agentic-soc/dashboard/"   data-en="Dashboard"   data-id="Dasbor">Dasbor</a>
@@ -433,7 +435,7 @@
   document.getElementById('nav-company').textContent = window.SS.company || '';
   if (window.SS.tier === 'sprint') {
     const badge = document.getElementById('nav-tier-badge');
-    badge.className = 'ss-nav__tier ss-nav__tier--sprint';
+    badge.className = 'badge badge-sprint';
     badge.setAttribute('data-en', 'Sprint'); badge.setAttribute('data-id', 'Sprint');
     badge.textContent = 'Sprint';
   }
