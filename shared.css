@@ -297,15 +297,28 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 .ss-audience-bar__label { font-size: 12px; color: var(--ss-on-surface-variant); font-weight: 500; margin-right: 4px; white-space: nowrap; }
 .ss-audience-bar__spacer { flex: 1; }
 .ss-audience-bar__actions { display: flex; gap: 8px; align-items: center; }
+/* Segmented control tray */
+.ss-aud-tabs {
+  display: inline-flex;
+  background: var(--ss-surface-container-low);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 2px;
+}
 .ss-aud-tab {
   font-size: 13px; font-weight: 500;
-  padding: 5px 14px; border-radius: 100px;
-  border: 1px solid var(--ss-outline-variant);
-  background: none; color: var(--ss-on-surface-variant);
-  cursor: pointer; transition: all 0.15s;
+  padding: 5px 16px; border-radius: 100px;
+  border: none; background: none;
+  color: var(--ss-on-surface-variant);
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap;
 }
-.ss-aud-tab:hover { background: var(--ss-surface-container-low); }
-.ss-aud-tab--active { background: var(--ss-brand); color: #fff; border-color: var(--ss-brand); }
+.ss-aud-tab:hover { color: var(--ss-on-surface); background: rgba(255,255,255,0.5); }
+.ss-aud-tab--active {
+  background: var(--ss-surface-container-lowest);
+  color: var(--ss-brand);
+  box-shadow: var(--ss-shadow-card);
+}
 
 /* ── Cards ───────────────────────────────────────────────────────────────── */
 .ss-card {
