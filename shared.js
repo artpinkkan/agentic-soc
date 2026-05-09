@@ -44,11 +44,6 @@ function initNav() {
   }
 }
 
-function toggleUserMenu() {
-  const m = document.getElementById('user-menu');
-  if (m) m.hidden = !m.hidden;
-}
-
 function toggleNav() {
   const nav = document.getElementById('ss-nav');
   if (!nav) return;
@@ -56,12 +51,6 @@ function toggleNav() {
   localStorage.setItem('ss-nav-collapsed', collapsed ? '1' : '0');
 }
 
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.ss-nav__user-row') && !e.target.closest('.ss-user-menu')) {
-    const m = document.getElementById('user-menu');
-    if (m) m.hidden = true;
-  }
-});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {

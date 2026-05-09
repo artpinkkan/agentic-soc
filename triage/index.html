@@ -109,18 +109,22 @@
         <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
       </div>
-      <div class="ss-nav__user-row" onclick="toggleUserMenu()">
+      <div class="ss-nav__footer-divider"></div>
+      <div class="ss-nav__user-row">
         <div class="ss-avatar" id="nav-avatar">TA</div>
         <div class="ss-nav__user-info">
           <span id="nav-name" class="ss-nav__name">Tamaria</span>
           <span id="nav-company" class="ss-nav__company">Gmail</span>
         </div>
       </div>
-      <div class="ss-user-menu" id="user-menu" hidden>
-        <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
-        <hr>
-        <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
-      </div>
+      <a href="/agentic-soc/onboarding/" class="ss-nav__footer-action" title="Setup wizard">
+        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        <span class="ss-nav__footer-action-label" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</span>
+      </a>
+      <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
+        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
+      </button>
     </div>
   </nav>
 
