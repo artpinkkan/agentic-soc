@@ -160,7 +160,6 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
   display: flex; align-items: center; gap: 10px;
   text-decoration: none !important; overflow: hidden; flex: 1; min-width: 0;
 }
-.ss-nav__brand-icon { width: 24px; height: 24px; flex-shrink: 0; color: var(--ss-brand); }
 .ss-nav__brand-name {
   font-family: var(--ss-font-headline); font-weight: 700; font-size: 14px;
   color: var(--ss-on-surface); white-space: nowrap; overflow: hidden;
@@ -193,7 +192,8 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 }
 .ss-nav__item:hover { background: var(--ss-surface-container-low); color: var(--ss-on-surface); }
 .ss-nav__item.active { background: rgba(0,104,95,0.09); color: var(--ss-brand); }
-.ss-nav__item-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.ss-nav__item-icon { width: 18px; height: 18px; min-width: 18px; flex-shrink: 0; display: block; }
+.ss-nav__brand-icon { width: 24px; height: 24px; min-width: 24px; flex-shrink: 0; display: block; color: var(--ss-brand); }
 .ss-nav__item-label { transition: opacity 0.15s; white-space: nowrap; overflow: hidden; }
 .ss-nav--collapsed .ss-nav__item-label { opacity: 0; }
 
