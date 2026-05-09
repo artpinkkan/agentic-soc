@@ -137,26 +137,20 @@
 
   <div class="ss-page">
     <!-- Page header -->
-    <div class="ss-page-header">
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
       <div>
         <h1 class="ss-page-title" data-en="Security Reports" data-id="Laporan Keamanan">Laporan Keamanan</h1>
         <p class="ss-page-sub" data-en="AI-generated reports framed for each audience. Free Tier includes a watermarked preview." data-id="Laporan bertenaga AI yang disesuaikan untuk setiap audiens. Tier Gratis menyertakan pratinjau bertanda air.">
           Laporan bertenaga AI yang disesuaikan untuk setiap audiens. Tier Gratis menyertakan pratinjau bertanda air.
         </p>
       </div>
-    </div>
-
-    <!-- Sticky "View as" audience bar -->
-    <div class="ss-audience-bar">
-      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
-      <div class="ss-aud-tabs">
-        <button class="ss-aud-tab ss-aud-tab--active" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
-        <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
-        <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
-        <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
-      </div>
-      <div class="ss-audience-bar__spacer"></div>
-      <div class="ss-audience-bar__actions">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
+          <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
+          <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
+          <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
+          <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
+        </select>
         <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="generateOJK()" data-en="OJK Evidence Pack" data-id="Paket Bukti OJK">Paket Bukti OJK</button>
         <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="sendEmail()" data-en="Send via Email" data-id="Kirim via Email">Kirim via Email</button>
         <button class="ss-btn-primary" style="font-size:12px;padding:5px 14px;" onclick="exportPDF()" data-en="Export PDF" data-id="Ekspor PDF">Ekspor PDF</button>

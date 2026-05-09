@@ -21,12 +21,11 @@ function setAudience(aud) {
   localStorage.setItem('ss-audience', aud);
   const lang = localStorage.getItem('ss-lang') || 'id';
 
-  // Update tab states
-  document.querySelectorAll('.ss-aud-tab').forEach(t =>
-    t.classList.toggle('ss-aud-tab--active', t.dataset.aud === aud)
-  );
+  // Sync select element
+  const sel = document.getElementById('audience-select');
+  if (sel) sel.value = aud;
 
-  // data-{aud} pattern — used by elements with .aud-q / .aud-f classes (dashboard)
+  // data-{aud} pattern — elements with .aud-q / .aud-f classes (dashboard)
   document.querySelectorAll('.aud-q, .aud-f').forEach(el => {
     if (el.dataset[aud]) el.textContent = el.dataset[aud];
   });

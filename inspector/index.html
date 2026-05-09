@@ -113,26 +113,23 @@
   </nav>
 
   <div class="ss-page">
-    <div class="ss-page-header">
-      <h1 class="ss-page-title" data-en="AI Inspector" data-id="Inspektor AI">Inspektor AI</h1>
-      <p class="ss-page-sub" data-en="Per-response trace: which model answered, what was retrieved, which guardrails fired." data-id="Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.">
-        Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.
-      </p>
-    </div>
-
-    <!-- Sticky audience bar -->
-    <div class="ss-audience-bar">
-      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
-      <div class="ss-aud-tabs">
-        <button class="ss-aud-tab" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
-        <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
-        <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
-        <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="ss-page-title" data-en="AI Inspector" data-id="Inspektor AI">Inspektor AI</h1>
+        <p class="ss-page-sub" data-en="Per-response trace: which model answered, what was retrieved, which guardrails fired." data-id="Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.">
+          Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.
+        </p>
       </div>
+      <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
+        <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
+        <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
+        <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
+        <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
+      </select>
     </div>
 
     <!-- Response selector -->
-    <div class="ss-response-selector" style="margin-top: var(--ss-gap-lg);">
+    <div class="ss-response-selector">
       <label for="resp-select" data-en="Inspect response:" data-id="Periksa respons:">Periksa respons:</label>
       <select id="resp-select" onchange="loadResponse(this.value)">
         <option value="1" data-en="[14:09] SSH Brute Force analysis — Qwen 2.5 7B" data-id="[14:09] Analisis SSH Brute Force — Qwen 2.5 7B">[14:09] Analisis SSH Brute Force — Qwen 2.5 7B</option>

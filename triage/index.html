@@ -126,22 +126,19 @@
   </nav>
 
   <div class="ss-page">
-    <div class="ss-page-header">
-      <h1 class="ss-page-title" data-en="Automated Triage" data-id="Triase Otomatis">Triase Otomatis</h1>
-      <p class="ss-page-sub" data-en="AI-classified alerts with human-in-the-loop approval for destructive actions." data-id="Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.">
-        Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.
-      </p>
-    </div>
-
-    <!-- Sticky audience bar -->
-    <div class="ss-audience-bar">
-      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
-      <div class="ss-aud-tabs">
-        <button class="ss-aud-tab" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
-        <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
-        <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
-        <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="ss-page-title" data-en="Automated Triage" data-id="Triase Otomatis">Triase Otomatis</h1>
+        <p class="ss-page-sub" data-en="AI-classified alerts with human-in-the-loop approval for destructive actions." data-id="Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.">
+          Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.
+        </p>
       </div>
+      <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
+        <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
+        <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
+        <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
+        <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
+      </select>
     </div>
 
     <!-- Stats -->
