@@ -259,8 +259,9 @@
   </div>
 
   <!-- Human Review Modal -->
-  <div class="ss-modal-overlay" id="review-modal" hidden onclick="closeModal(event)">
-    <div class="ss-modal" onclick="event.stopPropagation()">
+  <div class="ss-modal-overlay" id="review-modal" style="display:none" onclick="if(event.target===this)hideReviewModal()">
+    <div class="ss-modal" style="position:relative">
+      <button onclick="hideReviewModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;line-height:1;cursor:pointer;color:var(--ss-on-surface-variant)" aria-label="Close">&times;</button>
       <h3 data-en="Human Review Required" data-id="Tinjauan Manusia Diperlukan">Tinjauan Manusia Diperlukan</h3>
       <p class="ss-modal__sub"
          data-en="This report contains red (critical) findings. A human analyst must review before sharing."
@@ -275,7 +276,7 @@
         </ul>
       </div>
       <div class="ss-modal__actions">
-        <button class="ss-btn-secondary" onclick="document.getElementById('review-modal').hidden=true"
+        <button class="ss-btn-secondary" onclick="hideReviewModal()"
                 data-en="Cancel" data-id="Batalkan">Batalkan</button>
         <button class="ss-btn-primary" onclick="confirmExport()"
                 data-en="Confirm & Continue" data-id="Konfirmasi & Lanjutkan">Konfirmasi &amp; Lanjutkan</button>
@@ -298,28 +299,25 @@
       }
     }
 
-    function exportPDF() {
-      document.getElementById('review-modal').hidden = false;
+    function showReviewModal() {
+      document.getElementById('review-modal').style.display = 'flex';
     }
 
-    function sendEmail() {
-      document.getElementById('review-modal').hidden = false;
+    function hideReviewModal() {
+      document.getElementById('review-modal').style.display = 'none';
     }
+
+    function exportPDF() { showReviewModal(); }
+    function sendEmail() { showReviewModal(); }
 
     function generateOJK() {
       document.getElementById('ojk-pack').hidden = false;
     }
 
     function confirmExport() {
-      document.getElementById('review-modal').hidden = true;
+      hideReviewModal();
       const lang = localStorage.getItem('ss-lang') || 'id';
       alert(lang === 'en' ? 'Generating watermarked PDF…' : 'Membuat PDF bertanda air…');
-    }
-
-    function closeModal(e) {
-      if (e.target === document.getElementById('review-modal')) {
-        document.getElementById('review-modal').hidden = true;
-      }
     }
 
     function switchReport(type) {
