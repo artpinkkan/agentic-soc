@@ -1,27 +1,16 @@
 # macOS
 .DS_Store
 
-# Next.js build output (built by CI, not committed)
-sentinel/.next/
-sentinel/out/
+# Planning docs
+sentinel-mvp/
 
-# Root-level Next.js deploy artifacts (legacy — no longer committed)
-/_next/
-/dashboard/
-/investigate/
-/login/
-/reports/
-/triage/
-/404/
-/_not-found/
-/index.html
-/404.html
-/__next.*
-/index.txt
-
-# Duplicate files with spaces (Finder copies)
+# Duplicate Finder copies
 * 2.*
 * 2/
 
-# Planning docs
-sentinel-mvp/
+# Old Next.js build artifacts (no longer used)
+sentinel/
+_next/
+_not-found/
+404.html
+404/

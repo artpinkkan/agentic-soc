@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspektor AI — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+    })();
+  </script>
+  <style>
+    .ss-inspector-grid { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
+    @media (min-width: 960px) { .ss-inspector-grid { grid-template-columns: 1fr 1fr; } }
+    .ss-trace-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-trace-card h3 { font-size: 14px; font-weight: 500; margin-bottom: var(--ss-gap-md); color: var(--ss-neutral-700); }
+    .ss-trace-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--ss-border); font-size: 13px; }
+    .ss-trace-row:last-child { border-bottom: none; }
+    .ss-trace-label { color: var(--ss-neutral-500); min-width: 120px; flex-shrink: 0; }
+    .ss-trace-value { color: var(--ss-neutral-900); text-align: right; font-family: monospace; font-size: 12px; }
+    .ss-guardrail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ss-guardrail-table th { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--ss-border-md); }
+    .ss-guardrail-table td { padding: 8px 8px; border-bottom: 0.5px solid var(--ss-border); vertical-align: top; }
+    .ss-guardrail-table tr:last-child td { border-bottom: none; }
+    .ss-status-pass { color: var(--ss-success); font-weight: 500; }
+    .ss-status-flag { color: var(--ss-warning); font-weight: 500; }
+    .ss-kg-nodes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .ss-kg-node { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--ss-radius-sm); border: 0.5px solid; font-size: 12px; }
+    .ss-kg-node--attck    { background: #F9ECFE; color: #6B21A8; border-color: #D8B4FE; }
+    .ss-kg-node--nvd      { background: #FFF7ED; color: #9A3412; border-color: #FDC5A4; }
+    .ss-kg-node--kev      { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+    .ss-kg-node--sigma    { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+    .ss-kg-node--epss     { background: #F0FDF4; color: #166534; border-color: #86EFAC; }
+    .ss-kg-node--abuseipdb { background: #FFF9C4; color: #92400E; border-color: #FCD34D; }
+    .ss-prompt-log { background: var(--ss-neutral-50); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-md); font-size: 12px; font-family: monospace; line-height: 1.6; overflow: hidden; }
+    .ss-prompt-log summary { padding: 10px 14px; cursor: pointer; font-size: 13px; font-family: var(--ss-font); color: var(--ss-brand); font-weight: 500; }
+    .ss-prompt-log pre { padding: 10px 14px; overflow-x: auto; white-space: pre-wrap; color: var(--ss-neutral-700); }
+    .ss-log-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .ss-log-meta-table td { padding: 4px 8px; font-size: 12px; }
+    .ss-log-meta-table td:first-child { color: var(--ss-neutral-500); min-width: 100px; }
+    .ss-response-selector { display: flex; align-items: center; gap: 12px; margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
+    .ss-response-selector label { font-size: 13px; color: var(--ss-neutral-500); }
+    .ss-response-selector select { padding: 7px 12px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); font-size: 13px; font-family: var(--ss-font); background: var(--ss-surface); }
+  </style>
+</head>
+<body>
+  <nav class="ss-nav">
+    <div class="ss-nav__brand">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__logo">Shannon Sentinel</a>
+      <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    </div>
+    <div class="ss-nav__links">
+      <a href="/agentic-soc/dashboard/"   data-en="Dashboard"  data-id="Dasbor">Dasbor</a>
+      <a href="/agentic-soc/investigate/" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+      <a href="/agentic-soc/triage/"      data-en="Triage"     data-id="Triase">Triase</a>
+      <a href="/agentic-soc/reports/"     data-en="Reports"    data-id="Laporan">Laporan</a>
+      <a href="/agentic-soc/inspector/"   class="active" data-en="Inspector" data-id="Inspektor">Inspektor</a>
+    </div>
+    <div class="ss-nav__actions">
+      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      <div class="ss-nav__user" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">RH</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">Rudi Hartono</span>
+          <span id="nav-company" class="ss-nav__company">PT Bank Contoh</span>
+        </div>
+        <div class="ss-user-menu" id="user-menu" hidden>
+          <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
+          <hr>
+          <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ss-page">
+    <div class="ss-page-header">
+      <h1 class="ss-page-title" data-en="AI Inspector" data-id="Inspektor AI">Inspektor AI</h1>
+      <p class="ss-page-sub" data-en="Per-response trace: which model answered, what was retrieved, which guardrails fired." data-id="Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.">
+        Jejak per-respons: model mana yang menjawab, apa yang diambil, guardrail mana yang aktif.
+      </p>
+    </div>
+
+    <!-- Response selector -->
+    <div class="ss-response-selector">
+      <label for="resp-select" data-en="Inspect response:" data-id="Periksa respons:">Periksa respons:</label>
+      <select id="resp-select" onchange="loadResponse(this.value)">
+        <option value="1" data-en="[14:09] SSH Brute Force analysis — Qwen 2.5 7B" data-id="[14:09] Analisis SSH Brute Force — Qwen 2.5 7B">[14:09] Analisis SSH Brute Force — Qwen 2.5 7B</option>
+        <option value="2" data-en="[14:11] Escalation recommendation — Qwen 2.5 7B (guardrail flag)" data-id="[14:11] Rekomendasi eskalasi — Qwen 2.5 7B (flag guardrail)">[14:11] Rekomendasi eskalasi — Qwen 2.5 7B (flag guardrail)</option>
+        <option value="3" data-en="[13:45] DMARC finding summary — Claude Sonnet fallback" data-id="[13:45] Ringkasan temuan DMARC — cadangan Claude Sonnet">[13:45] Ringkasan temuan DMARC — cadangan Claude Sonnet</option>
+      </select>
+    </div>
+
+    <div class="ss-inspector-grid">
+
+      <!-- Trace card -->
+      <div class="ss-trace-card">
+        <h3 data-en="Response Trace" data-id="Jejak Respons">Jejak Respons</h3>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Model" data-id="Model">Model</span>
+          <span class="ss-trace-value" id="trace-model">Qwen 2.5 7B (vLLM)</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Timestamp" data-id="Stempel waktu">Stempel waktu</span>
+          <span class="ss-trace-value" id="trace-ts">2026-04-25T14:09:17+07:00</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Routing reason" data-id="Alasan routing">Alasan routing</span>
+          <span class="ss-trace-value" id="trace-routing">severity=HIGH → SLM primary</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Latency" data-id="Latensi">Latensi</span>
+          <span class="ss-trace-value" id="trace-latency">1,247 ms</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Confidence" data-id="Kepercayaan">Kepercayaan</span>
+          <span class="ss-trace-value" id="trace-confidence">94%</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Human review" data-id="Tinjauan manusia">Tinjauan manusia</span>
+          <span class="ss-trace-value" id="trace-hitl" style="color:var(--ss-warning);">⚠ Required</span>
+        </div>
+        <div class="ss-trace-row">
+          <span class="ss-trace-label" data-en="Tenant" data-id="Tenant">Tenant</span>
+          <span class="ss-trace-value"><span id="log-tenant">tenant-unknown</span></span>
+        </div>
+      </div>
+
+      <!-- Guardrail table -->
+      <div class="ss-trace-card">
+        <h3 data-en="Guardrail Checks" data-id="Pemeriksaan Guardrail">Pemeriksaan Guardrail</h3>
+        <table class="ss-guardrail-table">
+          <thead>
+            <tr>
+              <th data-en="Layer" data-id="Lapisan">Lapisan</th>
+              <th data-en="Check" data-id="Pemeriksaan">Pemeriksaan</th>
+              <th data-en="Status" data-id="Status">Status</th>
+            </tr>
+          </thead>
+          <tbody id="guardrail-body">
+            <tr>
+              <td><span data-en="Input" data-id="Input">Input</span></td>
+              <td data-en="Jailbreak / PII / scope" data-id="Jailbreak / PII / cakupan">Jailbreak / PII / cakupan</td>
+              <td class="ss-status-pass">✓ PASS</td>
+            </tr>
+            <tr>
+              <td><span data-en="Retrieval" data-id="Retrieval">Retrieval</span></td>
+              <td data-en="Untrusted-content tagging" data-id="Penandaan konten tidak tepercaya">Penandaan konten tidak tepercaya</td>
+              <td class="ss-status-pass">✓ PASS</td>
+            </tr>
+            <tr>
+              <td><span data-en="Output" data-id="Output">Output</span></td>
+              <td data-en="Dual-use filter / citation enforcement" data-id="Filter dual-use / penegakan kutipan">Filter dual-use / penegakan kutipan</td>
+              <td class="ss-status-pass">✓ PASS</td>
+            </tr>
+            <tr>
+              <td><span data-en="Topical" data-id="Topikal">Topikal</span></td>
+              <td data-en="Defensive-only scope check" data-id="Pemeriksaan cakupan hanya defensif">Pemeriksaan cakupan hanya defensif</td>
+              <td class="ss-status-pass">✓ PASS</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Knowledge graph nodes -->
+    <div class="ss-trace-card" style="margin-top:var(--ss-gap-lg);">
+      <h3 data-en="Knowledge Sources Retrieved" data-id="Sumber Pengetahuan yang Diambil">Sumber Pengetahuan yang Diambil</h3>
+      <div class="ss-kg-nodes" id="kg-nodes">
+        <div class="ss-kg-node ss-kg-node--attck">
+          <span>🔗</span> MITRE ATT&CK T1110.001
+        </div>
+        <div class="ss-kg-node ss-kg-node--nvd">
+          <span>📋</span> NVD CVE-2023-38408
+        </div>
+        <div class="ss-kg-node ss-kg-node--kev">
+          <span>⚡</span> CISA KEV 2023-38408
+        </div>
+        <div class="ss-kg-node ss-kg-node--sigma">
+          <span>📐</span> Sigma SSH Brute Force
+        </div>
+        <div class="ss-kg-node ss-kg-node--epss">
+          <span>📊</span> EPSS 0.847
+        </div>
+        <div class="ss-kg-node ss-kg-node--abuseipdb">
+          <span>🚨</span> AbuseIPDB ×3
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw prompt log -->
+    <details class="ss-prompt-log" style="margin-top:var(--ss-gap-lg);">
+      <summary data-en="Raw prompt log (metadata only)" data-id="Log prompt mentah (hanya metadata)">Log prompt mentah (hanya metadata)</summary>
+      <pre><table class="ss-log-meta-table">
+<tr><td>request_id</td><td>req_a7f3c2e9b1d4</td></tr>
+<tr><td>tenant_id</td><td id="log-tenant-pre">tenant-unknown</td></tr>
+<tr><td>model</td><td>Qwen 2.5 7B (stub — fine-tune pending)</td></tr>
+<tr><td>fallback_model</td><td>claude-sonnet-4-6 (not triggered)</td></tr>
+<tr><td>input_tokens</td><td>847</td></tr>
+<tr><td>output_tokens</td><td>412</td></tr>
+<tr><td>retrieval_nodes</td><td>6 (ATT&CK×2, NVD×1, KEV×1, Sigma×1, EPSS×1)</td></tr>
+<tr><td>guardrail_input</td><td>PASS (jailbreak:0.02, pii:0.00, scope:0.98)</td></tr>
+<tr><td>guardrail_retrieval</td><td>PASS (untrusted_content:0.05)</td></tr>
+<tr><td>guardrail_output</td><td>PASS (dual_use:0.03, citation_coverage:1.00)</td></tr>
+<tr><td>guardrail_topical</td><td>PASS (defensive_scope:0.97)</td></tr>
+<tr><td>llama_guard</td><td>PASS (safe)</td></tr>
+<tr><td>confidence</td><td>0.94</td></tr>
+<tr><td>hitl_required</td><td>true (confidence &lt; 0.95 threshold)</td></tr>
+<tr><td>latency_ms</td><td>1247</td></tr>
+<tr><td>cost_usd</td><td>0.0031</td></tr>
+</table>
+
+[Prompt content not stored — metadata-only log per tenant privacy policy]</pre>
+    </details>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    // Hydrate tenant from session
+    (function() {
+      if (window.SS) {
+        const slug = 'tenant-' + (window.SS.slug || 'unknown');
+        document.getElementById('log-tenant').textContent = slug;
+        document.getElementById('log-tenant-pre').textContent = slug;
+      }
+    })();
+
+    const responses = {
+      '1': {
+        model: 'Qwen 2.5 7B (vLLM)',
+        ts: '2026-04-25T14:09:17+07:00',
+        routing: 'severity=HIGH → SLM primary',
+        latency: '1,247 ms',
+        confidence: '94%',
+        hitl: '⚠ Required',
+        guardrails: [
+          ['Input', 'Jailbreak / PII / scope', 'pass'],
+          ['Retrieval', 'Untrusted-content tagging', 'pass'],
+          ['Output', 'Dual-use filter / citation enforcement', 'pass'],
+          ['Topical', 'Defensive-only scope check', 'pass'],
+        ],
+        nodes: [
+          ['attck', '🔗 MITRE ATT&CK T1110.001'],
+          ['nvd', '📋 NVD CVE-2023-38408'],
+          ['kev', '⚡ CISA KEV 2023-38408'],
+          ['sigma', '📐 Sigma SSH Brute Force'],
+          ['epss', '📊 EPSS 0.847'],
+          ['abuseipdb', '🚨 AbuseIPDB ×3'],
+        ]
+      },
+      '2': {
+        model: 'Qwen 2.5 7B (vLLM)',
+        ts: '2026-04-25T14:11:04+07:00',
+        routing: 'severity=HIGH → SLM primary',
+        latency: '1,089 ms',
+        confidence: '91%',
+        hitl: '⚠ Required',
+        guardrails: [
+          ['Input', 'Jailbreak / PII / scope', 'pass'],
+          ['Retrieval', 'Untrusted-content tagging', 'pass'],
+          ['Output', 'Dual-use filter / citation enforcement', 'FLAG'],
+          ['Topical', 'Defensive-only scope check', 'pass'],
+        ],
+        nodes: [
+          ['attck', '🔗 MITRE ATT&CK T1110'],
+          ['sigma', '📐 Sigma SSH Brute Force'],
+          ['epss', '📊 EPSS 0.847'],
+        ]
+      },
+      '3': {
+        model: 'claude-sonnet-4-6 (fallback)',
+        ts: '2026-04-25T13:45:22+07:00',
+        routing: 'severity=LOW → SLM timeout → Claude fallback',
+        latency: '2,341 ms',
+        confidence: '97%',
+        hitl: '✓ Not required',
+        guardrails: [
+          ['Input', 'Jailbreak / PII / scope', 'pass'],
+          ['Retrieval', 'Untrusted-content tagging', 'pass'],
+          ['Output', 'Dual-use filter / citation enforcement', 'pass'],
+          ['Topical', 'Defensive-only scope check', 'pass'],
+        ],
+        nodes: [
+          ['attck', '🔗 MITRE ATT&CK T1566'],
+          ['nvd', '📋 RFC 7489 DMARC'],
+          ['sigma', '📐 Sigma Email Security'],
+        ]
+      }
+    };
+
+    function loadResponse(id) {
+      const r = responses[id];
+      if (!r) return;
+      document.getElementById('trace-model').textContent = r.model;
+      document.getElementById('trace-ts').textContent = r.ts;
+      document.getElementById('trace-routing').textContent = r.routing;
+      document.getElementById('trace-latency').textContent = r.latency;
+      document.getElementById('trace-confidence').textContent = r.confidence;
+      const hitlEl = document.getElementById('trace-hitl');
+      hitlEl.textContent = r.hitl;
+      hitlEl.style.color = r.hitl.includes('⚠') ? 'var(--ss-warning)' : 'var(--ss-success)';
+
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const tbody = document.getElementById('guardrail-body');
+      tbody.innerHTML = r.guardrails.map(([layer, check, status]) => `
+        <tr>
+          <td>${layer}</td>
+          <td>${check}</td>
+          <td class="${status === 'pass' ? 'ss-status-pass' : 'ss-status-flag'}">${status === 'pass' ? '✓ PASS' : '⚠ FLAG'}</td>
+        </tr>`).join('');
+
+      document.getElementById('kg-nodes').innerHTML = r.nodes.map(([type, label]) =>
+        `<div class="ss-kg-node ss-kg-node--${type}"><span></span>${label}</div>`).join('');
+    }
+
+    // Apply lang to select options
+    document.addEventListener('DOMContentLoaded', () => {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      document.querySelectorAll('#resp-select option').forEach(opt => {
+        if (lang === 'en' && opt.dataset.en) opt.textContent = opt.dataset.en;
+        else if (opt.dataset.id) opt.textContent = opt.dataset.id;
+      });
+    });
+  </script>
+</body>
+</html>

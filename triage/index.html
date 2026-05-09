@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triase — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+    })();
+  </script>
+  <style>
+    .ss-triage-layout { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
+    @media (min-width: 960px) { .ss-triage-layout { grid-template-columns: 1fr 300px; } }
+    .ss-stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-lg); }
+    .ss-stat-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md); text-align: center; }
+    .ss-stat-card__value { font-size: 28px; font-weight: 600; color: var(--ss-brand); line-height: 1.2; }
+    .ss-stat-card__label { font-size: 12px; color: var(--ss-neutral-500); margin-top: 4px; }
+    .ss-playbook { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); overflow: hidden; margin-bottom: var(--ss-gap-lg); }
+    .ss-playbook__header { padding: var(--ss-gap-md) var(--ss-gap-lg); border-bottom: 0.5px solid var(--ss-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .ss-playbook__title { font-size: 16px; font-weight: 500; }
+    .ss-playbook__meta { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
+    .ss-playbook__steps { list-style: none; }
+    .ss-step { padding: var(--ss-gap-md) var(--ss-gap-lg); border-bottom: 0.5px solid var(--ss-border); display: flex; align-items: flex-start; gap: 12px; }
+    .ss-step:last-child { border-bottom: none; }
+    .ss-step__icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .ss-step__icon--done { background: var(--ss-success-light); color: var(--ss-success); }
+    .ss-step__icon--pending { background: var(--ss-warning-light); color: #854F0B; }
+    .ss-step__icon--locked { background: var(--ss-neutral-100); color: var(--ss-neutral-500); }
+    .ss-step__icon--approved { background: var(--ss-success-light); color: var(--ss-success); }
+    .ss-step__icon--rejected { background: var(--ss-danger-light); color: var(--ss-danger); }
+    .ss-step__body { flex: 1; }
+    .ss-step__title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .ss-step__desc { font-size: 13px; color: var(--ss-neutral-700); line-height: 1.5; }
+    .ss-hitl-card { border: 1.5px solid #F59E0B; background: #FFFBEB; border-radius: var(--ss-radius-md); padding: 12px 14px; margin-top: 10px; }
+    .ss-hitl-card__label { font-size: 11px; font-weight: 600; color: #92400E; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+    .ss-hitl-card__actions { display: flex; gap: 8px; margin-top: 10px; }
+    .ss-hitl-approve { background: var(--ss-brand); color: #fff; border: none; padding: 7px 16px; border-radius: var(--ss-radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; }
+    .ss-hitl-approve:hover { background: var(--ss-brand-dark); }
+    .ss-hitl-reject { background: var(--ss-surface); color: var(--ss-danger); border: 0.5px solid var(--ss-danger); padding: 7px 16px; border-radius: var(--ss-radius-sm); font-size: 13px; cursor: pointer; }
+    .ss-hitl-reject:hover { background: var(--ss-danger-light); }
+    .ss-audit-panel { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-audit-panel h3 { font-size: 14px; font-weight: 500; margin-bottom: var(--ss-gap-md); }
+    .ss-audit-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .ss-audit-item { display: flex; gap: 10px; font-size: 12px; }
+    .ss-audit-time { color: var(--ss-neutral-500); font-family: monospace; flex-shrink: 0; }
+    .ss-audit-text { color: var(--ss-neutral-700); }
+    .ss-alert-feed { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--ss-gap-lg); }
+    .ss-alert-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-md); font-size: 13px; }
+    .ss-alert-item--new { border-color: var(--ss-brand); }
+    .ss-alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .ss-alert-dot--critical { background: var(--ss-danger); }
+    .ss-alert-dot--high { background: var(--ss-warning); }
+    .ss-alert-dot--medium { background: var(--ss-info); }
+    .ss-alert-name { font-weight: 500; flex: 1; }
+    .ss-alert-time { font-size: 11px; color: var(--ss-neutral-500); }
+  </style>
+</head>
+<body>
+  <nav class="ss-nav">
+    <div class="ss-nav__brand">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__logo">Shannon Sentinel</a>
+      <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    </div>
+    <div class="ss-nav__links">
+      <a href="/agentic-soc/dashboard/"   data-en="Dashboard"  data-id="Dasbor">Dasbor</a>
+      <a href="/agentic-soc/investigate/" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+      <a href="/agentic-soc/triage/"      class="active" data-en="Triage" data-id="Triase">Triase</a>
+      <a href="/agentic-soc/reports/"     data-en="Reports"    data-id="Laporan">Laporan</a>
+      <a href="/agentic-soc/inspector/"   data-en="Inspector"  data-id="Inspektor">Inspektor</a>
+    </div>
+    <div class="ss-nav__actions">
+      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      <div class="ss-nav__user" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">RH</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">Rudi Hartono</span>
+          <span id="nav-company" class="ss-nav__company">PT Bank Contoh</span>
+        </div>
+        <div class="ss-user-menu" id="user-menu" hidden>
+          <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
+          <hr>
+          <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ss-page">
+    <div class="ss-page-header">
+      <h1 class="ss-page-title" data-en="Automated Triage" data-id="Triase Otomatis">Triase Otomatis</h1>
+      <p class="ss-page-sub" data-en="AI-classified alerts with human-in-the-loop approval for destructive actions." data-id="Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.">
+        Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="ss-stats-bar">
+      <div class="ss-stat-card">
+        <div class="ss-stat-card__value" id="stat-triaged">0</div>
+        <div class="ss-stat-card__label" data-en="Alerts triaged today" data-id="Alert triase hari ini">Alert triase hari ini</div>
+      </div>
+      <div class="ss-stat-card">
+        <div class="ss-stat-card__value">94%</div>
+        <div class="ss-stat-card__label" data-en="Avg. AI confidence" data-id="Kepercayaan AI rata-rata">Kepercayaan AI rata-rata</div>
+      </div>
+      <div class="ss-stat-card">
+        <div class="ss-stat-card__value">82%</div>
+        <div class="ss-stat-card__label" data-en="Auto-triage rate (triage only)" data-id="Laju auto-triase (hanya triase)">Laju auto-triase (hanya triase)</div>
+      </div>
+      <div class="ss-stat-card">
+        <div class="ss-stat-card__value">3</div>
+        <div class="ss-stat-card__label" data-en="HITL approvals pending" data-id="Persetujuan HITL tertunda">Persetujuan HITL tertunda</div>
+      </div>
+    </div>
+
+    <!-- Alert feed -->
+    <div class="ss-alert-feed">
+      <div class="ss-alert-item ss-alert-item--new">
+        <div class="ss-alert-dot ss-alert-dot--critical"></div>
+        <span class="ss-alert-name">SSH Brute Force — ssh.bankcontoh.co.id</span>
+        <span class="badge badge-critical" data-en="Critical" data-id="Kritis">Kritis</span>
+        <span class="ss-alert-time">14:07</span>
+      </div>
+      <div class="ss-alert-item">
+        <div class="ss-alert-dot ss-alert-dot--high"></div>
+        <span class="ss-alert-name" data-en="DMARC policy missing — bankcontoh.co.id" data-id="Kebijakan DMARC hilang — bankcontoh.co.id">Kebijakan DMARC hilang — bankcontoh.co.id</span>
+        <span class="badge badge-high" data-en="High" data-id="Tinggi">Tinggi</span>
+        <span class="ss-alert-time">13:45</span>
+      </div>
+      <div class="ss-alert-item">
+        <div class="ss-alert-dot ss-alert-dot--medium"></div>
+        <span class="ss-alert-name" data-en="4 admin accounts without MFA" data-id="4 akun admin tanpa MFA">4 akun admin tanpa MFA</span>
+        <span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span>
+        <span class="ss-alert-time">12:20</span>
+      </div>
+    </div>
+
+    <div class="ss-triage-layout">
+      <div>
+        <!-- Playbook -->
+        <div class="ss-playbook">
+          <div class="ss-playbook__header">
+            <div>
+              <div class="ss-playbook__title" data-en="SSH Brute Force Response" data-id="Respons Brute Force SSH">Respons Brute Force SSH</div>
+              <div class="ss-playbook__meta">ssh.bankcontoh.co.id · 14:07 WIB · 847 <span data-en="failed attempts" data-id="percobaan gagal">percobaan gagal</span></div>
+            </div>
+            <span class="badge badge-critical" data-en="Active" data-id="Aktif">Aktif</span>
+          </div>
+
+          <ul class="ss-playbook__steps">
+
+            <!-- Step 1: Auto-done -->
+            <li class="ss-step">
+              <div class="ss-step__icon ss-step__icon--done">✓</div>
+              <div class="ss-step__body">
+                <div class="ss-step__title" data-en="1. Alert ingested and classified" data-id="1. Alert diterima dan diklasifikasi">1. Alert diterima dan diklasifikasi</div>
+                <div class="ss-step__desc">
+                  <span data-en="T1110.001 Brute Force — AI confidence 94%. Source IPs identified: 45.152.67.23, 185.220.101.9, 91.240.118.172."
+                        data-id="T1110.001 Brute Force — Kepercayaan AI 94%. IP sumber teridentifikasi: 45.152.67.23, 185.220.101.9, 91.240.118.172.">
+                    T1110.001 Brute Force — Kepercayaan AI 94%. IP sumber teridentifikasi.
+                  </span>
+                </div>
+              </div>
+            </li>
+
+            <!-- Step 2: Auto-done -->
+            <li class="ss-step">
+              <div class="ss-step__icon ss-step__icon--done">✓</div>
+              <div class="ss-step__body">
+                <div class="ss-step__title" data-en="2. Log enrichment & correlation" data-id="2. Pengayaan log & korelasi">2. Pengayaan log &amp; korelasi</div>
+                <div class="ss-step__desc">
+                  <span data-en="No successful logins detected. All 3 source IPs flagged in AbuseIPDB. No lateral movement detected."
+                        data-id="Tidak ada login berhasil terdeteksi. Semua 3 IP sumber ditandai di AbuseIPDB. Tidak ada lateral movement terdeteksi.">
+                    Tidak ada login berhasil terdeteksi. Semua 3 IP sumber ditandai di AbuseIPDB.
+                  </span>
+                </div>
+              </div>
+            </li>
+
+            <!-- Step 3: HITL - Block IPs -->
+            <li class="ss-step" id="step-3">
+              <div class="ss-step__icon" id="icon-3" style="background:var(--ss-warning-light); color:#854F0B">!</div>
+              <div class="ss-step__body">
+                <div class="ss-step__title" data-en="3. Block source IPs at firewall" data-id="3. Blokir IP sumber di firewall">3. Blokir IP sumber di firewall</div>
+                <div class="ss-step__desc">
+                  <span data-en="Add deny rules for 45.152.67.23/32, 185.220.101.9/32, 91.240.118.172/32 to perimeter firewall."
+                        data-id="Tambahkan aturan deny untuk 45.152.67.23/32, 185.220.101.9/32, 91.240.118.172/32 ke firewall perimeter.">
+                    Tambahkan aturan deny untuk 3 IP sumber ke firewall perimeter.
+                  </span>
+                </div>
+                <div id="hitl-3" class="ss-hitl-card">
+                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <p style="font-size:13px; color:var(--ss-neutral-700);"
+                     data-en="This action modifies firewall rules. Review and approve before execution."
+                     data-id="Tindakan ini memodifikasi aturan firewall. Tinjau dan setujui sebelum eksekusi.">
+                    Tindakan ini memodifikasi aturan firewall. Tinjau dan setujui sebelum eksekusi.
+                  </p>
+                  <div class="ss-hitl-card__actions">
+                    <button class="ss-hitl-approve" onclick="approveStep(3)" data-en="Approve" data-id="Setujui">Setujui</button>
+                    <button class="ss-hitl-reject"  onclick="rejectStep(3)"  data-en="Reject"  data-id="Tolak">Tolak</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- Step 4: HITL - Disable password auth (locked until step 3 approved) -->
+            <li class="ss-step" id="step-4" style="opacity:0.45;">
+              <div class="ss-step__icon ss-step__icon--locked" id="icon-4">🔒</div>
+              <div class="ss-step__body">
+                <div class="ss-step__title" data-en="4. Disable SSH password authentication" data-id="4. Nonaktifkan autentikasi kata sandi SSH">4. Nonaktifkan autentikasi kata sandi SSH</div>
+                <div class="ss-step__desc">
+                  <span data-en="Set PasswordAuthentication no in /etc/ssh/sshd_config and reload sshd."
+                        data-id="Atur PasswordAuthentication no di /etc/ssh/sshd_config dan muat ulang sshd.">
+                    Atur PasswordAuthentication no di sshd_config dan muat ulang sshd.
+                  </span>
+                </div>
+                <div id="hitl-4" class="ss-hitl-card" style="display:none;">
+                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <p style="font-size:13px; color:var(--ss-neutral-700);"
+                     data-en="This action modifies SSH configuration. Ensure key-based auth is working before approving."
+                     data-id="Tindakan ini memodifikasi konfigurasi SSH. Pastikan autentikasi berbasis kunci berfungsi sebelum menyetujui.">
+                    Pastikan autentikasi berbasis kunci berfungsi sebelum menyetujui.
+                  </p>
+                  <div class="ss-hitl-card__actions">
+                    <button class="ss-hitl-approve" onclick="approveStep(4)" data-en="Approve" data-id="Setujui">Setujui</button>
+                    <button class="ss-hitl-reject"  onclick="rejectStep(4)"  data-en="Reject"  data-id="Tolak">Tolak</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- Step 5: HITL - Create ticket -->
+            <li class="ss-step" id="step-5" style="opacity:0.45;">
+              <div class="ss-step__icon ss-step__icon--locked" id="icon-5">🔒</div>
+              <div class="ss-step__body">
+                <div class="ss-step__title" data-en="5. Create incident ticket & notify team" data-id="5. Buat tiket insiden & beri tahu tim">5. Buat tiket insiden &amp; beri tahu tim</div>
+                <div class="ss-step__desc">
+                  <span data-en="Open DFIR-IRIS case with full evidence bundle. Notify on-call analyst."
+                        data-id="Buka kasus DFIR-IRIS dengan bundel bukti lengkap. Beri tahu analis on-call.">
+                    Buka kasus DFIR-IRIS dengan bundel bukti lengkap. Beri tahu analis on-call.
+                  </span>
+                </div>
+                <div id="hitl-5" class="ss-hitl-card" style="display:none;">
+                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <p style="font-size:13px; color:var(--ss-neutral-700);"
+                     data-en="This will send notifications to the on-call team."
+                     data-id="Ini akan mengirim notifikasi ke tim on-call.">
+                    Ini akan mengirim notifikasi ke tim on-call.
+                  </p>
+                  <div class="ss-hitl-card__actions">
+                    <button class="ss-hitl-approve" onclick="approveStep(5)" data-en="Approve" data-id="Setujui">Setujui</button>
+                    <button class="ss-hitl-reject"  onclick="rejectStep(5)"  data-en="Reject"  data-id="Tolak">Tolak</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <!-- Audit trail -->
+      <div>
+        <div class="ss-audit-panel">
+          <h3 data-en="Audit Trail" data-id="Jejak Audit">Jejak Audit</h3>
+          <ul class="ss-audit-list" id="audit-list">
+            <li class="ss-audit-item">
+              <span class="ss-audit-time">14:07</span>
+              <span class="ss-audit-text" data-en="Alert received — SSH Brute Force classified (AI)" data-id="Alert diterima — SSH Brute Force diklasifikasi (AI)">Alert diterima — SSH Brute Force diklasifikasi (AI)</span>
+            </li>
+            <li class="ss-audit-item">
+              <span class="ss-audit-time">14:08</span>
+              <span class="ss-audit-text" data-en="Log enrichment complete — no successful logins" data-id="Pengayaan log selesai — tidak ada login berhasil">Pengayaan log selesai — tidak ada login berhasil</span>
+            </li>
+            <li class="ss-audit-item">
+              <span class="ss-audit-time">14:08</span>
+              <span class="ss-audit-text" data-en="HITL gate triggered — awaiting approval for 3 steps" data-id="Gate HITL aktif — menunggu persetujuan 3 langkah">Gate HITL aktif — menunggu persetujuan 3 langkah</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    const hitlStates = { 3: 'pending', 4: 'locked', 5: 'locked' };
+    let statTriaged = 12;
+
+    // Animate counter
+    (function() {
+      const el = document.getElementById('stat-triaged');
+      let n = 0;
+      const interval = setInterval(() => {
+        if (n >= statTriaged) { clearInterval(interval); return; }
+        n++; el.textContent = n;
+      }, 80);
+    })();
+
+    function now() {
+      return new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function addAudit(text) {
+      const list = document.getElementById('audit-list');
+      const li = document.createElement('li');
+      li.className = 'ss-audit-item';
+      li.innerHTML = `<span class="ss-audit-time">${now()}</span><span class="ss-audit-text">${text}</span>`;
+      list.prepend(li);
+    }
+
+    function approveStep(n) {
+      hitlStates[n] = 'approved';
+      const hitlCard = document.getElementById('hitl-' + n);
+      if (hitlCard) {
+        const lang = localStorage.getItem('ss-lang') || 'id';
+        hitlCard.innerHTML = `<div style="font-size:13px; color:var(--ss-success); font-weight:500">✓ ${lang === 'en' ? 'Approved — executing…' : 'Disetujui — mengeksekusi…'}</div>`;
+        hitlCard.style.borderColor = 'var(--ss-success)';
+        hitlCard.style.background = 'var(--ss-success-light)';
+      }
+      const icon = document.getElementById('icon-' + n);
+      if (icon) { icon.className = 'ss-step__icon ss-step__icon--approved'; icon.textContent = '✓'; }
+
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const labels = {
+        3: lang === 'en' ? 'IP block approved and applied' : 'Blokir IP disetujui dan diterapkan',
+        4: lang === 'en' ? 'SSH password auth disabled' : 'Autentikasi kata sandi SSH dinonaktifkan',
+        5: lang === 'en' ? 'Incident ticket created, team notified' : 'Tiket insiden dibuat, tim diberitahu'
+      };
+      addAudit(labels[n]);
+
+      // Unlock next step
+      if (n < 5) unlockStep(n + 1);
+    }
+
+    function rejectStep(n) {
+      hitlStates[n] = 'rejected';
+      const hitlCard = document.getElementById('hitl-' + n);
+      if (hitlCard) {
+        const lang = localStorage.getItem('ss-lang') || 'id';
+        hitlCard.innerHTML = `<div style="font-size:13px; color:var(--ss-danger); font-weight:500">✗ ${lang === 'en' ? 'Rejected — manual action required' : 'Ditolak — tindakan manual diperlukan'}</div>`;
+        hitlCard.style.borderColor = 'var(--ss-danger)';
+        hitlCard.style.background = 'var(--ss-danger-light)';
+      }
+      const icon = document.getElementById('icon-' + n);
+      if (icon) { icon.className = 'ss-step__icon ss-step__icon--rejected'; icon.textContent = '✗'; }
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      addAudit(lang === 'en' ? `Step ${n} rejected by analyst` : `Langkah ${n} ditolak oleh analis`);
+    }
+
+    function unlockStep(n) {
+      const step = document.getElementById('step-' + n);
+      if (!step) return;
+      step.style.opacity = '1';
+      const icon = document.getElementById('icon-' + n);
+      if (icon) { icon.className = 'ss-step__icon ss-step__icon--pending'; icon.textContent = '!'; }
+      const hitlCard = document.getElementById('hitl-' + n);
+      if (hitlCard) hitlCard.style.display = '';
+      hitlStates[n] = 'pending';
+    }
+  </script>
+</body>
+</html>

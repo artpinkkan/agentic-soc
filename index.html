@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Shannon Sentinel</title>
+  <script>
+    (function() {
+      var sess = sessionStorage.getItem('ss-session');
+      if (sess) {
+        var s = JSON.parse(sess);
+        window.location.replace(s.setupComplete ? '/agentic-soc/dashboard/' : '/agentic-soc/onboarding/');
+      } else {
+        window.location.replace('/agentic-soc/login/');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p>Mengalihkan…</p>
+</body>
+</html>

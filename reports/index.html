@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+    })();
+  </script>
+  <style>
+    .ss-report-layout { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
+    @media (min-width: 960px) { .ss-report-layout { grid-template-columns: 260px 1fr; } }
+    .ss-report-nav { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md); height: fit-content; }
+    .ss-report-nav h4 { font-size: 12px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .ss-report-nav__item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--ss-radius-sm); font-size: 13px; cursor: pointer; transition: background 0.15s; margin-bottom: 2px; }
+    .ss-report-nav__item:hover { background: var(--ss-neutral-100); }
+    .ss-report-nav__item--active { background: var(--ss-brand-light); color: var(--ss-brand-dark); font-weight: 500; }
+    .ss-report-preview { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg) var(--ss-gap-xl); position: relative; overflow: hidden; }
+    .ss-watermark-overlay {
+      position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center;
+      transform: rotate(-30deg); font-size: 52px; font-weight: 700; letter-spacing: 0.1em;
+      color: rgba(15,110,86,0.06); text-align: center; line-height: 1.4;
+      white-space: nowrap; user-select: none;
+    }
+    .ss-report-section { margin-bottom: var(--ss-gap-lg); padding-bottom: var(--ss-gap-lg); border-bottom: 0.5px solid var(--ss-border); }
+    .ss-report-section:last-child { border-bottom: none; margin-bottom: 0; }
+    .ss-report-section__title { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+    .ss-finding-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--ss-border); font-size: 13px; }
+    .ss-finding-row:last-child { border-bottom: none; }
+    .ss-export-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--ss-gap-lg); }
+    .ss-generate-bar { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); display: flex; align-items: center; gap: var(--ss-gap-md); flex-wrap: wrap; margin-bottom: var(--ss-gap-lg); }
+    .ss-generate-bar input { flex: 1; min-width: 200px; padding: 8px 12px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); font-size: 14px; font-family: var(--ss-font); }
+    .ss-generate-bar input:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+    .ss-ojk-pack { background: var(--ss-info-light); border: 0.5px solid #85B7EB; border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); }
+    .ss-ojk-pack h4 { font-size: 14px; font-weight: 500; color: #185FA5; margin-bottom: 8px; }
+    .ss-ojk-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .ss-ojk-list li { font-size: 13px; padding-left: 18px; position: relative; color: var(--ss-neutral-700); }
+    .ss-ojk-list li::before { content: '📄'; position: absolute; left: 0; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <nav class="ss-nav">
+    <div class="ss-nav__brand">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__logo">Shannon Sentinel</a>
+      <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    </div>
+    <div class="ss-nav__links">
+      <a href="/agentic-soc/dashboard/"   data-en="Dashboard"  data-id="Dasbor">Dasbor</a>
+      <a href="/agentic-soc/investigate/" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+      <a href="/agentic-soc/triage/"      data-en="Triage"     data-id="Triase">Triase</a>
+      <a href="/agentic-soc/reports/"     class="active" data-en="Reports" data-id="Laporan">Laporan</a>
+      <a href="/agentic-soc/inspector/"   data-en="Inspector"  data-id="Inspektor">Inspektor</a>
+    </div>
+    <div class="ss-nav__actions">
+      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      <div class="ss-nav__user" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">RH</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">Rudi Hartono</span>
+          <span id="nav-company" class="ss-nav__company">PT Bank Contoh</span>
+        </div>
+        <div class="ss-user-menu" id="user-menu" hidden>
+          <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
+          <hr>
+          <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ss-page">
+    <div class="ss-page-header">
+      <h1 class="ss-page-title" data-en="Security Reports" data-id="Laporan Keamanan">Laporan Keamanan</h1>
+      <p class="ss-page-sub" data-en="Generate audience-framed reports. Free Tier includes a watermarked preview." data-id="Buat laporan yang disesuaikan audiens. Tier Gratis menyertakan pratinjau bertanda air.">
+        Buat laporan yang disesuaikan audiens. Tier Gratis menyertakan pratinjau bertanda air.
+      </p>
+    </div>
+
+    <!-- Generate bar -->
+    <div class="ss-generate-bar">
+      <input type="text" id="report-prompt"
+             placeholder="Minta laporan: 'Ringkasan status keamanan untuk rapat dewan…'"
+             data-en-placeholder="Request a report: 'Security status summary for board meeting…'"
+             data-id-placeholder="Minta laporan: 'Ringkasan status keamanan untuk rapat dewan…'">
+      <button class="ss-btn-primary" onclick="generateReport()"
+              data-en="Generate →" data-id="Buat →">Buat →</button>
+    </div>
+
+    <!-- Audience tabs -->
+    <div class="ss-audience-bar">
+      <span class="ss-audience-bar__label" data-en="Audience framing:" data-id="Framing audiens:">Framing audiens:</span>
+      <div class="ss-audience-tabs">
+        <button class="ss-tab ss-tab--active" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
+        <button class="ss-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+        <button class="ss-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
+        <button class="ss-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+      </div>
+    </div>
+
+    <!-- Watermark notice -->
+    <div class="ss-notice ss-notice--warning">
+      <span>⚠</span>
+      <div>
+        <span data-en="Free Tier — this report preview includes a watermark. Upgrade to Sprint for a clean, audit-ready PDF."
+              data-id="Tier Gratis — pratinjau laporan ini menyertakan tanda air. Upgrade ke Sprint untuk PDF bersih siap audit.">
+          Tier Gratis — pratinjau laporan ini menyertakan tanda air. Upgrade ke Sprint untuk PDF bersih siap audit.
+        </span>
+      </div>
+    </div>
+
+    <!-- Export actions -->
+    <div class="ss-export-actions">
+      <button class="ss-btn-primary" onclick="exportPDF()"
+              data-en="Export PDF" data-id="Ekspor PDF">Ekspor PDF</button>
+      <button class="ss-btn-secondary" onclick="sendEmail()"
+              data-en="Send via Email" data-id="Kirim via Email">Kirim via Email</button>
+      <button class="ss-btn-secondary" onclick="generateOJK()"
+              data-en="Generate OJK Evidence Pack" data-id="Buat Paket Bukti OJK">Buat Paket Bukti OJK</button>
+    </div>
+
+    <div class="ss-report-layout">
+      <!-- Report nav -->
+      <div class="ss-report-nav">
+        <h4 data-en="Reports" data-id="Laporan">Laporan</h4>
+        <div class="ss-report-nav__item ss-report-nav__item--active" onclick="switchReport('xray')">
+          <span>📊</span>
+          <span data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</span>
+        </div>
+        <div class="ss-report-nav__item" onclick="switchReport('incident')">
+          <span>🔴</span>
+          <span data-en="Incident Report" data-id="Laporan Insiden">Laporan Insiden</span>
+        </div>
+        <div class="ss-report-nav__item" onclick="switchReport('compliance')">
+          <span>📋</span>
+          <span data-en="Compliance Status" data-id="Status Kepatuhan">Status Kepatuhan</span>
+        </div>
+        <div class="ss-report-nav__item" style="opacity:0.5; cursor:not-allowed;">
+          <span>🛡️</span>
+          <span data-en="Executive Summary" data-id="Ringkasan Eksekutif">Ringkasan Eksekutif</span>
+          <span class="badge badge-neutral" style="margin-left:auto; font-size:10px;" data-en="Sprint" data-id="Sprint">Sprint</span>
+        </div>
+      </div>
+
+      <!-- Report preview with watermark -->
+      <div class="ss-report-preview">
+        <div class="ss-watermark-overlay">PRATINJAU<br>PREVIEW</div>
+
+        <!-- X-Ray report (default) -->
+        <div id="report-xray">
+          <div class="ss-report-section">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:var(--ss-gap-md);">
+              <div>
+                <h2 id="report-company-name" style="font-size:20px; font-weight:500;">PT Bank Contoh Tbk</h2>
+                <p style="font-size:13px; color:var(--ss-neutral-500);">
+                  <span data-en="Cyber X-Ray Report — 25 Apr 2026" data-id="Laporan Cyber X-Ray — 25 Apr 2026">Laporan Cyber X-Ray — 25 Apr 2026</span>
+                </p>
+              </div>
+              <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
+            </div>
+
+            <div class="ss-notice ss-notice--danger">
+              <span>🔴</span>
+              <div>
+                <strong id="aud-summary-direktur"
+                   data-direktur="Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan segera diperlukan."
+                   data-it="2 kontrol kritis gagal (DMARC, log retention). 2 temuan tinggi (SSH exposure, MFA gap). Patch dan konfigurasi diperlukan."
+                   data-finance="Risiko keuangan teridentifikasi: penipuan email dan akses tidak sah ke sistem keuangan mungkin terjadi."
+                   data-auditor="4 temuan tidak memenuhi persyaratan kepatuhan: DMARC, log retention (OJK), MFA, dan dokumentasi permukaan serangan.">
+                  Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan segera diperlukan.
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="ss-report-section">
+            <div class="ss-report-section__title" data-en="Security Findings" data-id="Temuan Keamanan">Temuan Keamanan</div>
+            <div class="ss-finding-row">
+              <span class="badge badge-critical">KRITIS</span>
+              <span data-en="No DMARC policy — email spoofing risk" data-id="Tidak ada kebijakan DMARC — risiko pemalsuan email">Tidak ada kebijakan DMARC — risiko pemalsuan email</span>
+            </div>
+            <div class="ss-finding-row">
+              <span class="badge badge-critical">KRITIS</span>
+              <span data-en="Log retention 7 days — OJK requires 90 days" data-id="Retensi log 7 hari — OJK mensyaratkan 90 hari">Retensi log 7 hari — OJK mensyaratkan 90 hari</span>
+            </div>
+            <div class="ss-finding-row">
+              <span class="badge badge-high">TINGGI</span>
+              <span data-en="3 subdomains exposed — SSH on EOL version" data-id="3 subdomain terekspos — SSH versi EOL">3 subdomain terekspos — SSH versi EOL</span>
+            </div>
+            <div class="ss-finding-row">
+              <span class="badge badge-high">TINGGI</span>
+              <span data-en="4 admin accounts without MFA" data-id="4 akun admin tanpa MFA">4 akun admin tanpa MFA</span>
+            </div>
+          </div>
+
+          <div class="ss-report-section">
+            <div class="ss-report-section__title" data-en="Top 3 Recommended Actions" data-id="3 Tindakan yang Direkomendasikan">3 Tindakan yang Direkomendasikan</div>
+            <div class="ss-finding-row">
+              <span style="font-size:13px; font-weight:500; min-width:20px;">1.</span>
+              <div>
+                <div data-en="Enable DMARC policy (p=quarantine) on bankcontoh.co.id" data-id="Aktifkan kebijakan DMARC (p=quarantine) pada bankcontoh.co.id">Aktifkan kebijakan DMARC (p=quarantine) pada bankcontoh.co.id</div>
+                <div style="font-size:12px; color:var(--ss-neutral-500);">~1 jam</div>
+              </div>
+            </div>
+            <div class="ss-finding-row">
+              <span style="font-size:13px; font-weight:500; min-width:20px;">2.</span>
+              <div>
+                <div data-en="Enable MFA on 4 admin accounts" data-id="Aktifkan MFA pada 4 akun admin">Aktifkan MFA pada 4 akun admin</div>
+                <div style="font-size:12px; color:var(--ss-neutral-500);">~1 hari</div>
+              </div>
+            </div>
+            <div class="ss-finding-row">
+              <span style="font-size:13px; font-weight:500; min-width:20px;">3.</span>
+              <div>
+                <div data-en="Extend log retention to 90 days" data-id="Perpanjang retensi log ke 90 hari">Perpanjang retensi log ke 90 hari</div>
+                <div style="font-size:12px; color:var(--ss-neutral-500);">~1 minggu</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:11px; color:var(--ss-neutral-500); text-align:center; padding-top:var(--ss-gap-md);">
+            <span data-en="Generated by Shannon Sentinel AI · Model: Qwen 2.5 7B · Human review required before sharing"
+                  data-id="Dibuat oleh Shannon Sentinel AI · Model: Qwen 2.5 7B · Diperlukan tinjauan manusia sebelum dibagikan">
+              Dibuat oleh Shannon Sentinel AI · Model: Qwen 2.5 7B · Diperlukan tinjauan manusia sebelum dibagikan
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- OJK evidence pack -->
+    <div class="ss-ojk-pack" id="ojk-pack" hidden>
+      <h4 data-en="OJK AI Governance Evidence Pack v0" data-id="Paket Bukti Tata Kelola AI OJK v0">Paket Bukti Tata Kelola AI OJK v0</h4>
+      <p style="font-size:13px; color:var(--ss-neutral-700); margin-bottom:12px;"
+         data-en="Generated evidence documents for POJK 11/2022 compliance review:"
+         data-id="Dokumen bukti yang dibuat untuk tinjauan kepatuhan POJK 11/2022:">
+        Dokumen bukti yang dibuat untuk tinjauan kepatuhan POJK 11/2022:
+      </p>
+      <ul class="ss-ojk-list">
+        <li data-en="AI System Registry — Qwen 2.5 7B + Claude Sonnet fallback" data-id="Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet">Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet</li>
+        <li data-en="Guardrail activation log — 30-day window" data-id="Log aktivasi guardrail — jendela 30 hari">Log aktivasi guardrail — jendela 30 hari</li>
+        <li data-en="Human review checkpoint record — all HITL decisions" data-id="Catatan checkpoint tinjauan manusia — semua keputusan HITL">Catatan checkpoint tinjauan manusia — semua keputusan HITL</li>
+        <li data-en="Model confidence distribution — last 500 responses" data-id="Distribusi kepercayaan model — 500 respons terakhir">Distribusi kepercayaan model — 500 respons terakhir</li>
+        <li data-en="Citation coverage report — knowledge sources used" data-id="Laporan cakupan kutipan — sumber pengetahuan yang digunakan">Laporan cakupan kutipan — sumber pengetahuan yang digunakan</li>
+      </ul>
+      <button class="ss-btn-secondary" style="margin-top:12px;" onclick="document.getElementById('ojk-pack').hidden=true"
+              data-en="Close" data-id="Tutup">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Human Review Modal -->
+  <div class="ss-modal-overlay" id="review-modal" hidden onclick="closeModal(event)">
+    <div class="ss-modal" onclick="event.stopPropagation()">
+      <h3 data-en="Human Review Required" data-id="Tinjauan Manusia Diperlukan">Tinjauan Manusia Diperlukan</h3>
+      <p class="ss-modal__sub"
+         data-en="This report contains red (critical) findings. A human analyst must review before sharing."
+         data-id="Laporan ini mengandung temuan merah (kritis). Analis manusia harus meninjau sebelum dibagikan.">
+        Laporan ini mengandung temuan merah (kritis). Analis manusia harus meninjau sebelum dibagikan.
+      </p>
+      <div class="ss-notice ss-notice--danger" style="margin-bottom:var(--ss-gap-md);">
+        <span>🔴</span>
+        <ul style="margin:0; padding-left:16px; font-size:13px;">
+          <li data-en="No DMARC policy — email spoofing risk" data-id="Tidak ada kebijakan DMARC — risiko pemalsuan email">Tidak ada kebijakan DMARC — risiko pemalsuan email</li>
+          <li data-en="Log retention 7 days (OJK minimum: 90)" data-id="Retensi log 7 hari (minimum OJK: 90)">Retensi log 7 hari (minimum OJK: 90)</li>
+        </ul>
+      </div>
+      <div class="ss-modal__actions">
+        <button class="ss-btn-secondary" onclick="document.getElementById('review-modal').hidden=true"
+                data-en="Cancel" data-id="Batalkan">Batalkan</button>
+        <button class="ss-btn-primary" onclick="confirmExport()"
+                data-en="Confirm & Continue" data-id="Konfirmasi & Lanjutkan">Konfirmasi &amp; Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    if (window.SS) document.getElementById('report-company-name').textContent = window.SS.company || 'Perusahaan Anda';
+
+    function setAudience(aud) {
+      localStorage.setItem('ss-audience', aud);
+      document.querySelectorAll('.ss-tab').forEach(t => t.classList.toggle('ss-tab--active', t.dataset.aud === aud));
+      const sumEl = document.getElementById('aud-summary-direktur');
+      if (sumEl && sumEl.dataset[aud]) sumEl.textContent = sumEl.dataset[aud];
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      if (lang === 'en') {
+        document.querySelectorAll('[data-en]').forEach(el => { el.textContent = el.dataset.en; });
+      }
+    }
+
+    function exportPDF() {
+      document.getElementById('review-modal').hidden = false;
+    }
+
+    function sendEmail() {
+      document.getElementById('review-modal').hidden = false;
+    }
+
+    function generateOJK() {
+      document.getElementById('ojk-pack').hidden = false;
+    }
+
+    function confirmExport() {
+      document.getElementById('review-modal').hidden = true;
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      alert(lang === 'en' ? 'Generating watermarked PDF…' : 'Membuat PDF bertanda air…');
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('review-modal')) {
+        document.getElementById('review-modal').hidden = true;
+      }
+    }
+
+    function switchReport(type) {
+      document.querySelectorAll('.ss-report-nav__item').forEach((item, i) => {
+        item.classList.toggle('ss-report-nav__item--active', i === ['xray','incident','compliance','exec'].indexOf(type));
+      });
+    }
+
+    function generateReport() {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const input = document.getElementById('report-prompt');
+      if (!input.value.trim()) return;
+      setTimeout(() => { input.value = ''; }, 200);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('ss-audience') || 'direktur';
+      setAudience(saved);
+    });
+  </script>
+</body>
+</html>

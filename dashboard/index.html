@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dasbor — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+    })();
+  </script>
+  <style>
+    .ss-xray-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-lg); }
+    .ss-xray-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-xray-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+    .ss-xray-card__q { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.4; }
+    .ss-xray-card__finding { font-size: 13px; color: var(--ss-neutral-700); line-height: 1.5; margin-bottom: 10px; }
+    .ss-xray-card__detail summary { font-size: 12px; color: var(--ss-brand); cursor: pointer; }
+    .ss-xray-card__detail pre { margin-top: 8px; font-size: 11px; background: var(--ss-neutral-100); padding: 10px; border-radius: var(--ss-radius-sm); overflow-x: auto; line-height: 1.5; }
+    .ss-actions-panel { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); }
+    .ss-actions-panel h3 { font-size: 16px; font-weight: 500; margin-bottom: var(--ss-gap-md); }
+    .ss-actions-list { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-md); }
+    .ss-actions-list li { display: flex; align-items: flex-start; gap: 10px; }
+    .ss-action-effort { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
+    .ss-export-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); padding: var(--ss-gap-md) var(--ss-gap-lg); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); background: var(--ss-surface); margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
+    .ss-upgrade-banner { background: var(--ss-brand-light); border: 0.5px solid #5DCAA5; border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-xl); flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <nav class="ss-nav">
+    <div class="ss-nav__brand">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__logo">Shannon Sentinel</a>
+      <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    </div>
+    <div class="ss-nav__links">
+      <a href="/agentic-soc/dashboard/"   class="active" data-en="Dashboard"  data-id="Dasbor">Dasbor</a>
+      <a href="/agentic-soc/investigate/" data-en="Investigate" data-id="Investigasi">Investigasi</a>
+      <a href="/agentic-soc/triage/"      data-en="Triage"     data-id="Triase">Triase</a>
+      <a href="/agentic-soc/reports/"     data-en="Reports"    data-id="Laporan">Laporan</a>
+      <a href="/agentic-soc/inspector/"   data-en="Inspector"  data-id="Inspektor">Inspektor</a>
+    </div>
+    <div class="ss-nav__actions">
+      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      <div class="ss-nav__user" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">RH</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">Rudi Hartono</span>
+          <span id="nav-company" class="ss-nav__company">PT Bank Contoh</span>
+        </div>
+        <div class="ss-user-menu" id="user-menu" hidden>
+          <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
+          <hr>
+          <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ss-page">
+    <!-- Page header -->
+    <div class="ss-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 class="ss-page-title">
+          <span id="hdr-company">PT Bank Contoh Tbk</span>
+          <span data-en="— Security Report" data-id="— Laporan Keamanan">— Laporan Keamanan</span>
+        </h1>
+        <p class="ss-page-sub">
+          <span data-en="Scan completed" data-id="Pemindaian selesai">Pemindaian selesai</span>
+          25 Apr 2026 · 14:32 WIB
+        </p>
+      </div>
+      <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
+    </div>
+
+    <!-- Audience tabs -->
+    <div class="ss-audience-bar">
+      <span class="ss-audience-bar__label" data-en="View as:" data-id="Tampilkan sebagai:">Tampilkan sebagai:</span>
+      <div class="ss-audience-tabs">
+        <button class="ss-tab ss-tab--active" data-aud="direktur" onclick="setAudience('direktur')"
+                data-en="Executive Director" data-id="Direktur">Direktur</button>
+        <button class="ss-tab" data-aud="it" onclick="setAudience('it')"
+                data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+        <button class="ss-tab" data-aud="finance" onclick="setAudience('finance')"
+                data-en="Finance" data-id="Keuangan">Keuangan</button>
+        <button class="ss-tab" data-aud="auditor" onclick="setAudience('auditor')"
+                data-en="Auditor" data-id="Auditor">Auditor</button>
+      </div>
+    </div>
+
+    <!-- X-Ray Cards grid -->
+    <div class="ss-xray-grid">
+
+      <!-- Card 1: Email security -->
+      <div class="ss-xray-card">
+        <div class="ss-xray-card__head">
+          <p class="ss-xray-card__q">
+            <span class="aud-q"
+                  data-direktur="Bisakah penyerang menyamar sebagai email perusahaan Anda?"
+                  data-it="Apakah konfigurasi SPF, DKIM, dan DMARC sudah benar?"
+                  data-finance="Apakah email tagihan kami rentan dipalsukan?"
+                  data-auditor="Apakah kontrol autentikasi email terdokumentasi?">
+              Bisakah penyerang menyamar sebagai email perusahaan Anda?
+            </span>
+          </p>
+          <span class="badge badge-critical" data-en="At Risk" data-id="Berisiko">Berisiko</span>
+        </div>
+        <p class="ss-xray-card__finding">
+          <span class="aud-f"
+                data-direktur="Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda."
+                data-it="SPF ditemukan, DKIM tidak ada, DMARC tidak ada. Terapkan kebijakan DMARC p=quarantine segera."
+                data-finance="Tanpa DMARC, email tagihan perusahaan Anda dapat dipalsukan. Risiko penipuan pembayaran tinggi."
+                data-auditor="Tidak ada kebijakan DMARC yang terdokumentasi. Kontrol autentikasi email tidak lengkap.">
+            Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda.
+          </span>
+        </p>
+        <details class="ss-xray-card__detail">
+          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
+          <pre>SPF:   ✓ v=spf1 include:_spf.google.com ~all
+DKIM:  ✗ No selector found
+DMARC: ✗ No _dmarc TXT record</pre>
+        </details>
+      </div>
+
+      <!-- Card 2: Exposed systems -->
+      <div class="ss-xray-card">
+        <div class="ss-xray-card__head">
+          <p class="ss-xray-card__q">
+            <span class="aud-q"
+                  data-direktur="Apakah ada sistem internal Anda yang terekspos ke internet?"
+                  data-it="Port dan layanan apa yang terekspos secara publik?"
+                  data-finance="Apakah sistem keuangan kami dapat diakses dari luar?"
+                  data-auditor="Apakah permukaan serangan eksternal terdokumentasi?">
+              Apakah ada sistem internal Anda yang terekspos ke internet?
+            </span>
+          </p>
+          <span class="badge badge-high" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
+        </div>
+        <p class="ss-xray-card__finding">
+          <span class="aud-f"
+                data-direktur="3 subdomain terekspos publik dengan layanan lama. Salah satunya menjalankan SSH versi rentan."
+                data-it="ssh.bankcontoh.co.id (port 22, OpenSSH 7.4 — EOL), panel.bankcontoh.co.id (port 8080 terbuka), dev.bankcontoh.co.id (terekspos publik)."
+                data-finance="Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan. Rekomendasikan audit akses segera."
+                data-auditor="3 subdomain tidak terlindungi ditemukan. Dokumentasi permukaan serangan diperlukan untuk audit kepatuhan.">
+            3 subdomain terekspos publik dengan layanan lama. Salah satunya menjalankan SSH versi rentan.
+          </span>
+        </p>
+        <details class="ss-xray-card__detail">
+          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
+          <pre>ssh.bankcontoh.co.id    → port 22, OpenSSH 7.4 (CVE-2023-38408)
+panel.bankcontoh.co.id  → port 8080, no auth detected
+dev.bankcontoh.co.id    → port 443, exposed dev environment</pre>
+        </details>
+      </div>
+
+      <!-- Card 3: Evidence readiness -->
+      <div class="ss-xray-card">
+        <div class="ss-xray-card__head">
+          <p class="ss-xray-card__q">
+            <span class="aud-q"
+                  data-direktur="Jika terjadi insiden, apakah kita siap membuktikannya?"
+                  data-it="Apakah log yang diperlukan tersedia dan cukup lama tersimpan?"
+                  data-finance="Bisakah kita membuktikan kepatuhan ke OJK jika diaudit?"
+                  data-auditor="Apakah retensi log memenuhi persyaratan OJK minimum 90 hari?">
+              Jika terjadi insiden, apakah kita siap membuktikannya?
+            </span>
+          </p>
+          <span class="badge badge-critical" data-en="At Risk" data-id="Berisiko">Berisiko</span>
+        </div>
+        <p class="ss-xray-card__finding">
+          <span class="aud-f"
+                data-direktur="Retensi log saat ini hanya 7 hari. OJK mensyaratkan minimum 90 hari untuk lembaga keuangan."
+                data-it="Log server dideteksi dengan retensi 7 hari. Tidak ada SIEM terpusat. Log endpoint tidak dikirim ke pusat."
+                data-finance="Tanpa log 90 hari, kita tidak dapat memenuhi persyaratan investigasi forensik OJK jika terjadi insiden."
+                data-auditor="Retensi log 7 hari (terdeteksi) tidak memenuhi POJK 11/2022 yang mensyaratkan 90 hari minimum.">
+            Retensi log saat ini hanya 7 hari. OJK mensyaratkan minimum 90 hari untuk lembaga keuangan.
+          </span>
+        </p>
+        <details class="ss-xray-card__detail">
+          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
+          <pre>Log retention detected: 7 days
+OJK minimum (POJK 11/2022): 90 days
+Gap: 83 days
+Centralized SIEM: ✗ Not detected
+Endpoint log forwarding: ✗ Not detected</pre>
+        </details>
+      </div>
+
+      <!-- Card 4: User protection -->
+      <div class="ss-xray-card">
+        <div class="ss-xray-card__head">
+          <p class="ss-xray-card__q">
+            <span class="aud-q"
+                  data-direktur="Apakah akun admin kita dilindungi dari pengambilalihan?"
+                  data-it="Berapa banyak akun admin yang belum mengaktifkan MFA?"
+                  data-finance="Apakah akun keuangan dan payroll terlindungi dengan MFA?"
+                  data-auditor="Apakah penerapan MFA untuk akun istimewa terdokumentasi?">
+              Apakah akun admin kita dilindungi dari pengambilalihan?
+            </span>
+          </p>
+          <span class="badge badge-high" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
+        </div>
+        <p class="ss-xray-card__finding">
+          <span class="aud-f"
+                data-direktur="4 dari 12 akun administrator belum mengaktifkan MFA. Ini membuka risiko pengambilalihan akun."
+                data-it="4 akun admin (domain admin: 2, cloud admin: 2) tanpa MFA terdeteksi via login pattern analysis."
+                data-finance="2 akun dengan akses sistem keuangan tidak menggunakan MFA. Risiko transfer tidak sah signifikan."
+                data-auditor="4 akun dengan hak istimewa tinggi tidak memiliki MFA. Tidak sesuai dengan kebijakan kontrol akses yang disyaratkan.">
+            4 dari 12 akun administrator belum mengaktifkan MFA. Ini membuka risiko pengambilalihan akun.
+          </span>
+        </p>
+        <details class="ss-xray-card__detail">
+          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
+          <pre>Admin accounts total:    12
+MFA enabled:             8  (66.7%)
+MFA not enabled:         4  (33.3%)
+  — domain.admin.01    ✗
+  — domain.admin.03    ✗
+  — cloud.admin.01     ✗
+  — cloud.admin.04     ✗</pre>
+        </details>
+      </div>
+
+    </div>
+
+    <!-- Top 3 Actions -->
+    <div class="ss-actions-panel">
+      <h3 data-en="Top 3 actions this week" data-id="3 tindakan prioritas minggu ini">3 tindakan prioritas minggu ini</h3>
+      <ol class="ss-actions-list">
+        <li>
+          <span class="badge badge-critical" style="margin-top:2px">TINGGI</span>
+          <div>
+            <p data-en="Enable DMARC policy on your domain (p=quarantine)."
+               data-id="Aktifkan kebijakan DMARC pada domain Anda (p=quarantine).">
+              Aktifkan kebijakan DMARC pada domain Anda (p=quarantine).
+            </p>
+            <p class="ss-action-effort">~1 jam</p>
+          </div>
+        </li>
+        <li>
+          <span class="badge badge-critical" style="margin-top:2px">TINGGI</span>
+          <div>
+            <p data-en="Enable MFA on all 4 unprotected admin accounts."
+               data-id="Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.">
+              Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.
+            </p>
+            <p class="ss-action-effort">~1 hari</p>
+          </div>
+        </li>
+        <li>
+          <span class="badge badge-high" style="margin-top:2px">SEDANG</span>
+          <div>
+            <p data-en="Extend log retention to 90 days (OJK minimum)."
+               data-id="Perpanjang retensi log ke 90 hari (minimum OJK).">
+              Perpanjang retensi log ke 90 hari (minimum OJK).
+            </p>
+            <p class="ss-action-effort">~1 minggu</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Export bar -->
+    <div class="ss-export-bar">
+      <div>
+        <p style="font-weight:500; font-size:13px;"
+           data-en="Free Tier — watermarked preview"
+           data-id="Tier Gratis — pratinjau bertanda air">
+          Tier Gratis — pratinjau bertanda air
+        </p>
+        <p style="font-size:12px; color:var(--ss-neutral-500);"
+           data-en="Upgrade for a clean, audit-ready PDF."
+           data-id="Upgrade untuk PDF bersih siap audit.">
+          Upgrade untuk PDF bersih siap audit.
+        </p>
+      </div>
+      <button class="ss-btn-secondary" onclick="alert('Generating watermarked PDF…')"
+              data-en="Download preview PDF"
+              data-id="Unduh PDF pratinjau">Unduh PDF pratinjau</button>
+    </div>
+
+    <!-- Upgrade CTA -->
+    <div class="ss-upgrade-banner">
+      <div>
+        <p style="font-weight:500;"
+           data-en="Found your gaps. Now close them."
+           data-id="Temukan celah. Sekarang tutup celahnya.">
+          Temukan celah. Sekarang tutup celahnya.
+        </p>
+        <p style="font-size:13px;"
+           data-en="30-Day Sprint: Rp 35–75 jt — our team helps you fix all red findings."
+           data-id="Sprint 30-Hari: Rp 35–75 jt — tim kami membantu memperbaiki semua temuan merah.">
+          Sprint 30-Hari: Rp 35–75 jt — tim kami membantu memperbaiki semua temuan merah.
+        </p>
+      </div>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary"
+         data-en="Contact us →" data-id="Hubungi kami →">Hubungi kami →</a>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    // Hydrate company name
+    if (window.SS) document.getElementById('hdr-company').textContent = window.SS.company || 'Perusahaan Anda';
+
+    function setAudience(aud) {
+      localStorage.setItem('ss-audience', aud);
+      document.querySelectorAll('.ss-tab').forEach(t => t.classList.toggle('ss-tab--active', t.dataset.aud === aud));
+      document.querySelectorAll('.aud-q, .aud-f').forEach(el => {
+        if (el.dataset[aud]) el.textContent = el.dataset[aud];
+      });
+      // Re-apply lang after audience swap
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      if (lang === 'en') {
+        document.querySelectorAll('[data-en]').forEach(el => { el.textContent = el.dataset.en; });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('ss-audience') || 'direktur';
+      setAudience(saved);
+    });
+  </script>
+</body>
+</html>

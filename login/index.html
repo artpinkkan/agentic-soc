@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    // Redirect logged-in users
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (sess) {
+        const s = JSON.parse(sess);
+        window.location.replace(s.setupComplete ? '/agentic-soc/dashboard/' : '/agentic-soc/onboarding/');
+      }
+      // Apply lang before render
+      document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    })();
+  </script>
+</head>
+<body>
+  <div class="ss-login-split">
+    <!-- Brand panel -->
+    <div class="ss-login-brand">
+      <div class="ss-login-brand__inner">
+        <p class="ss-login-brand__logo">Shannon Sentinel</p>
+        <h1 class="ss-login-brand__headline"
+            data-en="AI-resilient security for Indonesian finance"
+            data-id="Keamanan berbasis AI untuk keuangan Indonesia">
+          Keamanan berbasis AI untuk keuangan Indonesia
+        </h1>
+        <ul class="ss-login-brand__bullets">
+          <li data-en="Cyber X-Ray assessment in ~2 minutes"
+              data-id="Penilaian Cyber X-Ray dalam ~2 menit">
+            Penilaian Cyber X-Ray dalam ~2 menit
+          </li>
+          <li data-en="AI alert triage with full citations"
+              data-id="Triase alert AI dengan kutipan lengkap">
+            Triase alert AI dengan kutipan lengkap
+          </li>
+          <li data-en="OJK AI governance evidence pack"
+              data-id="Paket bukti tata kelola AI OJK">
+            Paket bukti tata kelola AI OJK
+          </li>
+          <li data-en="Bilingual — Bahasa Indonesia + English"
+              data-id="Dwibahasa — Bahasa Indonesia + Inggris">
+            Dwibahasa — Bahasa Indonesia + Inggris
+          </li>
+        </ul>
+        <p class="ss-login-brand__tenant">sentinel.shannondynamics.id</p>
+      </div>
+    </div>
+
+    <!-- Form panel -->
+    <div class="ss-login-form-panel">
+      <div class="ss-login-card">
+        <div class="ss-login-card__header">
+          <h2 data-en="Sign in to your account"
+              data-id="Masuk ke akun Anda">Masuk ke akun Anda</h2>
+          <p class="ss-login-card__sub">
+            <span data-en="Don't have an account?"
+                  data-id="Belum punya akun?">Belum punya akun?</span>
+            <a href="/agentic-soc/signup/"
+               data-en="Sign up free"
+               data-id="Daftar gratis">Daftar gratis</a>
+          </p>
+        </div>
+
+        <div id="login-error" class="ss-form-error" hidden>
+          <span data-en="Email and password are required."
+                data-id="Email dan kata sandi wajib diisi.">
+            Email dan kata sandi wajib diisi.
+          </span>
+        </div>
+
+        <div class="ss-form-group">
+          <label for="login-email"
+                 data-en="Work email" data-id="Email kerja">Email kerja</label>
+          <input type="email" id="login-email" autocomplete="email"
+                 placeholder="rudi@bankcontoh.co.id">
+        </div>
+
+        <div class="ss-form-group">
+          <label for="login-password"
+                 data-en="Password" data-id="Kata sandi">Kata sandi</label>
+          <input type="password" id="login-password" autocomplete="current-password"
+                 placeholder="••••••••">
+          <a href="#" class="ss-form-forgot"
+             data-en="Forgot password?" data-id="Lupa kata sandi?">Lupa kata sandi?</a>
+        </div>
+
+        <button class="ss-btn-primary ss-btn-full" onclick="handleLogin()"
+                data-en="Sign in" data-id="Masuk">Masuk</button>
+
+        <p class="ss-login-demo-hint">
+          <span data-en="Demo: enter any email + password to sign in."
+                data-id="Demo: masukkan email + kata sandi apa pun untuk masuk.">
+            Demo: masukkan email + kata sandi apa pun untuk masuk.
+          </span>
+        </p>
+      </div>
+
+      <div class="ss-login-lang">
+        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    function handleLogin() {
+      const email    = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errEl    = document.getElementById('login-error');
+
+      if (!email || !password) {
+        errEl.hidden = false;
+        return;
+      }
+      errEl.hidden = true;
+
+      const name    = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const domain  = email.includes('@') ? email.split('@')[1] : 'company';
+      const company = domain.split('.')[0];
+      const slug    = company.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+      const session = {
+        email, name,
+        company: company.charAt(0).toUpperCase() + company.slice(1),
+        slug, tier: 'free', state: 'free_active', setupComplete: false
+      };
+      sessionStorage.setItem('ss-session', JSON.stringify(session));
+      window.location.href = '/agentic-soc/onboarding/';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>

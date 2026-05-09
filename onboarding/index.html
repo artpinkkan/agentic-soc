@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+    (function() {
+      const sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      // Do NOT redirect if setupComplete=false — this IS the setup page
+    })();
+  </script>
+  <style>
+    .ss-wizard-wrap { max-width: 640px; margin: var(--ss-gap-xl) auto; padding: 0 var(--ss-gap-lg); }
+    .ss-wizard-steps { display: flex; align-items: flex-start; justify-content: center; gap: 0; margin-bottom: var(--ss-gap-xl); }
+    .ss-wizard-step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .ss-wizard-step__circle { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--ss-border-md); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ss-neutral-500); }
+    .ss-wizard-step--active .ss-wizard-step__circle { background: var(--ss-brand); border-color: var(--ss-brand); color: #fff; }
+    .ss-wizard-step--done .ss-wizard-step__circle { background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success); }
+    .ss-wizard-step__label { font-size: 12px; color: var(--ss-neutral-500); }
+    .ss-wizard-step--active .ss-wizard-step__label { color: var(--ss-neutral-900); font-weight: 500; }
+    .ss-wizard-connector { flex: 1; height: 1.5px; background: var(--ss-border-md); margin: 13px 12px 0; min-width: 40px; }
+    .ss-wizard-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg) var(--ss-gap-xl); }
+    .ss-wizard-card h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+    .ss-wizard-card__sub { font-size: 14px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-lg); }
+    .ss-wizard-footer { display: flex; justify-content: space-between; align-items: center; margin-top: var(--ss-gap-lg); padding-top: var(--ss-gap-md); border-top: 0.5px solid var(--ss-border); }
+    .ss-skip-link { font-size: 13px; color: var(--ss-neutral-500); }
+    .ss-checks-list__label { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: 8px; }
+    .ss-checks-list ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .ss-checks-list li { font-size: 13px; padding-left: 18px; position: relative; }
+    .ss-checks-list li::before { content: '✓'; color: var(--ss-brand); position: absolute; left: 0; font-size: 12px; }
+    .ss-endpoint-options { display: flex; flex-direction: column; gap: 10px; margin: var(--ss-gap-md) 0; }
+    .ss-endpoint-option { border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md); padding: 14px 16px; cursor: pointer; transition: border-color 0.15s; }
+    .ss-endpoint-option--active:hover { border-color: var(--ss-brand); }
+    .ss-endpoint-option--active.selected { border-color: var(--ss-brand); background: #F2FCF8; }
+    .ss-endpoint-option--disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; background: var(--ss-neutral-50); }
+    .ss-endpoint-option__header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ss-endpoint-option__radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--ss-border-md); flex-shrink: 0; }
+    .ss-endpoint-option__radio--selected { border-color: var(--ss-brand); background: var(--ss-brand); box-shadow: inset 0 0 0 3px #fff; }
+    .ss-endpoint-option__title { font-weight: 500; font-size: 14px; }
+    .ss-endpoint-option__desc { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: 10px; }
+    .ss-endpoint-downloads { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .ss-download-btn { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); color: var(--ss-brand); background: var(--ss-brand-light); text-decoration: none; }
+    .ss-manager-address { font-size: 12px; color: var(--ss-neutral-500); }
+    .ss-manager-address code { background: var(--ss-neutral-100); padding: 2px 6px; border-radius: 4px; }
+    .ss-endpoint-counter { font-size: 13px; color: var(--ss-neutral-500); padding: 10px 0; display: flex; align-items: center; gap: 4px; }
+    .ss-scan-header { display: flex; align-items: center; gap: 20px; margin-bottom: var(--ss-gap-lg); }
+    .ss-scan-ring { position: relative; }
+    .ss-scan-pct { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 13px; font-weight: 500; }
+    .ss-scan-checklist { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: var(--ss-gap-md) 0; }
+    .ss-scan-item { font-size: 14px; color: var(--ss-neutral-500); padding-left: 24px; position: relative; }
+    .ss-scan-item::before { content: '·'; position: absolute; left: 8px; }
+    .ss-scan-item--done { color: var(--ss-neutral-900); }
+    .ss-scan-item--done::before { content: '✓'; color: var(--ss-brand); font-weight: 500; }
+    .ss-scan-done { text-align: center; padding: var(--ss-gap-lg) 0; }
+    .ss-scan-done__icon { font-size: 36px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <!-- Minimal nav for onboarding -->
+  <nav class="ss-nav">
+    <div class="ss-nav__brand">
+      <span class="ss-nav__logo">Shannon Sentinel</span>
+      <span class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+    </div>
+    <div style="flex:1"></div>
+    <div class="ss-nav__actions">
+      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      <div class="ss-nav__user" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
+        <div class="ss-user-menu" id="user-menu" hidden>
+          <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ss-wizard-wrap">
+    <!-- Step indicator -->
+    <div class="ss-wizard-steps">
+      <div class="ss-wizard-step ss-wizard-step--active" id="step-dot-1">
+        <div class="ss-wizard-step__circle">1</div>
+        <span class="ss-wizard-step__label" data-en="Domain" data-id="Domain">Domain</span>
+      </div>
+      <div class="ss-wizard-connector"></div>
+      <div class="ss-wizard-step" id="step-dot-2">
+        <div class="ss-wizard-step__circle">2</div>
+        <span class="ss-wizard-step__label" data-en="Endpoints" data-id="Endpoint">Endpoint</span>
+      </div>
+      <div class="ss-wizard-connector"></div>
+      <div class="ss-wizard-step" id="step-dot-3">
+        <div class="ss-wizard-step__circle">3</div>
+        <span class="ss-wizard-step__label" data-en="Scanning" data-id="Pemindaian">Pemindaian</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Domain -->
+    <div id="wizard-step-1" class="ss-wizard-card">
+      <h2 data-en="Connect your domain" data-id="Hubungkan domain Anda">Hubungkan domain Anda</h2>
+      <p class="ss-wizard-card__sub"
+         data-en="We'll run a passive scan on your public domain."
+         data-id="Kami akan menjalankan pemindaian pasif pada domain publik Anda.">
+        Kami akan menjalankan pemindaian pasif pada domain publik Anda.
+      </p>
+
+      <div class="ss-form-group">
+        <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
+        <input type="text" id="ob-domain" placeholder="bankcontoh.co.id">
+      </div>
+
+      <div id="domain-verified-notice" class="ss-notice ss-notice--success" hidden>
+        <span>✓</span>
+        <span data-en="Domain verified during signup." data-id="Domain terverifikasi saat pendaftaran.">Domain terverifikasi saat pendaftaran.</span>
+      </div>
+      <div id="domain-unverified-notice" class="ss-notice ss-notice--warning" hidden>
+        <span>⚠</span>
+        <span data-en="Domain not yet verified. You can verify later in settings."
+              data-id="Domain belum terverifikasi. Anda dapat memverifikasi nanti di pengaturan.">
+          Domain belum terverifikasi. Anda dapat memverifikasi nanti di pengaturan.
+        </span>
+      </div>
+
+      <div class="ss-checks-list">
+        <p class="ss-checks-list__label" data-en="We will check:" data-id="Kami akan memeriksa:">Kami akan memeriksa:</p>
+        <ul>
+          <li>SPF record</li>
+          <li>DKIM configuration</li>
+          <li>DMARC policy</li>
+          <li data-en="Exposed subdomains" data-id="Subdomain yang terekspos">Subdomain yang terekspos</li>
+          <li data-en="Open ports on public-facing services" data-id="Port terbuka pada layanan publik">Port terbuka pada layanan publik</li>
+        </ul>
+      </div>
+
+      <p class="ss-form-hint" style="margin-top:12px;"
+         data-en="This scan is passive and non-intrusive."
+         data-id="Pemindaian ini bersifat pasif dan tidak mengganggu operasional.">
+        Pemindaian ini bersifat pasif dan tidak mengganggu operasional.
+      </p>
+
+      <div class="ss-wizard-footer">
+        <div></div>
+        <button class="ss-btn-primary" onclick="goStep(2)"
+                data-en="Next →" data-id="Lanjut →">Lanjut →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Endpoints -->
+    <div id="wizard-step-2" class="ss-wizard-card" hidden>
+      <h2 data-en="Connect your endpoints" data-id="Hubungkan endpoint Anda">Hubungkan endpoint Anda</h2>
+      <p class="ss-wizard-card__sub"
+         data-en="Choose how to connect your devices. You can add more later."
+         data-id="Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.">
+        Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.
+      </p>
+
+      <div class="ss-endpoint-options">
+        <!-- Wazuh — Active -->
+        <div class="ss-endpoint-option ss-endpoint-option--active selected" id="opt-wazuh">
+          <div class="ss-endpoint-option__header">
+            <div class="ss-endpoint-option__radio ss-endpoint-option__radio--selected" id="radio-wazuh"></div>
+            <div>
+              <p class="ss-endpoint-option__title">Wazuh Agent</p>
+              <span class="badge badge-low" data-en="Recommended" data-id="Direkomendasikan">Direkomendasikan</span>
+            </div>
+          </div>
+          <p class="ss-endpoint-option__desc"
+             data-en="Install Wazuh agent on your endpoints."
+             data-id="Pasang Wazuh agent pada endpoint Anda.">
+            Pasang Wazuh agent pada endpoint Anda.
+          </p>
+          <div class="ss-endpoint-downloads">
+            <a href="#" class="ss-download-btn">Windows .exe</a>
+            <a href="#" class="ss-download-btn">Linux .deb</a>
+            <a href="#" class="ss-download-btn">macOS .pkg</a>
+          </div>
+          <div class="ss-manager-address">
+            <span class="ss-manager-address__label" data-en="Manager address:" data-id="Alamat manager:">Alamat manager:</span>
+            <code>sentinel.shannondynamics.id:1514</code>
+          </div>
+        </div>
+
+        <!-- Syslog — Coming soon -->
+        <div class="ss-endpoint-option ss-endpoint-option--disabled">
+          <div class="ss-endpoint-option__header">
+            <div class="ss-endpoint-option__radio" style="background:var(--ss-neutral-200)"></div>
+            <div>
+              <p class="ss-endpoint-option__title" style="color:var(--ss-neutral-500)">Forward Syslog</p>
+              <span class="badge badge-neutral" data-en="Coming soon" data-id="Segera hadir">Segera hadir</span>
+            </div>
+          </div>
+          <p class="ss-endpoint-option__desc"
+             data-en="Forward syslog to Shannon's central collector. Available in v2."
+             data-id="Forward syslog ke kolektor pusat Shannon. Tersedia di v2.">
+            Forward syslog ke kolektor pusat Shannon. Tersedia di v2.
+          </p>
+        </div>
+
+        <!-- Manual upload — Coming soon -->
+        <div class="ss-endpoint-option ss-endpoint-option--disabled">
+          <div class="ss-endpoint-option__header">
+            <div class="ss-endpoint-option__radio" style="background:var(--ss-neutral-200)"></div>
+            <div>
+              <p class="ss-endpoint-option__title" style="color:var(--ss-neutral-500)"
+                 data-en="Manual log upload" data-id="Upload log manual">Upload log manual</p>
+              <span class="badge badge-neutral" data-en="Coming soon" data-id="Segera hadir">Segera hadir</span>
+            </div>
+          </div>
+          <p class="ss-endpoint-option__desc"
+             data-en="Upload CSV, JSON, or text log files. Available in v2."
+             data-id="Upload file log CSV, JSON, atau teks. Tersedia di v2.">
+            Upload file log CSV, JSON, atau teks. Tersedia di v2.
+          </p>
+        </div>
+      </div>
+
+      <div class="ss-endpoint-counter">
+        <span data-en="Endpoints connected:" data-id="Endpoint terhubung:">Endpoint terhubung:</span>
+        <strong id="ep-count">0</strong> / 10
+        <button class="ss-btn-ghost" style="margin-left:8px; font-size:12px;"
+                onclick="simulateEndpointConnect()"
+                data-en="+ Simulate connect" data-id="+ Simulasi koneksi">+ Simulasi koneksi</button>
+      </div>
+
+      <div class="ss-wizard-footer">
+        <button class="ss-btn-secondary" onclick="goStep(1)"
+                data-en="← Back" data-id="← Kembali">← Kembali</button>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <a href="#" class="ss-skip-link" onclick="goStep(3); return false;"
+             data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
+          <button class="ss-btn-primary" onclick="goStep(3)"
+                  data-en="Start scan →" data-id="Mulai penilaian →">Mulai penilaian →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Scanning -->
+    <div id="wizard-step-3" class="ss-wizard-card" hidden>
+      <div class="ss-scan-header">
+        <div class="ss-scan-ring" id="scan-ring">
+          <svg viewBox="0 0 80 80" width="80" height="80">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="#E1F5EE" stroke-width="6"/>
+            <circle id="scan-arc" cx="40" cy="40" r="34" fill="none"
+                    stroke="#1D9E75" stroke-width="6"
+                    stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                    stroke-linecap="round"
+                    transform="rotate(-90 40 40)"/>
+          </svg>
+          <span class="ss-scan-pct" id="scan-pct">0%</span>
+        </div>
+        <div>
+          <h2 data-en="Running your Cyber X-Ray…" data-id="Menjalankan Cyber X-Ray Anda…">Menjalankan Cyber X-Ray Anda…</h2>
+          <p class="ss-wizard-card__sub" data-en="Estimated: ~2 minutes" data-id="Estimasi: ~2 menit">Estimasi: ~2 menit</p>
+        </div>
+      </div>
+
+      <ul class="ss-scan-checklist" id="scan-checklist">
+        <li class="ss-scan-item" data-en="Starting domain scan…" data-id="Memulai pemindaian domain…">Memulai pemindaian domain…</li>
+        <li class="ss-scan-item" data-en="SPF record found" data-id="SPF record ditemukan">SPF record ditemukan</li>
+        <li class="ss-scan-item" data-en="DKIM checked" data-id="DKIM diperiksa">DKIM diperiksa</li>
+        <li class="ss-scan-item" data-en="Checking subdomain exposure…" data-id="Memeriksa paparan subdomain…">Memeriksa paparan subdomain…</li>
+        <li class="ss-scan-item" data-en="Subdomain scan complete" data-id="Subdomain scan selesai">Subdomain scan selesai</li>
+        <li class="ss-scan-item" data-en="Calculating evidence readiness score…" data-id="Menghitung skor kesiapan bukti…">Menghitung skor kesiapan bukti…</li>
+        <li class="ss-scan-item" data-en="Score calculated" data-id="Skor dihitung">Skor dihitung</li>
+        <li class="ss-scan-item" data-en="Generating AI summary…" data-id="Membuat ringkasan AI…">Membuat ringkasan AI…</li>
+        <li class="ss-scan-item" data-en="Report ready" data-id="Laporan siap">Laporan siap</li>
+      </ul>
+
+      <div class="ss-scan-done" id="scan-done" hidden>
+        <div class="ss-scan-done__icon">✅</div>
+        <h2 data-en="Your Cyber X-Ray report is ready!" data-id="Laporan Cyber X-Ray Anda siap!">
+          Laporan Cyber X-Ray Anda siap!
+        </h2>
+        <a href="/agentic-soc/dashboard/" class="ss-btn-primary"
+           style="display:inline-block; margin-top:16px;"
+           data-en="View report →" data-id="Lihat laporan →">Lihat laporan →</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    let epCount = 0;
+
+    // Hydrate domain from session
+    (function() {
+      if (window.SS && window.SS.domain) {
+        document.getElementById('ob-domain').value = window.SS.domain;
+      }
+      if (window.SS && window.SS.domainVerified) {
+        document.getElementById('domain-verified-notice').hidden = false;
+      } else if (window.SS && window.SS.domain) {
+        document.getElementById('domain-unverified-notice').hidden = false;
+      }
+      if (window.SS) {
+        const avatarEl = document.getElementById('nav-avatar');
+        if (avatarEl && window.SS.name) {
+          avatarEl.textContent = window.SS.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+        }
+      }
+    })();
+
+    function goStep(n) {
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById('wizard-step-' + i);
+        if (card) card.hidden = (i !== n);
+        const dot = document.getElementById('step-dot-' + i);
+        if (dot) {
+          dot.classList.toggle('ss-wizard-step--active', i === n);
+          dot.classList.toggle('ss-wizard-step--done', i < n);
+        }
+      }
+      if (n === 3) runScanAnimation();
+    }
+
+    function simulateEndpointConnect() {
+      if (epCount < 10) { epCount++; document.getElementById('ep-count').textContent = epCount; }
+    }
+
+    function runScanAnimation() {
+      const items = document.querySelectorAll('.ss-scan-item');
+      const arc = document.getElementById('scan-arc');
+      const pctEl = document.getElementById('scan-pct');
+      const totalCirc = 213.6;
+      let idx = 0;
+      const interval = setInterval(() => {
+        if (idx < items.length) {
+          items[idx].classList.add('ss-scan-item--done');
+          const pct = Math.round(((idx + 1) / items.length) * 100);
+          arc.style.strokeDashoffset = totalCirc - (totalCirc * pct / 100);
+          pctEl.textContent = pct + '%';
+          idx++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById('scan-ring').style.display = 'none';
+            document.getElementById('scan-done').hidden = false;
+            const sess = JSON.parse(sessionStorage.getItem('ss-session') || '{}');
+            sess.setupComplete = true;
+            sessionStorage.setItem('ss-session', JSON.stringify(sess));
+            window.SS = sess;
+          }, 400);
+        }
+      }, 380);
+    }
+  </script>
+</body>
+</html>
