@@ -18,41 +18,170 @@
     })();
   </script>
   <style>
-    .ss-chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 52px - 80px - 120px); min-height: 400px; }
-    .ss-chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: var(--ss-gap-md); padding-bottom: var(--ss-gap-lg); }
-    .ss-msg { max-width: 78%; }
-    .ss-msg--ai { align-self: flex-start; }
-    .ss-msg--user { align-self: flex-end; }
-    .ss-msg__bubble { padding: 12px 16px; border-radius: var(--ss-radius-md); font-size: 13px; line-height: 1.6; }
-    .ss-msg--ai .ss-msg__bubble { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: 0 var(--ss-radius-md) var(--ss-radius-md) var(--ss-radius-md); }
-    .ss-msg--user .ss-msg__bubble { background: var(--ss-brand); color: #fff; border-radius: var(--ss-radius-md) 0 var(--ss-radius-md) var(--ss-radius-md); }
-    .ss-msg__meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-    .ss-meta-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 7px; border-radius: 4px; }
-    .ss-meta-model    { background: var(--ss-neutral-100); color: var(--ss-neutral-700); border: 0.5px solid var(--ss-border); }
-    .ss-meta-conf     { background: var(--ss-success-light); color: #27500A; border: 0.5px solid #97C459; }
-    .ss-meta-hitl     { background: var(--ss-warning-light); color: #633806; border: 0.5px solid #FAC775; }
-    .ss-meta-inspect  { background: none; color: var(--ss-brand); border: 0.5px solid var(--ss-brand); text-decoration: none; }
-    .ss-meta-inspect:hover { background: var(--ss-brand-light); text-decoration: none; }
-    .ss-ai-section { margin-bottom: 8px; }
-    .ss-ai-section__label { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
-    .ss-ai-section__body { font-size: 13px; color: var(--ss-neutral-900); }
-    .ss-chat-input-wrap { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-end; margin-top: var(--ss-gap-md); }
-    .ss-chat-input-wrap textarea { flex: 1; border: none; outline: none; resize: none; font-family: var(--ss-font); font-size: 14px; color: var(--ss-neutral-900); background: none; min-height: 40px; max-height: 120px; line-height: 1.5; }
-    .ss-quick-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--ss-gap-md); }
-    .ss-quick-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-sm); background: var(--ss-surface-container-lowest); color: var(--ss-neutral-700); cursor: pointer; transition: background 0.15s; }
-    .ss-quick-btn:hover { background: var(--ss-neutral-100); }
-    .ss-chat-layout { display: grid; grid-template-columns: 1fr; gap: var(--ss-gap-lg); }
-    @media (min-width: 960px) { .ss-chat-layout { grid-template-columns: 1fr 280px; } }
-    .ss-context-panel { display: flex; flex-direction: column; gap: var(--ss-gap-md); }
-    .ss-context-card { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md); }
-    .ss-context-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--ss-neutral-700); }
-    .ss-context-item { font-size: 12px; padding: 5px 0; border-bottom: 0.5px solid var(--ss-border); display: flex; justify-content: space-between; align-items: center; }
-    .ss-context-item:last-child { border-bottom: none; }
+    /* Override ss-page so this page is a full-height flex column */
+    .ss-page { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Chat header ── */
+    .ss-chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; border-bottom: 1px solid var(--ss-outline-variant);
+      background: var(--ss-surface-container-lowest);
+      flex-shrink: 0; gap: 12px; flex-wrap: wrap;
+    }
+    .ss-chat-header__title { font-size: 15px; font-weight: 600; color: var(--ss-on-surface); font-family: var(--ss-font-headline); }
+    .ss-chat-header__sub   { font-size: 12px; color: var(--ss-on-surface-variant); margin-top: 1px; }
+    .ss-chat-header__meta  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .ss-model-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500; padding: 3px 9px;
+      background: var(--ss-surface-container-low);
+      border-radius: 100px; color: var(--ss-on-surface-variant);
+    }
+    .ss-model-pill__dot { width: 6px; height: 6px; border-radius: 50%; background: #639922; }
+
+    /* ── Messages area ── */
+    .ss-chat-messages {
+      flex: 1; overflow-y: auto; padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    /* ── Welcome state ── */
+    .ss-chat-welcome {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 12px; padding: 40px 20px;
+    }
+    .ss-chat-welcome__icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--ss-brand-gradient);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+    .ss-chat-welcome h2 { font-size: 18px; font-weight: 700; color: var(--ss-on-surface); }
+    .ss-chat-welcome p  { font-size: 14px; color: var(--ss-on-surface-variant); max-width: 380px; }
+
+    /* ── Message rows ── */
+    .ss-msg-row { display: flex; gap: 10px; max-width: 780px; }
+    .ss-msg-row--ai   { align-self: flex-start; width: 100%; }
+    .ss-msg-row--user { align-self: flex-end; flex-direction: row-reverse; }
+
+    /* AI avatar */
+    .ss-msg-avatar {
+      width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+      background: var(--ss-brand-gradient);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+
+    /* Bubbles */
+    .ss-msg-bubble {
+      padding: 12px 16px; border-radius: 16px;
+      font-size: 13.5px; line-height: 1.65;
+    }
+    .ss-msg-row--ai   .ss-msg-bubble {
+      background: var(--ss-surface-container-lowest);
+      box-shadow: var(--ss-shadow-card);
+      border-radius: 4px 16px 16px 16px;
+      flex: 1;
+    }
+    .ss-msg-row--user .ss-msg-bubble {
+      background: var(--ss-brand);
+      color: #fff;
+      border-radius: 16px 4px 16px 16px;
+      max-width: 540px;
+    }
+
+    /* AI structured sections */
+    .ss-ai-section { margin-bottom: 10px; }
+    .ss-ai-section:last-of-type { margin-bottom: 0; }
+    .ss-ai-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ss-on-surface-variant);
+      margin-bottom: 3px;
+    }
+    .ss-ai-body { font-size: 13.5px; color: var(--ss-on-surface); line-height: 1.6; }
+    .ss-ai-divider { height: 1px; background: var(--ss-outline-variant); margin: 10px 0; }
+
+    /* Message footer badges */
+    .ss-msg-footer {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 8px; flex-wrap: wrap;
+    }
+    .ss-badge-sm {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500;
+    }
+    .ss-badge-model   { background: var(--ss-surface-container-low); color: var(--ss-on-surface-variant); }
+    .ss-badge-conf    { background: var(--ss-success-light); color: #27500A; }
+    .ss-badge-hitl    { background: var(--ss-warning-light); color: #633806; }
+    .ss-badge-inspect {
+      background: none; color: var(--ss-brand);
+      border: 1px solid var(--ss-brand);
+      border-radius: 6px; text-decoration: none;
+      font-size: 11px; padding: 2px 8px; font-weight: 500;
+    }
+    .ss-badge-inspect:hover { background: var(--ss-brand-light); text-decoration: none; }
+
+    /* Typing indicator */
+    .ss-typing { display: flex; align-items: center; gap: 4px; padding: 14px 16px; }
+    .ss-typing span {
+      width: 6px; height: 6px; background: var(--ss-on-surface-variant);
+      border-radius: 50%; animation: bounce 1.2s infinite;
+    }
+    .ss-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .ss-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+    /* ── Input bar ── */
+    .ss-chat-input-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 20px;
+      background: var(--ss-surface);
+      border-top: 1px solid var(--ss-outline-variant);
+    }
+    .ss-quick-chips {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;
+    }
+    .ss-quick-chip {
+      font-size: 12px; padding: 5px 12px;
+      border: 1px solid var(--ss-outline-variant);
+      border-radius: 100px;
+      background: var(--ss-surface-container-lowest);
+      color: var(--ss-on-surface-variant);
+      cursor: pointer; transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .ss-quick-chip:hover { background: var(--ss-brand-light); border-color: var(--ss-brand); color: var(--ss-brand); }
+    .ss-input-box {
+      display: flex; align-items: flex-end; gap: 10px;
+      background: var(--ss-surface-container-lowest);
+      border: 1px solid var(--ss-outline-variant);
+      border-radius: 14px; padding: 10px 10px 10px 16px;
+      box-shadow: var(--ss-shadow-card);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .ss-input-box:focus-within {
+      border-color: var(--ss-brand);
+      box-shadow: 0 0 0 3px rgba(0,104,95,0.10);
+    }
+    .ss-input-box textarea {
+      flex: 1; border: none; outline: none; resize: none;
+      font-family: var(--ss-font); font-size: 14px;
+      color: var(--ss-on-surface); background: none;
+      min-height: 22px; max-height: 120px; line-height: 1.5;
+    }
+    .ss-input-box textarea::placeholder { color: var(--ss-on-surface-variant); }
+    .ss-send-btn {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      background: var(--ss-brand-gradient); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.15s; color: #fff;
+    }
+    .ss-send-btn:hover { opacity: 0.85; }
   </style>
 </head>
 <body>
   <nav class="ss-nav" id="ss-nav">
-    <!-- Header -->
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
         <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -64,8 +193,6 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
     </div>
-
-    <!-- Menu -->
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
         <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -88,8 +215,6 @@
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
     </div>
-
-    <!-- Footer -->
     <div class="ss-nav__footer">
       <div class="ss-nav__footer-top">
         <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
@@ -103,7 +228,6 @@
           <span id="nav-company" class="ss-nav__company">Gmail</span>
         </div>
       </div>
-
       <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
         <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
@@ -112,215 +236,141 @@
   </nav>
 
   <div class="ss-page">
-    <div class="ss-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+    <!-- Chat header -->
+    <div class="ss-chat-header">
       <div>
-        <h1 class="ss-page-title" data-en="SOC Investigation Assistant" data-id="Asisten Investigasi SOC">Asisten Investigasi SOC</h1>
-        <p class="ss-page-sub" data-en="Ask about alerts, threats, or request a root-cause analysis." data-id="Tanyakan tentang alert, ancaman, atau minta analisis akar masalah.">
-          Tanyakan tentang alert, ancaman, atau minta analisis akar masalah.
-        </p>
+        <div class="ss-chat-header__title" data-en="SOC Investigation Assistant" data-id="Asisten Investigasi SOC">Asisten Investigasi SOC</div>
+        <div class="ss-chat-header__sub" data-en="Ask about alerts, threats, or request a root-cause analysis" data-id="Tanyakan tentang alert, ancaman, atau minta analisis akar masalah">Tanyakan tentang alert, ancaman, atau minta analisis akar masalah</div>
       </div>
-      <div class="ss-audience-bar" style="margin-bottom:0">
-        <span class="ss-audience-bar__label" data-en="Audience:" data-id="Audiens:">Audiens:</span>
-        <div class="ss-audience-tabs">
-          <button class="ss-tab ss-tab--active" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive" data-id="Direktur">Direktur</button>
-          <button class="ss-tab" data-aud="it" onclick="setAudience('it')" data-en="IT" data-id="IT">IT</button>
-          <button class="ss-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
-          <button class="ss-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
-        </div>
+      <div class="ss-chat-header__meta">
+        <span class="ss-model-pill"><span class="ss-model-pill__dot"></span>Qwen 2.5 7B</span>
+        <span class="badge badge-high" style="font-size:11px;">3 <span data-en="Active Alerts" data-id="Alert Aktif">Alert Aktif</span></span>
+        <a href="/agentic-soc/triage/" class="ss-btn-secondary" style="font-size:12px; padding:5px 12px;" data-en="Open Triage" data-id="Buka Triase">Buka Triase</a>
       </div>
     </div>
 
-    <div class="ss-chat-layout">
-      <div>
-        <!-- Quick actions -->
-        <div class="ss-quick-actions">
-          <button class="ss-quick-btn" onclick="sendQuick(this.textContent)" data-en="Analyze latest alert" data-id="Analisis alert terbaru">Analisis alert terbaru</button>
-          <button class="ss-quick-btn" onclick="sendQuick(this.textContent)" data-en="Check email security posture" data-id="Periksa postur keamanan email">Periksa postur keamanan email</button>
-          <button class="ss-quick-btn" onclick="sendQuick(this.textContent)" data-en="Explain SSH brute force risk" data-id="Jelaskan risiko SSH brute force">Jelaskan risiko SSH brute force</button>
-          <button class="ss-quick-btn" onclick="sendQuick(this.textContent)" data-en="OJK compliance status" data-id="Status kepatuhan OJK">Status kepatuhan OJK</button>
-        </div>
+    <!-- Messages -->
+    <div class="ss-chat-messages" id="chat-messages">
 
-        <!-- Messages -->
-        <div class="ss-chat-messages" id="chat-messages">
-
-          <!-- User message 1 -->
-          <div class="ss-msg ss-msg--user">
-            <div class="ss-msg__bubble">
-              <span data-en="We got an alert about 847 failed SSH logins in the last hour on ssh.bankcontoh.co.id. Is this an active attack?"
-                    data-id="Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?">
-                Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?
-              </span>
-            </div>
-          </div>
-
-          <!-- AI response 1 -->
-          <div class="ss-msg ss-msg--ai">
-            <div class="ss-msg__bubble">
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="Yes — this pattern is consistent with an active credential-stuffing SSH brute force attack. 847 failures in 60 minutes from 3 unique source IPs exceeds the threshold for automated attack classification."
-                        data-id="Ya — pola ini konsisten dengan serangan brute force SSH credential-stuffing aktif. 847 kegagalan dalam 60 menit dari 3 IP sumber unik melampaui ambang batas untuk klasifikasi serangan otomatis.">
-                    Ya — pola ini konsisten dengan serangan brute force SSH credential-stuffing aktif. 847 kegagalan dalam 60 menit dari 3 IP sumber unik melampaui ambang batas untuk klasifikasi serangan otomatis.
-                  </span>
-                </div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Threat Classification" data-id="Klasifikasi Ancaman">Klasifikasi Ancaman</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="T1110.001 — Brute Force: Password Guessing (MITRE ATT&CK). Severity: HIGH. Confidence: 94%."
-                        data-id="T1110.001 — Brute Force: Password Guessing (MITRE ATT&CK). Tingkat keparahan: TINGGI. Kepercayaan: 94%.">
-                    T1110.001 — Brute Force: Password Guessing (MITRE ATT&CK). Tingkat keparahan: TINGGI. Kepercayaan: 94%.
-                  </span>
-                </div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Affected Assets" data-id="Aset Terdampak">Aset Terdampak</div>
-                <div class="ss-ai-section__body">ssh.bankcontoh.co.id (port 22) — OpenSSH 7.4, publicly exposed</div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Evidence" data-id="Bukti">Bukti</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="Source IPs: 45.152.67.23, 185.220.101.9, 91.240.118.172 — all flagged in AbuseIPDB (abuse confidence &gt;85%). Attack began 14:07 WIB. Rate: ~14 attempts/minute."
-                        data-id="IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — semua ditandai di AbuseIPDB (kepercayaan penyalahgunaan &gt;85%). Serangan dimulai 14:07 WIB. Laju: ~14 percobaan/menit.">
-                    IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — semua ditandai di AbuseIPDB. Serangan dimulai 14:07 WIB.
-                  </span>
-                </div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="1. Block the 3 source IPs at firewall immediately. 2. Disable password auth, enforce key-based SSH only. 3. Move SSH port from 22 or restrict to VPN-only. 4. Review auth logs for any successful login in the window."
-                        data-id="1. Blokir 3 IP sumber di firewall segera. 2. Nonaktifkan autentikasi kata sandi, terapkan SSH berbasis kunci saja. 3. Pindahkan port SSH dari 22 atau batasi ke VPN saja. 4. Tinjau log auth untuk login berhasil dalam periode ini.">
-                    1. Blokir 3 IP sumber di firewall segera. 2. Nonaktifkan autentikasi kata sandi, terapkan SSH berbasis kunci saja. 3. Pindahkan port SSH atau batasi ke VPN saja.
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="ss-msg__meta">
-              <span class="ss-meta-badge ss-meta-model">🤖 Qwen 2.5 7B</span>
-              <span class="ss-meta-badge ss-meta-conf">✓ 94%</span>
-              <span class="ss-meta-badge ss-meta-hitl">⚠ <span data-en="Human Review Required" data-id="Tinjauan Manusia Diperlukan">Tinjauan Manusia Diperlukan</span></span>
-              <a href="/agentic-soc/inspector/" class="ss-meta-badge ss-meta-inspect">
-                <span data-en="Inspect →" data-id="Periksa →">Periksa →</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- User message 2 -->
-          <div class="ss-msg ss-msg--user">
-            <div class="ss-msg__bubble">
-              <span data-en="No successful logins found. Should we escalate to the triage playbook?"
-                    data-id="Tidak ada login berhasil yang ditemukan. Haruskah kita eskalasi ke playbook triase?">
-                Tidak ada login berhasil yang ditemukan. Haruskah kita eskalasi ke playbook triase?
-              </span>
-            </div>
-          </div>
-
-          <!-- AI response 2 -->
-          <div class="ss-msg ss-msg--ai">
-            <div class="ss-msg__bubble">
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="Yes — escalate to the SSH Brute Force Response playbook immediately. No successful logins reduces the severity but the attack is ongoing and the server is on an EOL version with a known vulnerability."
-                        data-id="Ya — eskalasi ke playbook Respons Brute Force SSH segera. Tidak ada login berhasil mengurangi keparahan tetapi serangan masih berlangsung dan server menggunakan versi EOL dengan kerentanan yang diketahui.">
-                    Ya — eskalasi ke playbook Respons Brute Force SSH segera. Tidak ada login berhasil mengurangi keparahan tetapi serangan masih berlangsung.
-                  </span>
-                </div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Risk Assessment" data-id="Penilaian Risiko">Penilaian Risiko</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="Current risk: MEDIUM-HIGH. OpenSSH 7.4 (CVE-2023-38408) on public port 22. No successful compromise yet — but continued exposure allows privilege escalation if a credential is guessed."
-                        data-id="Risiko saat ini: SEDANG-TINGGI. OpenSSH 7.4 (CVE-2023-38408) pada port 22 publik. Belum ada kompromi berhasil — tetapi paparan berkelanjutan memungkinkan eskalasi hak istimewa jika ada kredensial yang ditebak.">
-                    Risiko saat ini: SEDANG-TINGGI. OpenSSH 7.4 (CVE-2023-38408) pada port 22 publik. Belum ada kompromi berhasil.
-                  </span>
-                </div>
-              </div>
-              <div class="ss-ai-section">
-                <div class="ss-ai-section__label" data-en="Recommended Action" data-id="Tindakan yang Direkomendasikan">Tindakan yang Direkomendasikan</div>
-                <div class="ss-ai-section__body">
-                  <span data-en="Open triage page → select 'SSH Brute Force Response' playbook → approve IP block step (HITL required for firewall changes)."
-                        data-id="Buka halaman triase → pilih playbook 'Respons Brute Force SSH' → setujui langkah blokir IP (HITL diperlukan untuk perubahan firewall).">
-                    Buka halaman triase → pilih playbook 'Respons Brute Force SSH' → setujui langkah blokir IP.
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="ss-msg__meta">
-              <span class="ss-meta-badge ss-meta-model">🤖 Qwen 2.5 7B</span>
-              <span class="ss-meta-badge ss-meta-conf">✓ 91%</span>
-              <span class="ss-meta-badge ss-meta-hitl">⚠ <span data-en="Human Review Required" data-id="Tinjauan Manusia Diperlukan">Tinjauan Manusia Diperlukan</span></span>
-              <a href="/agentic-soc/inspector/" class="ss-meta-badge ss-meta-inspect">
-                <span data-en="Inspect →" data-id="Periksa →">Periksa →</span>
-              </a>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Input area -->
-        <div class="ss-chat-input-wrap">
-          <textarea id="chat-input" rows="1"
-                    placeholder="Tanyakan tentang alert, ancaman, atau insiden…"
-                    onkeydown="handleChatKey(event)"></textarea>
-          <button class="ss-btn-primary" onclick="sendMessage()"
-                  data-en="Analyze" data-id="Analisis">Analisis</button>
+      <!-- User message 1 -->
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble">
+          <span data-en="We got an alert about 847 failed SSH logins in the last hour on ssh.bankcontoh.co.id. Is this an active attack?"
+                data-id="Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?">
+            Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?
+          </span>
         </div>
       </div>
 
-      <!-- Context panel -->
-      <div class="ss-context-panel">
-        <div class="ss-context-card">
-          <h4 data-en="Active Alerts" data-id="Alert Aktif">Alert Aktif</h4>
-          <div class="ss-context-item">
-            <span>SSH Brute Force</span>
-            <span class="badge badge-high">TINGGI</span>
+      <!-- AI response 1 -->
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+        </div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="Yes — this pattern is consistent with an active SSH credential-stuffing attack. 847 failures in 60 minutes from 3 unique source IPs exceeds the automated attack threshold." data-id="Ya — pola ini konsisten dengan serangan brute force SSH credential-stuffing aktif. 847 kegagalan dalam 60 menit dari 3 IP unik melampaui ambang batas klasifikasi serangan otomatis.">Ya — pola ini konsisten dengan serangan brute force SSH credential-stuffing aktif. 847 kegagalan dalam 60 menit dari 3 IP unik melampaui ambang batas klasifikasi serangan otomatis.</div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Threat Classification" data-id="Klasifikasi Ancaman">Klasifikasi Ancaman</div>
+              <div class="ss-ai-body">T1110.001 — Brute Force: Password Guessing (MITRE ATT&amp;CK) &nbsp;·&nbsp; <span class="badge badge-high" style="font-size:11px;vertical-align:middle">TINGGI</span></div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Evidence" data-id="Bukti">Bukti</div>
+              <div class="ss-ai-body" data-en="Source IPs: 45.152.67.23, 185.220.101.9, 91.240.118.172 — flagged in AbuseIPDB (>85% confidence). Attack began 14:07 WIB · ~14 attempts/min." data-id="IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — ditandai di AbuseIPDB (>85%). Serangan mulai 14:07 WIB · ~14 percobaan/menit.">IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — ditandai di AbuseIPDB (&gt;85%). Serangan mulai 14:07 WIB · ~14 percobaan/menit.</div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
+              <div class="ss-ai-body" data-en="1. Block 3 source IPs at firewall immediately. 2. Disable password auth, enforce key-based SSH. 3. Restrict port 22 to VPN-only. 4. Review auth logs for any successful login." data-id="1. Blokir 3 IP sumber di firewall segera. 2. Nonaktifkan autentikasi kata sandi, terapkan SSH berbasis kunci. 3. Batasi port 22 ke VPN saja. 4. Tinjau log auth untuk login berhasil.">1. Blokir 3 IP sumber di firewall segera. 2. Nonaktifkan autentikasi kata sandi. 3. Batasi port 22 ke VPN saja. 4. Tinjau log auth untuk login berhasil.</div>
+            </div>
           </div>
-          <div class="ss-context-item">
-            <span>DMARC Missing</span>
-            <span class="badge badge-critical">KRITIS</span>
-          </div>
-          <div class="ss-context-item">
-            <span>Admin MFA Gap</span>
-            <span class="badge badge-high">TINGGI</span>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model">🤖 Qwen 2.5 7B</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 94%</span>
+            <span class="ss-badge-sm ss-badge-hitl">⚠ <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></span>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
           </div>
         </div>
-        <div class="ss-context-card">
-          <h4 data-en="AI Model Info" data-id="Info Model AI">Info Model AI</h4>
-          <div class="ss-context-item">
-            <span data-en="Primary" data-id="Primer">Primer</span>
-            <span style="font-size:12px; font-weight:500">Qwen 2.5 7B</span>
+      </div>
+
+      <!-- User message 2 -->
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble">
+          <span data-en="No successful logins found. Should we escalate to the triage playbook?"
+                data-id="Tidak ada login berhasil yang ditemukan. Haruskah kita eskalasi ke playbook triase?">
+            Tidak ada login berhasil yang ditemukan. Haruskah kita eskalasi ke playbook triase?
+          </span>
+        </div>
+      </div>
+
+      <!-- AI response 2 -->
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+        </div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="Yes — escalate immediately. No successful logins reduces severity but the attack is ongoing and the server runs an EOL version with a known CVE." data-id="Ya — eskalasi segera. Tidak ada login berhasil mengurangi keparahan, tetapi serangan masih berlangsung dan server menggunakan versi EOL dengan CVE yang diketahui.">Ya — eskalasi segera. Tidak ada login berhasil mengurangi keparahan, tetapi serangan masih berlangsung dan server menggunakan versi EOL dengan CVE yang diketahui.</div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommended Action" data-id="Tindakan yang Direkomendasikan">Tindakan yang Direkomendasikan</div>
+              <div class="ss-ai-body" data-en="Open Triage → select 'SSH Brute Force Response' playbook → approve IP block step (HITL required for firewall changes)." data-id="Buka Triase → pilih playbook 'Respons Brute Force SSH' → setujui langkah blokir IP (HITL diperlukan untuk perubahan firewall).">Buka Triase → pilih playbook <strong>'Respons Brute Force SSH'</strong> → setujui langkah blokir IP (HITL diperlukan).</div>
+            </div>
           </div>
-          <div class="ss-context-item">
-            <span data-en="Fallback" data-id="Cadangan">Cadangan</span>
-            <span style="font-size:12px">Claude Sonnet</span>
-          </div>
-          <div class="ss-context-item">
-            <span data-en="Knowledge" data-id="Pengetahuan">Pengetahuan</span>
-            <span style="font-size:12px">ATT&CK, KEV, NVD</span>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model">🤖 Qwen 2.5 7B</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 91%</span>
+            <span class="ss-badge-sm ss-badge-hitl">⚠ <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></span>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
           </div>
         </div>
-        <a href="/agentic-soc/triage/" class="ss-btn-primary" style="text-align:center; display:block;"
-           data-en="Open Triage Playbook" data-id="Buka Playbook Triase">Buka Playbook Triase</a>
+      </div>
+
+    </div>
+
+    <!-- Input bar -->
+    <div class="ss-chat-input-bar">
+      <div class="ss-quick-chips" id="quick-chips">
+        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="Analyze latest alert" data-id="Analisis alert terbaru">Analisis alert terbaru</button>
+        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="Check email security" data-id="Periksa keamanan email">Periksa keamanan email</button>
+        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="SSH brute force risk" data-id="Risiko SSH brute force">Risiko SSH brute force</button>
+        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="OJK compliance status" data-id="Status kepatuhan OJK">Status kepatuhan OJK</button>
+      </div>
+      <div class="ss-input-box">
+        <textarea id="chat-input" rows="1"
+          data-en-placeholder="Ask about alerts, threats, or incidents…"
+          data-id-placeholder="Tanyakan tentang alert, ancaman, atau insiden…"
+          placeholder="Tanyakan tentang alert, ancaman, atau insiden…"
+          onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="ss-send-btn" onclick="sendMessage()" aria-label="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
       </div>
     </div>
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
   <script>
-    function setAudience(aud) {
-      localStorage.setItem('ss-audience', aud);
-      document.querySelectorAll('.ss-tab').forEach(t => t.classList.toggle('ss-tab--active', t.dataset.aud === aud));
-    }
-
     function handleChatKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     }
 
-    function sendQuick(text) {
-      document.getElementById('chat-input').value = text;
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    function sendQuick(btn) {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      document.getElementById('chat-input').value = lang === 'en' ? btn.dataset.en : btn.dataset.id;
       sendMessage();
     }
 
@@ -329,56 +379,71 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('quick-chips').style.display = 'none';
 
       const messages = document.getElementById('chat-messages');
       const lang = localStorage.getItem('ss-lang') || 'id';
 
       // User bubble
-      const userMsg = document.createElement('div');
-      userMsg.className = 'ss-msg ss-msg--user';
-      userMsg.innerHTML = `<div class="ss-msg__bubble">${escapeHtml(text)}</div>`;
-      messages.appendChild(userMsg);
+      const userRow = document.createElement('div');
+      userRow.className = 'ss-msg-row ss-msg-row--user';
+      userRow.innerHTML = `<div class="ss-msg-bubble">${escapeHtml(text)}</div>`;
+      messages.appendChild(userRow);
+      messages.scrollTop = messages.scrollHeight;
 
       // Typing indicator
-      const typing = document.createElement('div');
-      typing.className = 'ss-msg ss-msg--ai';
-      typing.innerHTML = `<div class="ss-msg__bubble" style="color:var(--ss-neutral-500); font-style:italic">${lang === 'en' ? 'Analyzing…' : 'Menganalisis…'}</div>`;
-      messages.appendChild(typing);
+      const typingRow = document.createElement('div');
+      typingRow.className = 'ss-msg-row ss-msg-row--ai';
+      typingRow.innerHTML = `
+        <div class="ss-msg-avatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+        </div>
+        <div class="ss-msg-bubble"><div class="ss-typing"><span></span><span></span><span></span></div></div>`;
+      messages.appendChild(typingRow);
       messages.scrollTop = messages.scrollHeight;
 
       setTimeout(() => {
-        messages.removeChild(typing);
-        const aiMsg = document.createElement('div');
-        aiMsg.className = 'ss-msg ss-msg--ai';
-        aiMsg.innerHTML = `
-          <div class="ss-msg__bubble">
-            <div class="ss-ai-section">
-              <div class="ss-ai-section__label">${lang === 'en' ? 'Summary' : 'Ringkasan'}</div>
-              <div class="ss-ai-section__body">${lang === 'en' ? 'Analysis complete. Based on current telemetry and threat intelligence, this requires immediate attention.' : 'Analisis selesai. Berdasarkan telemetri saat ini dan intelijen ancaman, ini memerlukan perhatian segera.'}</div>
-            </div>
-            <div class="ss-ai-section">
-              <div class="ss-ai-section__label">${lang === 'en' ? 'Recommendations' : 'Rekomendasi'}</div>
-              <div class="ss-ai-section__body">${lang === 'en' ? 'Review the findings in the triage dashboard and follow the recommended playbook steps.' : 'Tinjau temuan di dasbor triase dan ikuti langkah-langkah playbook yang direkomendasikan.'}</div>
-            </div>
+        messages.removeChild(typingRow);
+        const aiRow = document.createElement('div');
+        aiRow.className = 'ss-msg-row ss-msg-row--ai';
+        aiRow.innerHTML = `
+          <div class="ss-msg-avatar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
           </div>
-          <div class="ss-msg__meta">
-            <span class="ss-meta-badge ss-meta-model">🤖 Qwen 2.5 7B</span>
-            <span class="ss-meta-badge ss-meta-conf">✓ 87%</span>
-            <span class="ss-meta-badge ss-meta-hitl">⚠ ${lang === 'en' ? 'Human Review Required' : 'Tinjauan Manusia Diperlukan'}</span>
-            <a href="/agentic-soc/inspector/" class="ss-meta-badge ss-meta-inspect">${lang === 'en' ? 'Inspect →' : 'Periksa →'}</a>
+          <div>
+            <div class="ss-msg-bubble">
+              <div class="ss-ai-section">
+                <div class="ss-ai-label">${lang === 'en' ? 'Summary' : 'Ringkasan'}</div>
+                <div class="ss-ai-body">${lang === 'en' ? 'Analysis complete. Based on current telemetry and threat intelligence, this requires immediate attention.' : 'Analisis selesai. Berdasarkan telemetri saat ini dan intelijen ancaman, ini memerlukan perhatian segera.'}</div>
+              </div>
+              <div class="ss-ai-divider"></div>
+              <div class="ss-ai-section">
+                <div class="ss-ai-label">${lang === 'en' ? 'Recommendations' : 'Rekomendasi'}</div>
+                <div class="ss-ai-body">${lang === 'en' ? 'Review the findings in the triage dashboard and follow the recommended playbook steps.' : 'Tinjau temuan di dasbor triase dan ikuti langkah-langkah playbook yang direkomendasikan.'}</div>
+              </div>
+            </div>
+            <div class="ss-msg-footer">
+              <span class="ss-badge-sm ss-badge-model">🤖 Qwen 2.5 7B</span>
+              <span class="ss-badge-sm ss-badge-conf">✓ 87%</span>
+              <span class="ss-badge-sm ss-badge-hitl">⚠ ${lang === 'en' ? 'Human Review' : 'Tinjauan Manusia'}</span>
+              <a href="/agentic-soc/inspector/" class="ss-badge-inspect">${lang === 'en' ? 'Inspect →' : 'Periksa →'}</a>
+            </div>
           </div>`;
-        messages.appendChild(aiMsg);
+        messages.appendChild(aiRow);
         messages.scrollTop = messages.scrollHeight;
       }, 1600);
     }
 
-    function escapeHtml(text) {
-      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function escapeHtml(t) {
+      return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
+    // Update textarea placeholder on lang change
     document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('ss-audience') || 'direktur';
-      setAudience(saved);
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const ta = document.getElementById('chat-input');
+      if (ta) ta.placeholder = lang === 'en' ? ta.dataset.enPlaceholder : ta.dataset.idPlaceholder;
     });
   </script>
 </body>
