@@ -49,8 +49,15 @@ function toggleUserMenu() {
   if (m) m.hidden = !m.hidden;
 }
 
+function toggleNav() {
+  const nav = document.getElementById('ss-nav');
+  if (!nav) return;
+  const collapsed = nav.classList.toggle('ss-nav--collapsed');
+  localStorage.setItem('ss-nav-collapsed', collapsed ? '1' : '0');
+}
+
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.ss-nav__user')) {
+  if (!e.target.closest('.ss-nav__user-row') && !e.target.closest('.ss-user-menu')) {
     const m = document.getElementById('user-menu');
     if (m) m.hidden = true;
   }
@@ -59,8 +66,11 @@ document.addEventListener('click', (e) => {
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const lang = localStorage.getItem('ss-lang') || 'id';
-  // Set lang attr before DOMContentLoaded content renders
   document.documentElement.lang = lang;
   applyLang(lang);
   initNav();
+  const nav = document.getElementById('ss-nav');
+  if (nav && localStorage.getItem('ss-nav-collapsed') === '1') {
+    nav.classList.add('ss-nav--collapsed');
+  }
 });

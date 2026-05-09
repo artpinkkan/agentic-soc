@@ -65,17 +65,59 @@
 </head>
 <body>
   <!-- Minimal nav for onboarding -->
-  <nav class="ss-nav">
-    <div class="ss-nav__brand">
-      <span class="ss-nav__logo">Shannon Sentinel</span>
-      <span class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+  <nav class="ss-nav" id="ss-nav">
+    <!-- Header -->
+    <div class="ss-nav__header">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
+        <svg class="ss-nav__brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+        </svg>
+        <span class="ss-nav__brand-name">Shannon Sentinel</span>
+      </a>
+      <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
     </div>
-    <div style="flex:1"></div>
-    <div class="ss-nav__actions">
-      <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
-      <div class="ss-nav__user" onclick="toggleUserMenu()">
-        <div class="ss-avatar" id="nav-avatar">?</div>
+
+    <!-- Menu -->
+    <div class="ss-nav__menu">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
+        <svg class="ss-nav__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
+      </a>
+      <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
+        <svg class="ss-nav__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
+      </a>
+      <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
+        <svg class="ss-nav__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
+      </a>
+      <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
+        <svg class="ss-nav__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
+      </a>
+      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
+        <svg class="ss-nav__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="ss-nav__footer">
+      <div class="ss-nav__footer-top">
+        <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
+      </div>
+      <div class="ss-nav__user-row" onclick="toggleUserMenu()">
+        <div class="ss-avatar" id="nav-avatar">TA</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">Tamaria</span>
+          <span id="nav-company" class="ss-nav__company">Gmail</span>
+        </div>
         <div class="ss-user-menu" id="user-menu" hidden>
+          <a href="/agentic-soc/onboarding/" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</a>
+          <hr>
           <button onclick="logout()" data-en="Sign out" data-id="Keluar">Keluar</button>
         </div>
       </div>
