@@ -120,8 +120,17 @@
       </p>
     </div>
 
+    <!-- Sticky audience bar -->
+    <div class="ss-audience-bar">
+      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
+      <button class="ss-aud-tab" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
+      <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+      <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
+      <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+    </div>
+
     <!-- Response selector -->
-    <div class="ss-response-selector">
+    <div class="ss-response-selector" style="margin-top: var(--ss-gap-lg);">
       <label for="resp-select" data-en="Inspect response:" data-id="Periksa respons:">Periksa respons:</label>
       <select id="resp-select" onchange="loadResponse(this.value)">
         <option value="1" data-en="[14:09] SSH Brute Force analysis — Qwen 2.5 7B" data-id="[14:09] Analisis SSH Brute Force — Qwen 2.5 7B">[14:09] Analisis SSH Brute Force — Qwen 2.5 7B</option>
@@ -353,8 +362,8 @@
         `<div class="ss-kg-node ss-kg-node--${type}"><span></span>${label}</div>`).join('');
     }
 
-    // Apply lang to select options
     document.addEventListener('DOMContentLoaded', () => {
+      setAudience(localStorage.getItem('ss-audience') || 'direktur');
       const lang = localStorage.getItem('ss-lang') || 'id';
       document.querySelectorAll('#resp-select option').forEach(opt => {
         if (lang === 'en' && opt.dataset.en) opt.textContent = opt.dataset.en;

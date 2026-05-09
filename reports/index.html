@@ -18,46 +18,7 @@
     })();
   </script>
   <style>
-    /* ── Sticky audience bar ── */
-    .ss-audience-bar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: var(--ss-surface);
-      border-bottom: 1px solid var(--ss-outline-variant);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px var(--ss-gap-xl);
-      margin: 0 calc(-1 * var(--ss-gap-xl));
-      flex-wrap: wrap;
-    }
-    .ss-audience-bar__label {
-      font-size: 12px;
-      color: var(--ss-on-surface-variant);
-      font-weight: 500;
-      margin-right: 4px;
-      white-space: nowrap;
-    }
-    .ss-aud-tab {
-      font-size: 13px;
-      font-weight: 500;
-      padding: 5px 14px;
-      border-radius: 100px;
-      border: 1px solid var(--ss-outline-variant);
-      background: none;
-      color: var(--ss-on-surface-variant);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .ss-aud-tab:hover { background: var(--ss-surface-container-low); }
-    .ss-aud-tab--active {
-      background: var(--ss-brand);
-      color: #fff;
-      border-color: var(--ss-brand);
-    }
-    .ss-audience-bar__spacer { flex: 1; }
-    .ss-audience-bar__actions { display: flex; gap: 8px; align-items: center; }
+    /* audience bar styles live in shared.css */
 
     /* ── Report card ── */
     .ss-report-card {
@@ -496,21 +457,14 @@
 
     const AUDIENCE_FIELDS = ['aud-summary','aud-report-type','f1-title','f1-sub','f2-title','f2-sub','f3-title','f3-sub','f4-title','f4-sub','r1','r2','r3'];
 
-    function setAudience(aud) {
-      localStorage.setItem('ss-audience', aud);
-      const lang = localStorage.getItem('ss-lang') || 'id';
-
-      // Update tabs
-      document.querySelectorAll('.ss-aud-tab').forEach(t => t.classList.toggle('ss-aud-tab--active', t.dataset.aud === aud));
-
-      // Update all audience-aware fields
+    window.onAudienceChange = function(aud, lang) {
       AUDIENCE_FIELDS.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         const key = aud + '-' + lang;
         if (el.dataset[key]) el.textContent = el.dataset[key];
       });
-    }
+    };
 
     function showReviewModal() { document.getElementById('review-modal').style.display = 'flex'; }
     function hideReviewModal() { document.getElementById('review-modal').style.display = 'none'; }

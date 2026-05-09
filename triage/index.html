@@ -133,6 +133,15 @@
       </p>
     </div>
 
+    <!-- Sticky audience bar -->
+    <div class="ss-audience-bar">
+      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
+      <button class="ss-aud-tab" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
+      <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+      <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
+      <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+    </div>
+
     <!-- Stats -->
     <div class="ss-stats-bar">
       <div class="ss-stat-card">
@@ -398,6 +407,10 @@
       if (hitlCard) hitlCard.style.display = '';
       hitlStates[n] = 'pending';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setAudience(localStorage.getItem('ss-audience') || 'direktur');
+    });
   </script>
 </body>
 </html>

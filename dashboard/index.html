@@ -117,19 +117,13 @@
       </div>
     </div>
 
-    <!-- Audience tabs -->
+    <!-- Sticky audience bar -->
     <div class="ss-audience-bar">
-      <span class="ss-audience-bar__label" data-en="View as:" data-id="Tampilkan sebagai:">Tampilkan sebagai:</span>
-      <div class="ss-audience-tabs">
-        <button class="ss-tab ss-tab--active" data-aud="direktur" onclick="setAudience('direktur')"
-                data-en="Executive Director" data-id="Direktur">Direktur</button>
-        <button class="ss-tab" data-aud="it" onclick="setAudience('it')"
-                data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
-        <button class="ss-tab" data-aud="finance" onclick="setAudience('finance')"
-                data-en="Finance" data-id="Keuangan">Keuangan</button>
-        <button class="ss-tab" data-aud="auditor" onclick="setAudience('auditor')"
-                data-en="Auditor" data-id="Auditor">Auditor</button>
-      </div>
+      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
+      <button class="ss-aud-tab ss-aud-tab--active" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
+      <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+      <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
+      <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
     </div>
 
     <!-- X-Ray Cards grid -->
@@ -347,22 +341,8 @@ MFA not enabled:         4  (33.3%)
     // Hydrate company name
     if (window.SS) document.getElementById('hdr-company').textContent = window.SS.company || 'Perusahaan Anda';
 
-    function setAudience(aud) {
-      localStorage.setItem('ss-audience', aud);
-      document.querySelectorAll('.ss-tab').forEach(t => t.classList.toggle('ss-tab--active', t.dataset.aud === aud));
-      document.querySelectorAll('.aud-q, .aud-f').forEach(el => {
-        if (el.dataset[aud]) el.textContent = el.dataset[aud];
-      });
-      // Re-apply lang after audience swap
-      const lang = localStorage.getItem('ss-lang') || 'id';
-      if (lang === 'en') {
-        document.querySelectorAll('[data-en]').forEach(el => { el.textContent = el.dataset.en; });
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('ss-audience') || 'direktur';
-      setAudience(saved);
+      setAudience(localStorage.getItem('ss-audience') || 'direktur');
     });
   </script>
 </body>

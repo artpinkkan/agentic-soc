@@ -249,6 +249,15 @@
       </div>
     </div>
 
+    <!-- Audience bar (overrides margin since page has padding:0) -->
+    <div class="ss-audience-bar" style="margin:0; padding:8px 24px;">
+      <span class="ss-audience-bar__label" data-en="View as:" data-id="Lihat sebagai:">Lihat sebagai:</span>
+      <button class="ss-aud-tab" data-aud="direktur" onclick="setAudience('direktur')" data-en="Executive Director" data-id="Direktur">Direktur</button>
+      <button class="ss-aud-tab" data-aud="it" onclick="setAudience('it')" data-en="IT Manager" data-id="Manajer IT">Manajer IT</button>
+      <button class="ss-aud-tab" data-aud="finance" onclick="setAudience('finance')" data-en="Finance" data-id="Keuangan">Keuangan</button>
+      <button class="ss-aud-tab" data-aud="auditor" onclick="setAudience('auditor')" data-en="Auditor" data-id="Auditor">Auditor</button>
+    </div>
+
     <!-- Messages -->
     <div class="ss-chat-messages" id="chat-messages">
 
@@ -439,8 +448,8 @@
       return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // Update textarea placeholder on lang change
     document.addEventListener('DOMContentLoaded', () => {
+      setAudience(localStorage.getItem('ss-audience') || 'direktur');
       const lang = localStorage.getItem('ss-lang') || 'id';
       const ta = document.getElementById('chat-input');
       if (ta) ta.placeholder = lang === 'en' ? ta.dataset.enPlaceholder : ta.dataset.idPlaceholder;
