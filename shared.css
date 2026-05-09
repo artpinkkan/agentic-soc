@@ -233,20 +233,23 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 .ss-nav__name    { display: block; font-size: 13px; font-weight: 500; color: var(--ss-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ss-nav__company { display: block; font-size: 11px; color: var(--ss-neutral-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Footer action links — always visible, no popup */
+/* Footer action links — always visible, same style as nav items */
 .ss-nav__footer-action {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: var(--ss-radius-sm);
   font-size: 13px; font-weight: 500; color: var(--ss-on-surface-variant);
   text-decoration: none !important; white-space: nowrap; overflow: hidden;
   transition: background 0.15s, color 0.15s;
-  background: none; border: none; cursor: pointer; width: 100%; text-align: left;
+  /* reset button UA styles */
+  appearance: none; -webkit-appearance: none;
+  background: none; border: none; outline: none;
+  cursor: pointer; width: 100%; text-align: left; box-shadow: none;
 }
 .ss-nav__footer-action:hover { background: var(--ss-surface-container-low); color: var(--ss-on-surface); }
 .ss-nav__footer-action-icon { width: 16px; height: 16px; min-width: 16px; flex-shrink: 0; display: block; }
-.ss-nav__footer-action-label { transition: opacity 0.15s; }
+.ss-nav__footer-action-label { transition: opacity 0.15s; white-space: nowrap; overflow: hidden; }
 .ss-nav--collapsed .ss-nav__footer-action-label { opacity: 0; }
-.ss-nav__footer-divider { height: 1px; background: var(--ss-outline-variant); margin: 2px 0; }
+.ss-nav__footer-divider { height: 1px; background: var(--ss-outline-variant); margin: 4px 0; }
 
 /* ── Page layout ─────────────────────────────────────────────────────────── */
 .ss-page { flex: 1; min-width: 0; min-height: 100vh; padding: var(--ss-gap-xl); }
