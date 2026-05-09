@@ -18,25 +18,121 @@
     })();
   </script>
   <style>
-    .ss-xray-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-lg); }
-    .ss-xray-card { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); }
-    .ss-xray-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-    .ss-xray-card__q { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.4; }
-    .ss-xray-card__finding { font-size: 13px; color: var(--ss-neutral-700); line-height: 1.5; margin-bottom: 10px; }
-    .ss-xray-card__detail summary { font-size: 12px; color: var(--ss-brand); cursor: pointer; }
-    .ss-xray-card__detail pre { margin-top: 8px; font-size: 11px; background: var(--ss-neutral-100); padding: 10px; border-radius: var(--ss-radius-sm); overflow-x: auto; line-height: 1.5; }
-    .ss-actions-panel { background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); }
-    .ss-actions-panel h3 { font-size: 16px; font-weight: 500; margin-bottom: var(--ss-gap-md); }
-    .ss-actions-list { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-md); }
-    .ss-actions-list li { display: flex; align-items: flex-start; gap: 10px; }
-    .ss-action-effort { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
-    .ss-export-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); padding: var(--ss-gap-md) var(--ss-gap-lg); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); background: var(--ss-surface-container-lowest); margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
-    .ss-upgrade-banner { background: var(--ss-brand-light); border: 0.5px solid #5DCAA5; border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-md); margin-bottom: var(--ss-gap-xl); flex-wrap: wrap; }
+    /* ── Command Center hero ── */
+    .ss-command-center {
+      background: var(--ss-brand-gradient);
+      border-radius: var(--ss-radius-lg);
+      padding: var(--ss-gap-lg) var(--ss-gap-xl);
+      position: relative; overflow: hidden;
+      margin-bottom: var(--ss-gap-xl);
+    }
+    .ss-command-center__bg {
+      position: absolute; right: -20px; top: -20px;
+      opacity: 0.06; pointer-events: none;
+    }
+    .ss-command-center__header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; flex-wrap: wrap; margin-bottom: var(--ss-gap-lg);
+    }
+    .ss-command-center__title {
+      font-size: 26px; font-weight: 700; color: #fff;
+      font-family: var(--ss-font-headline); letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .ss-command-center__sub {
+      font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.5;
+    }
+    .ss-command-center__sub strong { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .ss-command-center__meta {
+      font-size: 12px; color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 100px; padding: 4px 12px; white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── Priority action cards ── */
+    .ss-actions-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
+    }
+    .ss-action-card {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--ss-radius-md);
+      padding: var(--ss-gap-md);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .ss-action-card__head { display: flex; align-items: center; justify-content: space-between; }
+    .ss-action-card__num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,0.20); border: 1.5px solid rgba(255,255,255,0.35);
+      color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ss-action-card__urgency {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px;
+      border-radius: 100px; text-transform: uppercase;
+    }
+    .ss-action-card__urgency--urgent { background: #E24B4A; color: #fff; }
+    .ss-action-card__urgency--high   { background: rgba(239,159,39,0.85); color: #fff; }
+    .ss-action-card__title { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.35; font-family: var(--ss-font-headline); }
+    .ss-action-card__desc  { font-size: 12px; color: rgba(255,255,255,0.68); line-height: 1.5; flex: 1; }
+    .ss-action-card__btn {
+      margin-top: 4px; width: 100%; padding: 8px; border-radius: var(--ss-radius-sm);
+      background: #fff; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--ss-brand);
+      transition: opacity 0.15s; font-family: var(--ss-font);
+    }
+    .ss-action-card__btn:hover { opacity: 0.88; }
+
+    /* ── Findings section ── */
+    .ss-findings-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; margin-bottom: var(--ss-gap-md);
+    }
+    .ss-findings-title {
+      font-size: 18px; font-weight: 700;
+      font-family: var(--ss-font-headline); color: var(--ss-on-surface);
+    }
+    .ss-findings-actions { display: flex; gap: 8px; }
+
+    .ss-findings-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--ss-gap-xl); }
+    .ss-finding-row {
+      background: var(--ss-surface-container-lowest);
+      box-shadow: var(--ss-shadow-card);
+      border-radius: var(--ss-radius-md);
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 14px;
+      transition: box-shadow 0.15s;
+    }
+    .ss-finding-row:hover { box-shadow: 0px 2px 8px rgba(25,28,30,0.10), 0px 4px 16px rgba(25,28,30,0.06); }
+    .ss-finding-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .ss-finding-dot--critical { background: var(--ss-danger); }
+    .ss-finding-dot--high     { background: var(--ss-warning); }
+    .ss-finding-dot--medium   { background: var(--ss-info); }
+    .ss-finding-badge { flex-shrink: 0; min-width: 80px; }
+    .ss-finding-icon  { flex-shrink: 0; color: var(--ss-on-surface-variant); opacity: 0.5; }
+    .ss-finding-body  { flex: 1; min-width: 0; }
+    .ss-finding-title { font-size: 14px; font-weight: 600; color: var(--ss-on-surface); margin-bottom: 2px; }
+    .ss-finding-desc  { font-size: 13px; color: var(--ss-on-surface-variant); line-height: 1.5; }
+    .ss-finding-action {
+      font-size: 13px; font-weight: 600; color: var(--ss-brand);
+      white-space: nowrap; cursor: pointer; background: none; border: none;
+      font-family: var(--ss-font); transition: opacity 0.15s; flex-shrink: 0;
+    }
+    .ss-finding-action:hover { opacity: 0.7; }
+
+    /* ── Upgrade banner ── */
+    .ss-upgrade-banner {
+      background: var(--ss-brand-light); border: 0.5px solid #5DCAA5;
+      border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: var(--ss-gap-md); flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
   <nav class="ss-nav" id="ss-nav">
-    <!-- Header -->
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
         <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -48,8 +144,6 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
     </div>
-
-    <!-- Menu -->
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item active" title="Dashboard">
         <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -72,8 +166,6 @@
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
     </div>
-
-    <!-- Footer -->
     <div class="ss-nav__footer">
       <div class="ss-nav__footer-top">
         <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
@@ -87,7 +179,6 @@
           <span id="nav-company" class="ss-nav__company">Gmail</span>
         </div>
       </div>
-
       <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
         <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
@@ -97,25 +188,21 @@
 
   <div class="ss-page">
     <!-- Page header -->
-    <div class="ss-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>
-        <h1 class="ss-page-title">
-          <span id="hdr-company">PT Bank Contoh Tbk</span>
-          <span data-en="— Security Report" data-id="— Laporan Keamanan">— Laporan Keamanan</span>
-        </h1>
-        <p class="ss-page-sub">
+        <p style="font-size:13px;color:var(--ss-on-surface-variant);">
           <span data-en="Scan completed" data-id="Pemindaian selesai">Pemindaian selesai</span>
-          25 Apr 2026 · 14:32 WIB
+          25 Apr 2026 · 14:32 WIB &nbsp;·&nbsp; <span id="hdr-company">PT Bank Contoh Tbk</span>
         </p>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
           <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
           <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
           <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
           <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
         </select>
-        <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:6px 12px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
+        <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:5px 12px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.42 1.42M4.93 4.93L6.35 6.35M19.07 19.07l-1.42-1.42M4.93 19.07l1.42-1.42M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
           Pengaturan domain
         </a>
@@ -123,220 +210,146 @@
       </div>
     </div>
 
-    <!-- X-Ray Cards grid -->
-    <div class="ss-xray-grid">
-
-      <!-- Card 1: Email security -->
-      <div class="ss-xray-card">
-        <div class="ss-xray-card__head">
-          <p class="ss-xray-card__q">
-            <span class="aud-q"
-                  data-direktur="Bisakah penyerang menyamar sebagai email perusahaan Anda?"
-                  data-it="Apakah konfigurasi SPF, DKIM, dan DMARC sudah benar?"
-                  data-finance="Apakah email tagihan kami rentan dipalsukan?"
-                  data-auditor="Apakah kontrol autentikasi email terdokumentasi?">
-              Bisakah penyerang menyamar sebagai email perusahaan Anda?
-            </span>
+    <!-- Command Center hero -->
+    <div class="ss-command-center">
+      <!-- Decorative background shield -->
+      <svg class="ss-command-center__bg" width="220" height="220" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+      </svg>
+      <div class="ss-command-center__header">
+        <div>
+          <h2 class="ss-command-center__title" data-en="Command Center" data-id="Pusat Komando">Pusat Komando</h2>
+          <p class="ss-command-center__sub">
+            <span id="cmd-sub-text" data-en="Strategic risk assessment &amp; prioritized actions for the" data-id="Penilaian risiko strategis &amp; tindakan prioritas untuk">Penilaian risiko strategis &amp; tindakan prioritas untuk</span>
+            <strong id="cmd-aud-label">Direktur</strong>.
           </p>
-          <span class="badge badge-critical" data-en="At Risk" data-id="Berisiko">Berisiko</span>
         </div>
-        <p class="ss-xray-card__finding">
-          <span class="aud-f"
-                data-direktur="Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda."
-                data-it="SPF ditemukan, DKIM tidak ada, DMARC tidak ada. Terapkan kebijakan DMARC p=quarantine segera."
-                data-finance="Tanpa DMARC, email tagihan perusahaan Anda dapat dipalsukan. Risiko penipuan pembayaran tinggi."
-                data-auditor="Tidak ada kebijakan DMARC yang terdokumentasi. Kontrol autentikasi email tidak lengkap.">
-            Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda.
-          </span>
-        </p>
-        <details class="ss-xray-card__detail">
-          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
-          <pre>SPF:   ✓ v=spf1 include:_spf.google.com ~all
-DKIM:  ✗ No selector found
-DMARC: ✗ No _dmarc TXT record</pre>
-        </details>
+        <span class="ss-command-center__meta" data-en="System Updated 1h ago" data-id="Sistem Diperbarui 1j lalu">Sistem Diperbarui 1j lalu</span>
       </div>
-
-      <!-- Card 2: Exposed systems -->
-      <div class="ss-xray-card">
-        <div class="ss-xray-card__head">
-          <p class="ss-xray-card__q">
-            <span class="aud-q"
-                  data-direktur="Apakah ada sistem internal Anda yang terekspos ke internet?"
-                  data-it="Port dan layanan apa yang terekspos secara publik?"
-                  data-finance="Apakah sistem keuangan kami dapat diakses dari luar?"
-                  data-auditor="Apakah permukaan serangan eksternal terdokumentasi?">
-              Apakah ada sistem internal Anda yang terekspos ke internet?
-            </span>
-          </p>
-          <span class="badge badge-high" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
-        </div>
-        <p class="ss-xray-card__finding">
-          <span class="aud-f"
-                data-direktur="3 subdomain terekspos publik dengan layanan lama. Salah satunya menjalankan SSH versi rentan."
-                data-it="ssh.bankcontoh.co.id (port 22, OpenSSH 7.4 — EOL), panel.bankcontoh.co.id (port 8080 terbuka), dev.bankcontoh.co.id (terekspos publik)."
-                data-finance="Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan. Rekomendasikan audit akses segera."
-                data-auditor="3 subdomain tidak terlindungi ditemukan. Dokumentasi permukaan serangan diperlukan untuk audit kepatuhan.">
-            3 subdomain terekspos publik dengan layanan lama. Salah satunya menjalankan SSH versi rentan.
-          </span>
-        </p>
-        <details class="ss-xray-card__detail">
-          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
-          <pre>ssh.bankcontoh.co.id    → port 22, OpenSSH 7.4 (CVE-2023-38408)
-panel.bankcontoh.co.id  → port 8080, no auth detected
-dev.bankcontoh.co.id    → port 443, exposed dev environment</pre>
-        </details>
+      <div class="ss-actions-grid" id="priority-actions">
+        <!-- Rendered by JS -->
       </div>
-
-      <!-- Card 3: Evidence readiness -->
-      <div class="ss-xray-card">
-        <div class="ss-xray-card__head">
-          <p class="ss-xray-card__q">
-            <span class="aud-q"
-                  data-direktur="Jika terjadi insiden, apakah kita siap membuktikannya?"
-                  data-it="Apakah log yang diperlukan tersedia dan cukup lama tersimpan?"
-                  data-finance="Bisakah kita membuktikan kepatuhan ke OJK jika diaudit?"
-                  data-auditor="Apakah retensi log memenuhi persyaratan OJK minimum 90 hari?">
-              Jika terjadi insiden, apakah kita siap membuktikannya?
-            </span>
-          </p>
-          <span class="badge badge-critical" data-en="At Risk" data-id="Berisiko">Berisiko</span>
-        </div>
-        <p class="ss-xray-card__finding">
-          <span class="aud-f"
-                data-direktur="Retensi log saat ini hanya 7 hari. OJK mensyaratkan minimum 90 hari untuk lembaga keuangan."
-                data-it="Log server dideteksi dengan retensi 7 hari. Tidak ada SIEM terpusat. Log endpoint tidak dikirim ke pusat."
-                data-finance="Tanpa log 90 hari, kita tidak dapat memenuhi persyaratan investigasi forensik OJK jika terjadi insiden."
-                data-auditor="Retensi log 7 hari (terdeteksi) tidak memenuhi POJK 11/2022 yang mensyaratkan 90 hari minimum.">
-            Retensi log saat ini hanya 7 hari. OJK mensyaratkan minimum 90 hari untuk lembaga keuangan.
-          </span>
-        </p>
-        <details class="ss-xray-card__detail">
-          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
-          <pre>Log retention detected: 7 days
-OJK minimum (POJK 11/2022): 90 days
-Gap: 83 days
-Centralized SIEM: ✗ Not detected
-Endpoint log forwarding: ✗ Not detected</pre>
-        </details>
-      </div>
-
-      <!-- Card 4: User protection -->
-      <div class="ss-xray-card">
-        <div class="ss-xray-card__head">
-          <p class="ss-xray-card__q">
-            <span class="aud-q"
-                  data-direktur="Apakah akun admin kita dilindungi dari pengambilalihan?"
-                  data-it="Berapa banyak akun admin yang belum mengaktifkan MFA?"
-                  data-finance="Apakah akun keuangan dan payroll terlindungi dengan MFA?"
-                  data-auditor="Apakah penerapan MFA untuk akun istimewa terdokumentasi?">
-              Apakah akun admin kita dilindungi dari pengambilalihan?
-            </span>
-          </p>
-          <span class="badge badge-high" data-en="Needs Attention" data-id="Perlu Perhatian">Perlu Perhatian</span>
-        </div>
-        <p class="ss-xray-card__finding">
-          <span class="aud-f"
-                data-direktur="4 dari 12 akun administrator belum mengaktifkan MFA. Ini membuka risiko pengambilalihan akun."
-                data-it="4 akun admin (domain admin: 2, cloud admin: 2) tanpa MFA terdeteksi via login pattern analysis."
-                data-finance="2 akun dengan akses sistem keuangan tidak menggunakan MFA. Risiko transfer tidak sah signifikan."
-                data-auditor="4 akun dengan hak istimewa tinggi tidak memiliki MFA. Tidak sesuai dengan kebijakan kontrol akses yang disyaratkan.">
-            4 dari 12 akun administrator belum mengaktifkan MFA. Ini membuka risiko pengambilalihan akun.
-          </span>
-        </p>
-        <details class="ss-xray-card__detail">
-          <summary data-en="Technical detail" data-id="Detail teknis">Detail teknis</summary>
-          <pre>Admin accounts total:    12
-MFA enabled:             8  (66.7%)
-MFA not enabled:         4  (33.3%)
-  — domain.admin.01    ✗
-  — domain.admin.03    ✗
-  — cloud.admin.01     ✗
-  — cloud.admin.04     ✗</pre>
-        </details>
-      </div>
-
     </div>
 
-    <!-- Top 3 Actions -->
-    <div class="ss-actions-panel">
-      <h3 data-en="Top 3 actions this week" data-id="3 tindakan prioritas minggu ini">3 tindakan prioritas minggu ini</h3>
-      <ol class="ss-actions-list">
-        <li>
-          <span class="badge badge-critical" style="margin-top:2px">TINGGI</span>
-          <div>
-            <p data-en="Enable DMARC policy on your domain (p=quarantine)."
-               data-id="Aktifkan kebijakan DMARC pada domain Anda (p=quarantine).">
-              Aktifkan kebijakan DMARC pada domain Anda (p=quarantine).
-            </p>
-            <p class="ss-action-effort">~1 jam</p>
-          </div>
-        </li>
-        <li>
-          <span class="badge badge-critical" style="margin-top:2px">TINGGI</span>
-          <div>
-            <p data-en="Enable MFA on all 4 unprotected admin accounts."
-               data-id="Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.">
-              Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.
-            </p>
-            <p class="ss-action-effort">~1 hari</p>
-          </div>
-        </li>
-        <li>
-          <span class="badge badge-high" style="margin-top:2px">SEDANG</span>
-          <div>
-            <p data-en="Extend log retention to 90 days (OJK minimum)."
-               data-id="Perpanjang retensi log ke 90 hari (minimum OJK).">
-              Perpanjang retensi log ke 90 hari (minimum OJK).
-            </p>
-            <p class="ss-action-effort">~1 minggu</p>
-          </div>
-        </li>
-      </ol>
+    <!-- Unresolved findings -->
+    <div class="ss-findings-header">
+      <h3 class="ss-findings-title" data-en="Unresolved Security Findings" data-id="Temuan Keamanan Belum Diselesaikan">Temuan Keamanan Belum Diselesaikan</h3>
+      <div class="ss-findings-actions">
+        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" data-en="Filter: Status" data-id="Filter: Status">Filter: Status</button>
+        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="alert('Exporting…')" data-en="Export CSV" data-id="Ekspor CSV">Ekspor CSV</button>
+      </div>
     </div>
 
-    <!-- Export bar -->
-    <div class="ss-export-bar">
-      <div>
-        <p style="font-weight:500; font-size:13px;"
-           data-en="Free Tier — watermarked preview"
-           data-id="Tier Gratis — pratinjau bertanda air">
-          Tier Gratis — pratinjau bertanda air
-        </p>
-        <p style="font-size:12px; color:var(--ss-neutral-500);"
-           data-en="Upgrade for a clean, audit-ready PDF."
-           data-id="Upgrade untuk PDF bersih siap audit.">
-          Upgrade untuk PDF bersih siap audit.
-        </p>
-      </div>
-      <button class="ss-btn-secondary" onclick="alert('Generating watermarked PDF…')"
-              data-en="Download preview PDF"
-              data-id="Unduh PDF pratinjau">Unduh PDF pratinjau</button>
+    <div class="ss-findings-list" id="findings-list">
+      <!-- Rendered by JS -->
     </div>
 
     <!-- Upgrade CTA -->
     <div class="ss-upgrade-banner">
       <div>
-        <p style="font-weight:500;"
-           data-en="Found your gaps. Now close them."
-           data-id="Temukan celah. Sekarang tutup celahnya.">
-          Temukan celah. Sekarang tutup celahnya.
-        </p>
-        <p style="font-size:13px;"
-           data-en="30-Day Sprint: Rp 35–75 jt — our team helps you fix all red findings."
-           data-id="Sprint 30-Hari: Rp 35–75 jt — tim kami membantu memperbaiki semua temuan merah.">
-          Sprint 30-Hari: Rp 35–75 jt — tim kami membantu memperbaiki semua temuan merah.
-        </p>
+        <p style="font-weight:500;" data-en="Found your gaps. Now close them." data-id="Temukan celah Anda. Sekarang tutup celahnya.">Temukan celah Anda. Sekarang tutup celahnya.</p>
+        <p style="font-size:13px;color:var(--ss-neutral-700);" data-en="30-Day Sprint: Rp 35–75M — our team fixes all red findings." data-id="Sprint 30-Hari: Rp 35–75jt — tim kami membantu memperbaiki semua temuan merah.">Sprint 30-Hari: Rp 35–75jt — tim kami membantu memperbaiki semua temuan merah.</p>
       </div>
-      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary"
-         data-en="Contact us →" data-id="Hubungi kami →">Hubungi kami →</a>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary" data-en="Contact us →" data-id="Hubungi kami →">Hubungi kami →</a>
     </div>
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
   <script>
-    // Hydrate company name
-    if (window.SS) document.getElementById('hdr-company').textContent = window.SS.company || 'Perusahaan Anda';
+    if (window.SS) {
+      document.getElementById('hdr-company').textContent = window.SS.company || 'Perusahaan Anda';
+    }
+
+    const PRIORITY_ACTIONS = {
+      direktur: [
+        { urgency: 'urgent', title: 'Setujui Deployment DMARC', desc: 'Otorisasi IT untuk menutup risiko pemalsuan email perusahaan hari ini.', btn: 'Otorisasi Sekarang' },
+        { urgency: 'high',   title: 'Wajibkan MFA untuk Admin', desc: '4 akun admin tanpa MFA membuka risiko pengambilalihan akun.', btn: 'Setujui Kebijakan' },
+        { urgency: 'high',   title: 'Tinjau Risiko Retensi Log', desc: 'Retensi 7 hari membuka eksposur audit OJK. Butuh keputusan segera.', btn: 'Tinjau Risiko' },
+      ],
+      it: [
+        { urgency: 'urgent', title: 'Deploy DMARC p=quarantine', desc: 'Tambahkan record TXT ke _dmarc.bankcontoh.co.id · ~1 jam.', btn: 'Eksekusi Sekarang' },
+        { urgency: 'high',   title: 'Aktifkan MFA — 4 Akun Admin', desc: 'domain.admin.01, .03, cloud.admin.01, .04 — gunakan SSO yang ada.', btn: 'Konfigurasi MFA' },
+        { urgency: 'high',   title: 'Patch OpenSSH di ssh.bankcontoh.co.id', desc: 'OpenSSH 7.4 (EOL) — CVE-2023-38408 aktif dieksploitasi.', btn: 'Jadwalkan Patch' },
+      ],
+      finance: [
+        { urgency: 'urgent', title: 'Risiko Penipuan Invoice — DMARC Hilang', desc: 'Email tagihan dapat dipalsukan. Eksposur penipuan pembayaran tinggi.', btn: 'Eskalasi ke IT' },
+        { urgency: 'high',   title: 'Akun Finance Admin Tidak Terlindungi', desc: '2 akun dengan akses sistem keuangan tidak memiliki MFA.', btn: 'Minta Tindakan' },
+        { urgency: 'high',   title: 'Eksposur Audit OJK — Gap Log 83 Hari', desc: 'Potensi denda OJK jika diaudit dalam kondisi saat ini.', btn: 'Tinjau Eksposur' },
+      ],
+      auditor: [
+        { urgency: 'urgent', title: 'DMARC — Tidak Sesuai POJK 11/2022', desc: 'Kontrol autentikasi email §4.2 tidak terpenuhi. Dokumentasikan segera.', btn: 'Catat Temuan' },
+        { urgency: 'high',   title: 'Retensi Log 7 Hari vs 90 Hari', desc: 'POJK 11/2022 §7.1 — gap 83 hari. Butuh rencana remediasi.', btn: 'Buat Catatan Audit' },
+        { urgency: 'high',   title: '4 Akun Istimewa Tanpa MFA', desc: 'Tidak sesuai §5.3 persyaratan kontrol akses. Jadwalkan tinjauan.', btn: 'Jadwalkan Tinjauan' },
+      ],
+    };
+
+    const FINDINGS = [
+      {
+        dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+        title: { direktur: 'Domain Email Tidak Terlindungi', it: 'DMARC Hilang — bankcontoh.co.id', finance: 'Risiko Penipuan Invoice', auditor: 'Ketidakpatuhan DMARC' },
+        desc:  { direktur: 'Penyerang dapat memalsukan email perusahaan Anda ke klien dan mitra.', it: 'SPF: ✓  DKIM: ✗  DMARC: ✗ — Terapkan p=quarantine segera.', finance: 'Tanpa DMARC, email tagihan dapat dipalsukan. Risiko transfer tidak sah.', auditor: 'Kontrol §4.2 tidak dipenuhi. Tidak ada kebijakan DMARC terdokumentasi.' },
+        action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Lihat Kepatuhan →' },
+      },
+      {
+        dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+        title: { direktur: 'Retensi Log Tidak Memenuhi OJK', it: 'Log Retention 7 Hari — SIEM Tidak Terdeteksi', finance: 'Investigasi Penipuan Terbatas', auditor: 'Retensi Log Tidak Memenuhi POJK 11/2022' },
+        desc:  { direktur: 'OJK mensyaratkan 90 hari minimum. Saat ini hanya 7 hari. Risiko audit tinggi.', it: 'Log server 7 hari, tanpa SIEM terpusat, endpoint log tidak diteruskan.', finance: 'Log 7 hari tidak cukup untuk investigasi forensik jika terjadi penipuan.', auditor: 'POJK 11/2022 §7.1 — gap 83 hari. Remediasi wajib sebelum audit berikutnya.' },
+        action:{ direktur: 'Tinjau Risiko', it: 'Lihat Konfigurasi →', finance: 'Lihat Dampak →', auditor: 'Buat Catatan Audit' },
+      },
+      {
+        dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+        title: { direktur: '3 Subdomain Terekspos ke Internet', it: 'SSH EOL + Port Terbuka di Subdomain', finance: 'Subdomain Terekspos — Risiko Akses Sistem', auditor: 'Permukaan Serangan Tidak Terdokumentasi' },
+        desc:  { direktur: 'Salah satu subdomain menjalankan SSH versi rentan yang sedang aktif diserang.', it: 'ssh.bankcontoh.co.id — OpenSSH 7.4 (CVE-2023-38408), port 8080 terbuka.', finance: 'Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan.', auditor: '3 subdomain tidak terlindungi belum terdokumentasi dalam register risiko.' },
+        action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Perbarui Register' },
+      },
+      {
+        dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+        title: { direktur: '4 Akun Admin Tanpa MFA', it: '4 Akun Admin Tanpa MFA Terdeteksi', finance: 'Akun Finance Admin Rentan', auditor: '4 Akun Istimewa Tidak Memenuhi §5.3' },
+        desc:  { direktur: '4 dari 12 admin belum MFA. Risiko pengambilalihan akun signifikan.', it: 'domain.admin.01, .03, cloud.admin.01, .04 — fix via SSO provider yang ada.', finance: '2 akun dengan akses sistem keuangan dan payroll tidak menggunakan MFA.', auditor: 'MFA wajib untuk akun istimewa per POJK 11/2022 §5.3 — 4 akun tidak patuh.' },
+        action:{ direktur: 'Tinjau Akun', it: 'Konfigurasi MFA →', finance: 'Minta Tindakan', auditor: 'Dokumentasikan Gap' },
+      },
+    ];
+
+    function renderDashboard(aud) {
+      const actions = PRIORITY_ACTIONS[aud] || PRIORITY_ACTIONS.direktur;
+      document.getElementById('priority-actions').innerHTML = actions.map((a, i) => `
+        <div class="ss-action-card">
+          <div class="ss-action-card__head">
+            <span class="ss-action-card__num">${i + 1}</span>
+            <span class="ss-action-card__urgency ss-action-card__urgency--${a.urgency}">
+              ${a.urgency === 'urgent' ? 'URGENT' : 'HIGH'}
+            </span>
+          </div>
+          <div class="ss-action-card__title">${a.title}</div>
+          <div class="ss-action-card__desc">${a.desc}</div>
+          <button class="ss-action-card__btn" onclick="alert('${a.btn}…')">${a.btn}</button>
+        </div>
+      `).join('');
+
+      const audLabels = { direktur: 'Direktur', it: 'Manajer IT', finance: 'Keuangan', auditor: 'Auditor' };
+      document.getElementById('cmd-aud-label').textContent = audLabels[aud] || aud;
+
+      document.getElementById('findings-list').innerHTML = FINDINGS.map(f => `
+        <div class="ss-finding-row">
+          <div class="ss-finding-dot ss-finding-dot--${f.dot}"></div>
+          <div class="ss-finding-badge">${f.badge}</div>
+          <div class="ss-finding-icon">${f.icon}</div>
+          <div class="ss-finding-body">
+            <div class="ss-finding-title">${f.title[aud] || f.title.direktur}</div>
+            <div class="ss-finding-desc">${f.desc[aud] || f.desc.direktur}</div>
+          </div>
+          <button class="ss-finding-action" onclick="window.location.href='/agentic-soc/reports/'">${f.action[aud] || f.action.direktur}</button>
+        </div>
+      `).join('');
+    }
+
+    window.onAudienceChange = function(aud) {
+      renderDashboard(aud);
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
       setAudience(localStorage.getItem('ss-audience') || 'direktur');
