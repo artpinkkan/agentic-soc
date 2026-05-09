@@ -1,240 +1,748 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getSession, SSSession } from "@/lib/session";
 
-const alerts = [
-  { title: "SSH Brute Force Attack", meta: "192.168.10.45 → auth-server-01", sev: "critical", time: "2m ago", host: "192.168.10.45", src: "EDR", detail: "340 attempts / 2 min", ai: "This IP attempted 340 SSH logins in under 2 minutes — classic brute force. Recommend immediate isolation and password reset on targeted accounts." },
-  { title: "Lateral Movement Detected", meta: "AD01 → file-server → db-server", sev: "critical", time: "7m ago", host: "AD01", src: "SIEM", detail: "3 hops detected", ai: "Sequential access across 3 internal hosts in 4 minutes. Matches known APT lateral movement. Contain AD01 immediately." },
-  { title: "Unusual Data Exfiltration", meta: "joko@corp.id → external FTP", sev: "high", time: "14m ago", host: "ws-joko-012", src: "DLP", detail: "4.2 GB upload", ai: "4.2 GB uploaded to unrecognized FTP at 2:14 AM — outside working hours. Could be insider threat or compromised account." },
-  { title: "Suspicious PowerShell", meta: "CORP\\dev-pc-07 — encoded cmd", sev: "high", time: "31m ago", host: "dev-pc-07", src: "EDR", detail: "Base64 payload", ai: "Encoded PowerShell consistent with download-and-execute patterns. Parent: Word.exe — likely macro malware." },
-  { title: "Failed Login Spike", meta: "portal.corp.id — 220 failures", sev: "medium", time: "1h ago", host: "portal.corp.id", src: "WAF", detail: "220 failures / 10 min", ai: "Distributed credential stuffing from 18 IPs. Consider enabling CAPTCHA or rate limiting." },
-  { title: "Port Scan from Unknown IP", meta: "45.33.102.77 → DMZ subnet", sev: "low", time: "2h ago", host: "DMZ", src: "Firewall", detail: "1,200 ports scanned", ai: "Reconnaissance scan. No active exploitation detected. Monitor for follow-up activity." },
-];
+// ─── Types ───────────────────────────────────────────────────────────────────
+type Audience = "direktur" | "it" | "finance" | "auditor";
+type Lang = "id" | "en";
 
-const sevStyle: Record<string, { bar: string; badge: string; text: string; kpiTop: string }> = {
-  critical: { bar: "bg-danger",  badge: "bg-danger-light text-danger border border-danger-border",   text: "text-danger",  kpiTop: "border-t-danger" },
-  high:     { bar: "bg-warning", badge: "bg-warning-light text-warning border border-warning-border", text: "text-warning", kpiTop: "border-t-warning" },
-  medium:   { bar: "bg-info",    badge: "bg-info-light text-info border border-info-border",          text: "text-info",    kpiTop: "" },
-  low:      { bar: "bg-success", badge: "bg-success-light text-success border border-success-border", text: "text-success", kpiTop: "" },
+// ─── Copy ────────────────────────────────────────────────────────────────────
+const copy = {
+  id: {
+    topbarSub: "Pemindaian selesai 09 Mei 2026 · 23:41 WIB",
+    tierBadge: "Tier Gratis · Pratinjau",
+    langToggle: "EN",
+    audiences: ["Direktur", "Manajer IT", "Keuangan", "Auditor"] as string[],
+    actionsHeadline: "3 Tindakan Prioritas Minggu Ini",
+    actions: [
+      {
+        level: "TINGGI",
+        levelType: "error" as const,
+        text: "Aktifkan kebijakan DMARC pada domain Anda.",
+        effort: "~1 jam",
+      },
+      {
+        level: "TINGGI",
+        levelType: "error" as const,
+        text: "Aktifkan MFA pada semua 4 akun admin yang belum terlindungi.",
+        effort: "~1 hari",
+      },
+      {
+        level: "SEDANG",
+        levelType: "warning" as const,
+        text: "Perpanjang retensi log ke 90 hari (minimum OJK).",
+        effort: "~1 minggu",
+      },
+    ],
+    exportLeft: "Tier Gratis — pratinjau bertanda air",
+    exportLeftSub: "Upgrade untuk PDF bersih siap audit.",
+    exportBtn: "Unduh PDF pratinjau",
+    ctaHeadline: "Temukan celah. Sekarang tutup celahnya.",
+    ctaSub: "Sprint 30-Hari: Rp 35–75 jt — tim kami membantu memperbaiki semua temuan merah.",
+    ctaBtn: "Hubungi kami →",
+    detailSummary: "Detail teknis",
+    statusError: "Berisiko",
+    statusWarning: "Perlu Perhatian",
+    cards: [
+      // Card 1 — Email Security
+      {
+        id: "email",
+        status: "error" as const,
+        questions: {
+          direktur: "Bisakah penyerang menyamar sebagai email perusahaan Anda?",
+          it: "Apakah konfigurasi SPF, DKIM, dan DMARC sudah benar?",
+          finance: "Apakah email tagihan kami rentan dipalsukan?",
+          auditor: "Apakah kontrol autentikasi email terdokumentasi?",
+        },
+        findings: {
+          direktur:
+            "Domain Anda tidak memiliki kebijakan DMARC. Penyerang dapat mengirim email yang tampak berasal dari perusahaan Anda.",
+          it: "SPF ditemukan, DKIM tidak ada, DMARC tidak ada. Terapkan kebijakan DMARC p=quarantine segera.",
+          finance:
+            "Tanpa DMARC, email tagihan perusahaan Anda dapat dipalsukan. Risiko penipuan pembayaran tinggi.",
+          auditor:
+            "Tidak ada kebijakan DMARC. Kontrol autentikasi email tidak lengkap sesuai ISO 27001.",
+        },
+        technical: `SPF:   ✓ v=spf1 include:_spf.google.com ~all\nDKIM:  ✗ No selector found\nDMARC: ✗ No _dmarc TXT record`,
+      },
+      // Card 2 — Exposed Systems
+      {
+        id: "exposed",
+        status: "warning" as const,
+        questions: {
+          direktur: "Apakah sistem yang menghadap internet Anda terlindungi dari penyerang?",
+          it: "Layanan apa yang terekspos dan kerentanan apa yang ada?",
+          finance: "Apakah sistem keuangan kami berisiko akibat paparan internet?",
+          auditor:
+            "Apakah sistem yang terekspos internet terinventarisasi dan diperkuat?",
+        },
+        findings: {
+          direktur:
+            "3 layanan memiliki sertifikat SSL kadaluarsa. Port RDP terbuka ke internet.",
+          it: "Port 3389 terekspos, sertifikat SSL kadaluarsa di 3 endpoint, tidak ada WAF pada portal pelanggan.",
+          finance:
+            "Layanan tanpa sertifikat yang valid dapat mengekspos data keuangan pelanggan.",
+          auditor:
+            "Inventaris aset tidak lengkap, tidak ada bukti WAF, sertifikat SSL tidak dikelola sesuai kebijakan.",
+        },
+        technical: `Port 3389 (RDP): ✗ Exposed (0.0.0.0/0)\nSSL cert portal.company.id: ✗ Expired 12 days ago\nSSL cert api.company.id:    ✗ Expires in 3 days\nWAF:                        ✗ Not detected`,
+      },
+      // Card 3 — Evidence Readiness
+      {
+        id: "evidence",
+        status: "error" as const,
+        questions: {
+          direktur: "Jika diserang, dapatkah kami membuktikan apa yang terjadi?",
+          it: "Apakah retensi log kami cukup untuk investigasi insiden?",
+          finance:
+            "Dapatkah kami memberikan bukti untuk audit regulasi setelah insiden?",
+          auditor:
+            "Apakah retensi log memenuhi persyaratan minimum OJK 90 hari?",
+        },
+        findings: {
+          direktur:
+            "Retensi log hanya 7 hari. Anda tidak dapat merekonstruksi kejadian dari bulan lalu.",
+          it: "Retensi log SIEM: 7 hari. OJK POJK 11/2022 mensyaratkan minimum 90 hari. Kesenjangan: 83 hari.",
+          finance:
+            "Retensi log 7 hari tidak memenuhi kepatuhan OJK. Risiko denda dan gagal audit.",
+          auditor:
+            "Kebijakan retensi log tidak patuh. Rantai bukti tidak dapat dibuat untuk insiden lebih dari 7 hari lalu.",
+        },
+        technical: `SIEM log retention:  7 days (current)\nOJK minimum:         90 days (required)\nGap:                 83 days\nAffected sources:    Firewall, SIEM, AD logs`,
+      },
+      // Card 4 — User Protection
+      {
+        id: "user",
+        status: "warning" as const,
+        questions: {
+          direktur: "Dapatkah peretas mengambil alih akun admin Anda?",
+          it: "Akun admin mana yang tidak memiliki MFA atau memiliki kredensial lemah?",
+          finance:
+            "Apakah akun tim keuangan terlindungi dari akses tidak sah?",
+          auditor:
+            "Apakah autentikasi multi-faktor diberlakukan untuk akun istimewa?",
+        },
+        findings: {
+          direktur:
+            "4 dari 5 akun admin tidak memiliki MFA. 2 akun tidak mengganti kata sandi selama 180+ hari.",
+          it: "Akun: rudi@, admin@, sysadmin@, devops@ — tanpa MFA. 2 akun: usia kata sandi >180 hari.",
+          finance:
+            "Akun admin tanpa MFA rentan terhadap serangan credential stuffing yang menargetkan sistem keuangan.",
+          auditor:
+            "MFA tidak diberlakukan pada 80% akun istimewa. Tidak patuh dengan kebijakan kontrol akses.",
+        },
+        technical: `Admin accounts:   5 total\nMFA enabled:      1 / 5 (20%)\nPassword >180d:   2 accounts\nLast MFA audit:   Not recorded`,
+      },
+    ],
+  },
+  en: {
+    topbarSub: "Scan completed 09 May 2026 · 23:41 WIB",
+    tierBadge: "Free Tier · Preview",
+    langToggle: "ID",
+    audiences: ["Director", "IT Manager", "Finance", "Auditor"] as string[],
+    actionsHeadline: "3 Priority Actions This Week",
+    actions: [
+      {
+        level: "HIGH",
+        levelType: "error" as const,
+        text: "Enable DMARC policy on your domain.",
+        effort: "~1 hour",
+      },
+      {
+        level: "HIGH",
+        levelType: "error" as const,
+        text: "Enable MFA on all 4 unprotected admin accounts.",
+        effort: "~1 day",
+      },
+      {
+        level: "MEDIUM",
+        levelType: "warning" as const,
+        text: "Extend log retention to 90 days (OJK minimum).",
+        effort: "~1 week",
+      },
+    ],
+    exportLeft: "Free Tier — watermarked preview",
+    exportLeftSub: "Upgrade for a clean audit-ready PDF.",
+    exportBtn: "Download preview PDF",
+    ctaHeadline: "Find the gaps. Now close them.",
+    ctaSub: "30-Day Sprint: IDR 35–75M — our team helps fix all red findings.",
+    ctaBtn: "Contact us →",
+    detailSummary: "Technical detail",
+    statusError: "At Risk",
+    statusWarning: "Needs Attention",
+    cards: [
+      // Card 1 — Email Security
+      {
+        id: "email",
+        status: "error" as const,
+        questions: {
+          direktur: "Can attackers impersonate your company's email?",
+          it: "Are SPF, DKIM, and DMARC configured correctly?",
+          finance: "Are our billing emails vulnerable to spoofing?",
+          auditor: "Are email authentication controls documented?",
+        },
+        findings: {
+          direktur:
+            "Your domain has no DMARC policy. Attackers can send emails that appear to come from your company.",
+          it: "SPF found, DKIM missing, DMARC missing. Apply DMARC p=quarantine policy immediately.",
+          finance:
+            "Without DMARC, your company's billing emails can be spoofed. High payment fraud risk.",
+          auditor:
+            "No DMARC policy. Email authentication controls are incomplete per ISO 27001.",
+        },
+        technical: `SPF:   ✓ v=spf1 include:_spf.google.com ~all\nDKIM:  ✗ No selector found\nDMARC: ✗ No _dmarc TXT record`,
+      },
+      // Card 2 — Exposed Systems
+      {
+        id: "exposed",
+        status: "warning" as const,
+        questions: {
+          direktur: "Are your internet-facing systems protected from attackers?",
+          it: "What services are exposed and what vulnerabilities exist?",
+          finance: "Are our financial systems at risk due to internet exposure?",
+          auditor:
+            "Are internet-exposed systems inventoried and hardened?",
+        },
+        findings: {
+          direktur:
+            "3 services have expired SSL certificates. RDP port is open to the internet.",
+          it: "Port 3389 exposed, SSL certificates expired on 3 endpoints, no WAF on customer portal.",
+          finance:
+            "Services without valid certificates can expose customer financial data.",
+          auditor:
+            "Incomplete asset inventory, no WAF evidence, SSL certificates not managed per policy.",
+        },
+        technical: `Port 3389 (RDP): ✗ Exposed (0.0.0.0/0)\nSSL cert portal.company.id: ✗ Expired 12 days ago\nSSL cert api.company.id:    ✗ Expires in 3 days\nWAF:                        ✗ Not detected`,
+      },
+      // Card 3 — Evidence Readiness
+      {
+        id: "evidence",
+        status: "error" as const,
+        questions: {
+          direktur: "If attacked, can we prove what happened?",
+          it: "Is our log retention sufficient for incident investigation?",
+          finance:
+            "Can we provide evidence for regulatory audits after an incident?",
+          auditor:
+            "Does log retention meet OJK's 90-day minimum requirement?",
+        },
+        findings: {
+          direktur:
+            "Log retention is only 7 days. You cannot reconstruct events from last month.",
+          it: "SIEM log retention: 7 days. OJK POJK 11/2022 requires a minimum of 90 days. Gap: 83 days.",
+          finance:
+            "7-day log retention does not meet OJK compliance. Risk of fines and failed audits.",
+          auditor:
+            "Log retention policy is non-compliant. Chain of evidence cannot be established for incidents older than 7 days.",
+        },
+        technical: `SIEM log retention:  7 days (current)\nOJK minimum:         90 days (required)\nGap:                 83 days\nAffected sources:    Firewall, SIEM, AD logs`,
+      },
+      // Card 4 — User Protection
+      {
+        id: "user",
+        status: "warning" as const,
+        questions: {
+          direktur: "Can hackers take over your admin accounts?",
+          it: "Which admin accounts lack MFA or have weak credentials?",
+          finance:
+            "Are finance team accounts protected against unauthorized access?",
+          auditor:
+            "Is multi-factor authentication enforced for privileged accounts?",
+        },
+        findings: {
+          direktur:
+            "4 out of 5 admin accounts do not have MFA. 2 accounts have not changed passwords in 180+ days.",
+          it: "Accounts: rudi@, admin@, sysadmin@, devops@ — without MFA. 2 accounts: password age >180 days.",
+          finance:
+            "Admin accounts without MFA are vulnerable to credential-stuffing attacks targeting financial systems.",
+          auditor:
+            "MFA is not enforced on 80% of privileged accounts. Non-compliant with access control policy.",
+        },
+        technical: `Admin accounts:   5 total\nMFA enabled:      1 / 5 (20%)\nPassword >180d:   2 accounts\nLast MFA audit:   Not recorded`,
+      },
+    ],
+  },
 };
 
-const sparkBars = [
-  { h: "38%", color: "bg-info/40" }, { h: "52%", color: "bg-info/45" },
-  { h: "44%", color: "bg-info/50" }, { h: "61%", color: "bg-info/55" },
-  { h: "36%", color: "bg-info/45" }, { h: "73%", color: "bg-warning/55" },
-  { h: "100%", color: "bg-danger/60" },
-];
+// ─── Audience key mapping ─────────────────────────────────────────────────────
+const AUDIENCE_KEYS: Audience[] = ["direktur", "it", "finance", "auditor"];
 
-const categories = [
-  { label: "Malware",    pct: 72, color: "bg-danger" },
-  { label: "Credential", pct: 55, color: "bg-warning" },
-  { label: "Network",    pct: 40, color: "bg-info" },
-  { label: "Insider",    pct: 22, color: "bg-purple" },
-];
+// ─── Shared styles ────────────────────────────────────────────────────────────
+const cardStyle: React.CSSProperties = {
+  background: "var(--color-surface-container-lowest)",
+  borderRadius: "1.5rem",
+  boxShadow: "0px 10px 40px rgba(25,28,30,0.06)",
+  padding: "1.5rem",
+};
 
-const sources = [
-  { name: "Firewall Logs",   ok: true,    note: "Connected" },
-  { name: "EDR — Endpoints", ok: true,    note: "Connected" },
-  { name: "Cloud / AWS",     ok: true,    note: "Connected" },
-  { name: "Active Directory",ok: false,   note: "Lag 2m" },
-  { name: "Threat Intel Feed",ok: true,   note: "Connected" },
-];
+const errorBadge: React.CSSProperties = {
+  background: "var(--color-error-container)",
+  color: "var(--color-error)",
+  borderRadius: "9999px",
+  padding: "0.2rem 0.75rem",
+  fontSize: "0.75rem",
+  fontWeight: 600,
+  display: "inline-block",
+};
 
-const timeline = [
-  { color: "bg-primary", msg: "Auto-triaged 47 alerts — 44 closed as false positives", time: "14:30" },
-  { color: "bg-danger",  msg: "Playbook executed — host 192.168.10.45 isolated", time: "14:22" },
-  { color: "bg-warning", msg: "New IOC submitted to threat intel database", time: "14:15" },
-  { color: "bg-info",    msg: "Weekly report auto-generated and sent", time: "13:58" },
-];
+const warningBadge: React.CSSProperties = {
+  background: "#fef3c7",
+  color: "#92400e",
+  borderRadius: "9999px",
+  padding: "0.2rem 0.75rem",
+  fontSize: "0.75rem",
+  fontWeight: 600,
+  display: "inline-block",
+};
 
+const primaryBtn: React.CSSProperties = {
+  background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%)",
+  color: "var(--color-on-primary)",
+  borderRadius: "9999px",
+  padding: "0.6rem 1.4rem",
+  fontWeight: 600,
+  fontSize: "0.875rem",
+  border: "none",
+  cursor: "pointer",
+  textDecoration: "none",
+  display: "inline-block",
+};
+
+const ghostBtn: React.CSSProperties = {
+  background: "var(--color-surface-container)",
+  color: "var(--color-on-surface)",
+  borderRadius: "9999px",
+  padding: "0.5rem 1.2rem",
+  fontWeight: 500,
+  fontSize: "0.875rem",
+  border: "none",
+  cursor: "pointer",
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const [expanded, setExpanded] = useState<number | null>(null);
-  const [clock, setClock] = useState("");
+  const router = useRouter();
+  const [session, setSession] = useState<SSSession | null>(null);
+  const [audience, setAudience] = useState<Audience>("direktur");
+  const [lang, setLang] = useState<Lang>("id");
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const tick = () => {
-      const d = new Date();
-      const p = (n: number) => String(n).padStart(2, "0");
-      setClock(`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} WIB`);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
+    const sess = getSession();
+    if (!sess) {
+      router.replace("/login");
+      return;
+    }
+    setSession(sess);
+
+    const savedAudience = localStorage.getItem("ss-audience") as Audience | null;
+    if (savedAudience && AUDIENCE_KEYS.includes(savedAudience)) {
+      setAudience(savedAudience);
+    }
+
+    const savedLang = localStorage.getItem("ss-lang") as Lang | null;
+    if (savedLang === "en" || savedLang === "id") {
+      setLang(savedLang);
+    }
+
+    setLoaded(true);
+  }, [router]);
+
+  const handleAudienceChange = (key: Audience) => {
+    setAudience(key);
+    localStorage.setItem("ss-audience", key);
+  };
+
+  const handleLangToggle = () => {
+    const next: Lang = lang === "id" ? "en" : "id";
+    setLang(next);
+    localStorage.setItem("ss-lang", next);
+  };
+
+  const t = copy[lang];
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      {/* Topbar */}
-      <header className="glass-bar sticky top-0 z-40 h-[52px] flex items-center justify-between px-5 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-6 h-6 bg-primary" style={{ clipPath: "polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%)" }} />
-          <div>
-            <span className="text-[15px] font-semibold text-slate-900">Shannon Sentinel</span>
-            <span className="text-[11px] text-slate-400 font-mono ml-2">SOC Dashboard</span>
-          </div>
+    <div
+      style={{
+        background: "var(--color-surface)",
+        minHeight: "100vh",
+        fontFamily: "var(--font-sans)",
+        color: "var(--color-on-surface)",
+      }}
+    >
+      {/* ── Top bar ──────────────────────────────────────────────────────────── */}
+      <header
+        style={{
+          background: "var(--color-surface-container-low)",
+          padding: "1rem 2rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "0.75rem",
+        }}
+      >
+        <div>
+          {loaded && session ? (
+            <>
+              <h1
+                style={{
+                  fontFamily: "var(--font-headline)",
+                  fontWeight: 700,
+                  fontSize: "1.25rem",
+                  color: "var(--color-on-surface)",
+                  margin: 0,
+                  lineHeight: 1.3,
+                }}
+              >
+                {session.company} — {lang === "id" ? "Laporan Keamanan" : "Security Report"}
+              </h1>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-on-surface-variant)",
+                  margin: "0.2rem 0 0",
+                }}
+              >
+                {t.topbarSub}
+              </p>
+            </>
+          ) : (
+            <>
+              <div
+                style={{
+                  height: "1.25rem",
+                  width: "220px",
+                  background: "var(--color-surface-container-high)",
+                  borderRadius: "0.5rem",
+                  marginBottom: "0.35rem",
+                }}
+              />
+              <div
+                style={{
+                  height: "0.875rem",
+                  width: "280px",
+                  background: "var(--color-surface-container)",
+                  borderRadius: "0.5rem",
+                }}
+              />
+            </>
+          )}
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-success-light/70 backdrop-blur-sm border border-success-border/60 rounded-full text-[11px] font-medium text-success">
-            <span className="w-1.5 h-1.5 rounded-full bg-success" style={{ animation: "blink 1.4s infinite" }} />
-            Live
-          </div>
-          <span className="font-mono text-[12px] text-slate-500">{clock}</span>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {/* Tier badge */}
+          <span
+            style={{
+              background: "#a1f1e5",
+              color: "var(--color-primary)",
+              borderRadius: "9999px",
+              padding: "0.25rem 0.85rem",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+            }}
+          >
+            {t.tierBadge}
+          </span>
+
+          {/* Language toggle */}
+          <button onClick={handleLangToggle} style={ghostBtn}>
+            {t.langToggle}
+          </button>
         </div>
       </header>
 
-      {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto scroll-thin px-5 py-4 space-y-4">
+      {/* ── Scrollable content ───────────────────────────────────────────────── */}
+      <main style={{ padding: "2rem" }}>
 
-        {/* KPI row */}
-        <div className="grid grid-cols-4 gap-3">
-          {[
-            { label: "Open Incidents", value: "12",    sub: "↑ 3 from yesterday",  subColor: "text-danger",  topColor: "border-t-danger",   colr: "text-danger" },
-            { label: "MTTD",           value: "4.2m",  sub: "✓ Target < 5 min",    subColor: "text-primary", topColor: "border-t-warning",  colr: "text-warning" },
-            { label: "MTTR",           value: "18m",   sub: "↓ 22% this week",     subColor: "text-success", topColor: "border-t-success",  colr: "text-success" },
-            { label: "Alerts 24h",     value: "1,847", sub: "92% auto-triaged",    subColor: "text-primary", topColor: "border-t-primary",  colr: "text-primary" },
-          ].map((kpi) => (
-            <div key={kpi.label} className={`glass rounded-xl p-4 border-t-2 ${kpi.topColor} hover:shadow-md transition-shadow`}>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">{kpi.label}</div>
-              <div className={`text-3xl font-semibold font-mono leading-none mb-1.5 ${kpi.colr}`}>{kpi.value}</div>
-              <div className={`text-[11px] ${kpi.subColor}`}>{kpi.sub}</div>
-            </div>
-          ))}
+        {/* ── Audience tabs ─────────────────────────────────────────────────── */}
+        <div
+          style={{
+            display: "flex",
+            gap: "0.5rem",
+            flexWrap: "wrap",
+            marginBottom: "1.75rem",
+          }}
+        >
+          {t.audiences.map((label, idx) => {
+            const key = AUDIENCE_KEYS[idx];
+            const active = audience === key;
+            return (
+              <button
+                key={key}
+                onClick={() => handleAudienceChange(key)}
+                style={{
+                  background: active
+                    ? "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%)"
+                    : "var(--color-surface-container)",
+                  color: active
+                    ? "var(--color-on-primary)"
+                    : "var(--color-on-surface-variant)",
+                  borderRadius: "9999px",
+                  padding: "0.5rem 1.25rem",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "background 0.15s",
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-[1fr_320px] gap-3">
+        {/* ── 4 X-Ray Cards ─────────────────────────────────────────────────── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))",
+            gap: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          {t.cards.map((card) => {
+            const question = card.questions[audience];
+            const finding = card.findings[audience];
+            const isError = card.status === "error";
+            const statusLabel = isError ? t.statusError : t.statusWarning;
+            const badgeStyle = isError ? errorBadge : warningBadge;
 
-          {/* Alert feed */}
-          <div className="glass rounded-xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/50">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Active Alert Feed</span>
-              <span className="text-[11px] font-mono px-2 py-0.5 bg-danger-light/70 text-danger border border-danger-border/50 rounded-full">6 open</span>
-            </div>
-            <div className="overflow-y-auto scroll-thin" style={{ maxHeight: 420 }}>
-              {alerts.map((a, i) => (
-                <div key={i}>
-                  <div
-                    className="grid gap-3 items-center px-4 py-3 cursor-pointer transition-colors hover:bg-white/40 border-b border-white/40"
-                    style={{ gridTemplateColumns: "3px 1fr auto auto" }}
-                    onClick={() => setExpanded(expanded === i ? null : i)}
+            return (
+              <div key={card.id} style={cardStyle}>
+                {/* Question headline */}
+                <h2
+                  style={{
+                    fontFamily: "var(--font-headline)",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    color: "var(--color-on-surface)",
+                    margin: "0 0 0.75rem",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {question}
+                </h2>
+
+                {/* Status badge */}
+                <span style={badgeStyle}>{statusLabel}</span>
+
+                {/* Finding */}
+                <p
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.9rem",
+                    color: "var(--color-on-surface-variant)",
+                    lineHeight: 1.6,
+                    margin: "0.85rem 0 1rem",
+                  }}
+                >
+                  {finding}
+                </p>
+
+                {/* Collapsible technical detail */}
+                <details
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--color-on-surface-variant)",
+                  }}
+                >
+                  <summary
+                    style={{
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      userSelect: "none",
+                      color: "var(--color-outline)",
+                      marginBottom: "0.5rem",
+                    }}
                   >
-                    <div className={`${sevStyle[a.sev].bar} rounded-sm self-stretch`} />
-                    <div>
-                      <div className="text-[13px] font-medium text-slate-800 mb-0.5">{a.title}</div>
-                      <div className="text-[11px] font-mono text-slate-400">{a.meta}</div>
-                    </div>
-                    <span className={`text-[10px] font-semibold font-mono px-1.5 py-0.5 rounded ${sevStyle[a.sev].badge}`}>{a.sev.toUpperCase()}</span>
-                    <span className="text-[11px] font-mono text-slate-400 whitespace-nowrap">{a.time}</span>
-                  </div>
-                  {expanded === i && (
-                    <div className="px-4 py-3.5 bg-white/30 backdrop-blur-sm border-b border-white/40 animate-fade-up">
-                      <div className="grid grid-cols-4 gap-3 mb-3">
-                        {[["Host", a.host], ["Source", a.src], ["Severity", a.sev.toUpperCase()], ["Detail", a.detail]].map(([k, v]) => (
-                          <div key={k}>
-                            <div className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">{k}</div>
-                            <div className={`text-[11px] font-mono ${k === "Severity" ? sevStyle[a.sev].text : "text-slate-700"}`}>{v}</div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="bg-primary-light/60 backdrop-blur-sm border-l-2 border-primary rounded-r-lg px-3 py-2.5 mb-3">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-primary mb-1">AI Analysis</div>
-                        <p className="text-[12px] text-slate-600 leading-relaxed">{a.ai}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="text-[11px] font-medium px-3 py-1.5 glass-btn rounded-lg text-danger border-danger-border/50">Isolate Host</button>
-                        <button className="text-[11px] font-medium px-3 py-1.5 glass-btn rounded-lg text-slate-600">Block IP</button>
-                        <Link href="/investigate" className="text-[11px] font-medium px-3 py-1.5 rounded-lg bg-primary-light/70 text-primary border border-primary-border/50 hover:bg-primary-mid/50 transition-colors">Open in AI Chat ↗</Link>
-                        <button className="text-[11px] font-medium px-3 py-1.5 glass-btn rounded-lg text-slate-500 ml-auto" onClick={(e) => { e.stopPropagation(); setExpanded(null); }}>Close ✕</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            {/* AI bar */}
-            <Link href="/investigate" className="flex items-center gap-3 px-4 py-2.5 bg-white/25 hover:bg-primary-light/50 border-t border-white/40 transition-colors group">
-              <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center text-white text-[11px] font-bold shrink-0">AI</div>
-              <span className="flex-1 text-[12px] text-slate-400 group-hover:text-slate-600 transition-colors">Ask AI about any alert…</span>
-              <span className="text-primary text-[13px]">↗</span>
-            </Link>
-          </div>
-
-          {/* Right column */}
-          <div className="flex flex-col gap-3">
-
-            {/* Sparkline */}
-            <div className="glass rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/50">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Alert Volume — 7 Days</span>
-                <span className="text-[11px] font-medium text-danger">↑ 38% today</span>
+                    {t.detailSummary}
+                  </summary>
+                  <pre
+                    style={{
+                      background: "var(--color-surface-container-low)",
+                      borderRadius: "0.75rem",
+                      padding: "0.875rem 1rem",
+                      fontSize: "0.75rem",
+                      lineHeight: 1.7,
+                      overflowX: "auto",
+                      margin: 0,
+                      fontFamily: "monospace",
+                      color: "var(--color-on-surface)",
+                    }}
+                  >
+                    {card.technical}
+                  </pre>
+                </details>
               </div>
-              <div className="px-4 py-3">
-                <div className="flex items-end gap-1" style={{ height: 52 }}>
-                  {sparkBars.map((b, i) => (
-                    <div key={i} className={`flex-1 rounded-t-sm ${b.color} transition-opacity hover:opacity-100`} style={{ height: b.h }} />
-                  ))}
-                </div>
-                <div className="flex justify-between mt-1.5 text-[10px] font-mono text-slate-400">
-                  <span>18 Apr</span><span>25 Apr</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div className="glass rounded-xl overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/50">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Alert Categories</span>
-              </div>
-              <div className="px-4 py-2.5 space-y-2">
-                {categories.map((c) => (
-                  <div key={c.label} className="flex items-center gap-2.5">
-                    <span className="text-[11px] text-slate-600 w-16 shrink-0">{c.label}</span>
-                    <div className="flex-1 bg-white/40 rounded-full h-1.5">
-                      <div className={`${c.color} h-1.5 rounded-full`} style={{ width: `${c.pct}%` }} />
-                    </div>
-                    <span className="text-[11px] font-mono text-slate-400 w-8 text-right">{c.pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Data sources */}
-            <div className="glass rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/50">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Data Sources</span>
-                <span className="text-[11px] font-mono px-2 py-0.5 bg-success-light/70 text-success border border-success-border/50 rounded-full">5 active</span>
-              </div>
-              {sources.map((s) => (
-                <div key={s.name} className="flex items-center justify-between px-4 py-2 border-b border-white/30 last:border-0 text-[12px]">
-                  <span className="font-medium text-slate-700">{s.name}</span>
-                  <div className={`flex items-center gap-1.5 font-mono text-[11px] ${s.ok ? "text-success" : "text-warning"}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? "bg-success" : "bg-warning"}`} />
-                    {s.note}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* AI Activity */}
-            <div className="glass rounded-xl overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/50">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">AI Agent Activity</span>
-              </div>
-              {timeline.map((t, i) => (
-                <div key={i} className="flex gap-3 px-4 py-2.5 border-b border-white/30 last:border-0">
-                  <div className={`w-2 h-2 rounded-full ${t.color} shrink-0 mt-1.5 ring-2 ring-white`} />
-                  <div>
-                    <p className="text-[12px] text-slate-700 leading-snug mb-0.5">{t.msg}</p>
-                    <span className="text-[10px] font-mono text-slate-400">{t.time}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
+            );
+          })}
         </div>
-      </div>
+
+        {/* ── Top 3 Actions Panel ───────────────────────────────────────────── */}
+        <div style={{ ...cardStyle, marginBottom: "1.5rem" }}>
+          <h2
+            style={{
+              fontFamily: "var(--font-headline)",
+              fontWeight: 700,
+              fontSize: "1.125rem",
+              color: "var(--color-on-surface)",
+              margin: "0 0 1.25rem",
+            }}
+          >
+            {t.actionsHeadline}
+          </h2>
+
+          <ol style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {t.actions.map((action, i) => (
+              <li
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "1rem",
+                  padding: "0.875rem 1rem",
+                  borderRadius: "1rem",
+                  background: "var(--color-surface-container-low)",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLLIElement).style.background =
+                    "var(--color-surface-container-low)";
+                }}
+              >
+                {/* Number */}
+                <span
+                  style={{
+                    fontFamily: "var(--font-headline)",
+                    fontWeight: 700,
+                    fontSize: "1.125rem",
+                    color: "var(--color-outline)",
+                    lineHeight: 1,
+                    minWidth: "1.5rem",
+                    paddingTop: "0.1rem",
+                  }}
+                >
+                  {i + 1}
+                </span>
+
+                {/* Badge */}
+                <span
+                  style={
+                    action.levelType === "error" ? errorBadge : warningBadge
+                  }
+                >
+                  {action.level}
+                </span>
+
+                {/* Text */}
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: "0.9rem",
+                    color: "var(--color-on-surface)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {action.text}
+                </span>
+
+                {/* Effort */}
+                <span
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--color-outline)",
+                    whiteSpace: "nowrap",
+                    paddingTop: "0.1rem",
+                  }}
+                >
+                  {action.effort}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* ── Export bar ────────────────────────────────────────────────────── */}
+        <div
+          style={{
+            ...cardStyle,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <div>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "var(--color-on-surface)",
+                margin: 0,
+              }}
+            >
+              {t.exportLeft}
+            </p>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--color-on-surface-variant)",
+                margin: "0.2rem 0 0",
+              }}
+            >
+              {t.exportLeftSub}
+            </p>
+          </div>
+          <button style={ghostBtn}>{t.exportBtn}</button>
+        </div>
+
+        {/* ── Upgrade CTA banner ────────────────────────────────────────────── */}
+        <div
+          style={{
+            ...cardStyle,
+            background: "rgba(161,241,229,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                fontFamily: "var(--font-headline)",
+                fontWeight: 700,
+                fontSize: "1.0625rem",
+                color: "var(--color-on-surface)",
+                margin: "0 0 0.3rem",
+              }}
+            >
+              {t.ctaHeadline}
+            </h3>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--color-on-surface-variant)",
+                margin: 0,
+                maxWidth: "520px",
+              }}
+            >
+              {t.ctaSub}
+            </p>
+          </div>
+          <a href="mailto:sales@shannondynamics.id" style={primaryBtn}>
+            {t.ctaBtn}
+          </a>
+        </div>
+
+      </main>
     </div>
   );
 }

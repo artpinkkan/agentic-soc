@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { mockLogin } from "@/lib/session";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   return (
     <div
@@ -126,7 +130,15 @@ export default function LoginPage() {
 
           <form
             className="space-y-5"
-            onSubmit={(e) => { e.preventDefault(); }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const sess = mockLogin(email, password);
+              if (sess) {
+                router.replace("/dashboard");
+              } else {
+                setError("Invalid email or password.");
+              }
+            }}
           >
             {/* Email */}
             <div>
@@ -186,6 +198,11 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {/* Error */}
+            {error && (
+              <p className="text-xs font-semibold" style={{ color: "var(--color-error)" }}>{error}</p>
+            )}
 
             {/* Submit */}
             <button type="submit" className="btn-primary w-full mt-2">
