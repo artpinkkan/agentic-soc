@@ -87,10 +87,7 @@
           <span id="nav-company" class="ss-nav__company">Gmail</span>
         </div>
       </div>
-      <a href="/agentic-soc/onboarding/" class="ss-nav__footer-action" title="Setup wizard">
-        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.42 1.42M4.93 4.93L6.35 6.35M19.07 19.07l-1.42-1.42M4.93 19.07l1.42-1.42M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
-        <span class="ss-nav__footer-action-label" data-en="Setup wizard" data-id="Wizard pengaturan">Wizard pengaturan</span>
-      </a>
+
       <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
         <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
@@ -111,7 +108,13 @@
           25 Apr 2026 · 14:32 WIB
         </p>
       </div>
-      <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:6px 12px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.42 1.42M4.93 4.93L6.35 6.35M19.07 19.07l-1.42-1.42M4.93 19.07l1.42-1.42M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
+          Pengaturan domain
+        </a>
+        <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
+      </div>
     </div>
 
     <!-- Audience tabs -->
