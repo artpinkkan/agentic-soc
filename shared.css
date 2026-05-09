@@ -139,7 +139,8 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
   height: 100vh;
   position: sticky;
   top: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   display: flex;
   flex-direction: column;
   background: var(--ss-surface-container-lowest);
@@ -202,6 +203,7 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
   border-top: 1px solid var(--ss-outline-variant);
   padding: 10px 8px; flex-shrink: 0;
   display: flex; flex-direction: column; gap: 6px;
+  position: relative; overflow: visible;
 }
 .ss-nav__footer-top {
   display: flex; align-items: center; gap: 8px; overflow: hidden; min-height: 30px;
@@ -212,7 +214,7 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 .ss-nav__user-row {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 6px; border-radius: var(--ss-radius-sm);
-  cursor: pointer; overflow: hidden; position: relative;
+  cursor: pointer; position: relative;
   transition: background 0.15s;
 }
 .ss-nav__user-row:hover { background: var(--ss-surface-container-low); }
@@ -233,7 +235,7 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 
 /* User menu — floats upward */
 .ss-user-menu {
-  position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; min-width: 160px;
+  position: absolute; bottom: calc(100% + 4px); left: 8px; right: 8px; min-width: 160px;
   background: var(--ss-surface-container-lowest);
   border-radius: var(--ss-radius-md); padding: 6px;
   box-shadow: var(--ss-shadow-float); z-index: 200;
