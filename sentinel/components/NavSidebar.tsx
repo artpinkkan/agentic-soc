@@ -61,12 +61,18 @@ export default function NavSidebar() {
   const pathname = usePathname();
 
   return (
-    <nav className="glass-nav fixed left-0 top-0 bottom-0 w-[52px] flex flex-col items-center py-3.5 gap-1 z-50">
+    <nav
+      className="surface-nav fixed left-0 top-0 bottom-0 w-[52px] flex flex-col items-center py-3.5 gap-1 z-50"
+      style={{ backgroundColor: "var(--color-surface-container-low)" }}
+    >
       {/* Logo mark */}
       <Link href="/dashboard" className="mb-3.5 shrink-0 block">
         <div
-          className="w-7 h-7 bg-primary"
-          style={{ clipPath: "polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%)" }}
+          className="w-7 h-7"
+          style={{
+            background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%)",
+            clipPath: "polygon(50% 0%,100% 22%,100% 68%,50% 100%,0% 68%,0% 22%)",
+          }}
         />
       </Link>
 
@@ -77,15 +83,25 @@ export default function NavSidebar() {
             key={item.href}
             href={item.href}
             title={item.label}
-            className={`relative group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 ${
+            className="relative group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150"
+            style={
               active
-                ? "bg-primary/12 text-primary shadow-sm"
-                : "text-slate-400 hover:bg-white/60 hover:text-slate-600"
-            }`}
+                ? { backgroundColor: "rgba(0,78,71,0.10)", color: "var(--color-primary)" }
+                : { color: "var(--color-outline)" }
+            }
+            onMouseEnter={(e) => {
+              if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-surface-container)";
+            }}
+            onMouseLeave={(e) => {
+              if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "";
+            }}
           >
             {item.icon}
             {/* Tooltip */}
-            <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 glass-heavy rounded-lg text-[11px] font-medium text-slate-700 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-sm">
+            <span
+              className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 glass-overlay rounded-lg text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+              style={{ color: "var(--color-on-surface)" }}
+            >
               {item.label}
             </span>
           </Link>
@@ -97,14 +113,20 @@ export default function NavSidebar() {
       {/* Settings */}
       <button
         title="Settings"
-        className="relative group w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white/60 hover:text-slate-600 transition-all duration-150"
+        className="relative group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150"
+        style={{ color: "var(--color-outline)" }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-surface-container)"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = ""; }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
           <path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M3.93 3.93l1.06 1.06M13.01 13.01l1.06 1.06M3.93 14.07l1.06-1.06M13.01 4.99l1.06-1.06" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
-        <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 glass-heavy rounded-lg text-[11px] font-medium text-slate-700 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-sm">
+        <span
+          className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 glass-overlay rounded-lg text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          style={{ color: "var(--color-on-surface)" }}
+        >
           Settings
         </span>
       </button>
