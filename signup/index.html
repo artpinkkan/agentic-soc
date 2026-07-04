@@ -12,190 +12,363 @@
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
   </script>
   <style>
-    .ss-slug-preview {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--ss-neutral-100); border-radius: var(--ss-radius-sm);
-      padding: 8px 10px; margin-bottom: var(--ss-gap-md); flex-wrap: wrap;
+    body {
+      display: block !important;
+      background: var(--ss-surface);
+      min-height: 100vh;
     }
-    .ss-slug-preview__label { font-size: 12px; color: var(--ss-neutral-500); }
-    .ss-slug-preview__url { font-size: 12px; color: var(--ss-neutral-700); flex: 1; }
-    .ss-slug-edit { font-size: 12px; color: var(--ss-brand); background: none; border: none; cursor: pointer; }
-    .ss-dns-card { border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md); overflow: hidden; margin: var(--ss-gap-md) 0; }
-    .ss-dns-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--ss-border); }
-    .ss-dns-row:last-child { border-bottom: none; }
-    .ss-dns-field { font-size: 12px; color: var(--ss-neutral-500); min-width: 90px; }
-    .ss-dns-val { flex: 1; font-size: 12px; font-family: monospace; background: var(--ss-neutral-100); padding: 3px 6px; border-radius: 4px; word-break: break-all; }
-    .ss-copy-btn { font-size: 11px; color: var(--ss-brand); background: none; border: 0.5px solid var(--ss-brand); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
-    .ss-verify-progress { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--ss-neutral-100); border-radius: var(--ss-radius-md); margin-top: 20px; font-size: 14px; }
-    .ss-verify-spinner { width: 18px; height: 18px; border: 2px solid var(--ss-border-md); border-top-color: var(--ss-brand); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+
+    /* ── Top bar ─────────────────────────────── */
+    .su-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    }
+    .su-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
+      color: var(--ss-brand); text-decoration: none !important;
+    }
+    .su-brand i { font-size: 20px; }
+
+    /* ── Page centering ──────────────────────── */
+    .su-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 80px 16px 40px;
+    }
+
+    /* ── Card shell ──────────────────────────── */
+    .su-card {
+      width: 100%; max-width: 500px;
+      background: var(--ss-surface-container-lowest);
+      border-radius: 20px;
+      box-shadow: var(--ss-shadow-float);
+      overflow: hidden;
+    }
+
+    /* ── Card funnel header ──────────────────── */
+    .su-card-header {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 24px 28px;
+      background: var(--ss-brand-gradient);
+      color: #fff;
+    }
+    .su-card-header--inbox        { background: linear-gradient(135deg, #1a6cc4 0%, #378ADD 100%); }
+    .su-card-header--postincident { background: linear-gradient(135deg, #b03030 0%, #E24B4A 100%); }
+
+    .su-card-header__icon {
+      width: 44px; height: 44px; border-radius: var(--ss-radius-md);
+      background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .su-card-header__eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;
+    }
+    .su-card-header__title {
+      font-family: var(--ss-font-headline); font-size: 18px;
+      font-weight: 700; line-height: 1.25; margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+    .su-card-header__desc { font-size: 13px; opacity: 0.85; line-height: 1.4; }
+
+    /* ── Card body ───────────────────────────── */
+    .su-card-body { padding: 28px 28px 32px; }
+
+    /* ── Step indicator ──────────────────────── */
+    .su-steps {
+      display: flex; align-items: center;
+      margin-bottom: 28px;
+    }
+    .su-step {
+      display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
+    }
+    .su-step__circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--ss-surface-container);
+      border: 2px solid var(--ss-border-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--ss-neutral-500);
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .su-step__label {
+      font-size: 13px; font-weight: 500; color: var(--ss-neutral-500);
+      white-space: nowrap;
+    }
+    .su-step--active .su-step__circle {
+      background: var(--ss-brand); border-color: var(--ss-brand); color: #fff;
+      box-shadow: 0 0 0 3px rgba(0,104,95,0.15);
+    }
+    .su-step--active .su-step__label { color: var(--ss-on-surface); font-weight: 600; }
+    .su-step--done .su-step__circle {
+      background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success);
+    }
+    .su-step--done .su-step__label { color: var(--ss-neutral-500); }
+    .su-step__connector {
+      flex: 1; height: 2px; background: var(--ss-border-md);
+      margin: 0 10px; border-radius: 100px;
+      transition: background 0.3s;
+    }
+    .su-step__connector--done { background: var(--ss-success); }
+
+    /* ── Field section groups ────────────────── */
+    .su-section {
+      margin-bottom: 20px; padding-top: 16px;
+      border-top: 1px solid var(--ss-border);
+    }
+    .su-section:first-of-type { border-top: none; padding-top: 0; }
+    .su-section__label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ss-neutral-500); margin-bottom: 14px;
+    }
+    .su-section .ss-form-group { margin-bottom: 14px; }
+    .su-section .ss-form-group:last-child { margin-bottom: 0; }
+    .su-section .ss-form-group input,
+    .su-section .ss-form-group select {
+      padding: 10px 13px; font-size: 14px;
+    }
+
+    /* ── Slug preview ────────────────────────── */
+    .su-slug-row {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--ss-surface-container-low);
+      border-radius: var(--ss-radius-sm);
+      padding: 8px 12px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .su-slug-row__label { font-size: 12px; color: var(--ss-neutral-500); flex-shrink: 0; }
+    .su-slug-row__url { font-size: 12px; color: var(--ss-neutral-700); flex: 1; font-family: monospace; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .su-slug-edit { font-size: 12px; color: var(--ss-brand); background: none; border: none; cursor: pointer; flex-shrink: 0; padding: 0; font-weight: 500; }
+    .su-slug-edit:hover { text-decoration: underline; }
+
+    /* ── Two-col row ─────────────────────────── */
+    .su-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 400px) { .su-row-2 { grid-template-columns: 1fr; } }
+
+    /* ── Sign-in link ────────────────────────── */
+    .su-signin-hint {
+      text-align: center; font-size: 13px; color: var(--ss-neutral-500);
+      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--ss-border);
+    }
+    .su-signin-hint a { font-weight: 600; }
+
+    /* ── Step 2 styles ───────────────────────── */
+    .su-step2-heading {
+      font-family: var(--ss-font-headline); font-size: 22px; font-weight: 700;
+      margin-bottom: 6px; letter-spacing: -0.01em; color: var(--ss-on-surface);
+    }
+    .su-step2-intro {
+      font-size: 14px; color: var(--ss-neutral-500); margin-bottom: 20px; line-height: 1.55;
+    }
+    .su-dns-card {
+      border: 1px solid var(--ss-border-md); border-radius: var(--ss-radius-md);
+      overflow: hidden; margin: 0 0 16px;
+    }
+    .su-dns-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-bottom: 0.5px solid var(--ss-border);
+    }
+    .su-dns-row:last-child { border-bottom: none; }
+    .su-dns-field { font-size: 12px; color: var(--ss-neutral-500); min-width: 80px; font-weight: 500; }
+    .su-dns-val {
+      flex: 1; font-size: 12px; font-family: monospace;
+      background: var(--ss-surface-container-low);
+      padding: 4px 8px; border-radius: 6px; word-break: break-all;
+      color: var(--ss-neutral-700);
+    }
+    .su-copy-btn {
+      font-size: 11px; color: var(--ss-brand); background: none;
+      border: 1px solid var(--ss-brand); border-radius: 6px;
+      padding: 3px 10px; cursor: pointer; flex-shrink: 0; font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+    .su-copy-btn:hover { background: var(--ss-brand); color: #fff; }
+    .su-verify-progress {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px; background: var(--ss-surface-container-low);
+      border-radius: var(--ss-radius-md); margin-top: 16px; font-size: 14px;
+    }
+    .su-verify-spinner {
+      width: 18px; height: 18px; border: 2px solid var(--ss-border-md);
+      border-top-color: var(--ss-brand); border-radius: 50%;
+      animation: spin 0.8s linear infinite; flex-shrink: 0;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .ss-verify-result { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--ss-radius-md); margin-top: 20px; }
-    .ss-verify-result--success { background: #EAF3DE; border: 0.5px solid #97C459; }
-    .ss-verify-result--failed  { background: #FCEBEB; border: 0.5px solid #F09595; }
-    .ss-verify-icon { font-size: 18px; line-height: 1.4; }
-    .ss-verify-result--success .ss-verify-icon { color: #27500A; }
-    .ss-verify-result--failed  .ss-verify-icon { color: #791F1F; }
-    .ss-verify-result__title { font-weight: 500; font-size: 14px; }
-    .ss-verify-result__sub { font-size: 13px; color: var(--ss-neutral-500); margin-top: 2px; }
-    .ss-back-btn { background: none; border: none; color: var(--ss-neutral-500); cursor: pointer; font-size: 13px; padding: 0; margin-bottom: 16px; }
-    .ss-back-btn:hover { color: var(--ss-neutral-900); }
-    .ss-step-indicator { display: flex; align-items: center; gap: 0; margin-bottom: var(--ss-gap-lg); }
-    .ss-step-dot { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .ss-step-dot__num { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--ss-border-md); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--ss-neutral-500); }
-    .ss-step-dot--active .ss-step-dot__num { background: var(--ss-brand); border-color: var(--ss-brand); color: #fff; }
-    .ss-step-dot--done .ss-step-dot__num { background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success); }
-    .ss-step-dot__label { font-size: 11px; color: var(--ss-neutral-500); white-space: nowrap; }
-    .ss-step-dot--active .ss-step-dot__label { color: var(--ss-neutral-900); font-weight: 500; }
-    .ss-step-connector { flex: 1; height: 1.5px; background: var(--ss-border-md); margin: 0 8px 16px; }
-    .ss-verify-intro { font-size: 14px; color: var(--ss-neutral-700); margin-bottom: var(--ss-gap-md); line-height: 1.5; }
-    .ss-funnel-context { display: flex; align-items: flex-start; gap: 10px; background: var(--ss-brand-light); border: 0.5px solid rgba(0,104,95,0.25); border-radius: var(--ss-radius-md); padding: 10px 14px; margin-bottom: var(--ss-gap-lg); }
-    .ss-funnel-context__icon { font-size: 20px; flex-shrink: 0; }
-    .ss-funnel-context__title { font-size: 13px; font-weight: 600; color: var(--ss-brand-dark); }
-    .ss-funnel-context__desc { font-size: 12px; color: var(--ss-on-surface-variant); }
+    .su-verify-result {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px; border-radius: var(--ss-radius-md); margin-top: 16px;
+    }
+    .su-verify-result--success { background: var(--ss-success-light); border: 1px solid rgba(99,153,34,0.35); }
+    .su-verify-result--failed  { background: var(--ss-danger-light);  border: 1px solid rgba(226,75,74,0.35); }
+    .su-verify-icon { font-size: 18px; line-height: 1.4; flex-shrink: 0; }
+    .su-verify-result--success .su-verify-icon { color: var(--ss-success); }
+    .su-verify-result--failed  .su-verify-icon { color: var(--ss-danger); }
+    .su-verify-result__title { font-weight: 600; font-size: 14px; }
+    .su-verify-result__sub { font-size: 13px; color: var(--ss-neutral-500); margin-top: 3px; }
+    .su-step2-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .su-step2-actions .ss-btn-primary { flex: 1; }
+    .su-skip-link {
+      font-size: 13px; color: var(--ss-neutral-500); text-align: center;
+      display: block; margin-top: 12px;
+    }
+    .su-skip-link:hover { color: var(--ss-on-surface); }
+
+    /* ── Language toggle ─────────────────────── */
+    .su-lang { position: fixed; bottom: 20px; right: 20px; }
   </style>
 </head>
 <body>
-  <div class="ss-login-split">
-    <!-- Brand panel -->
-    <div class="ss-login-brand">
-      <div class="ss-login-brand__inner">
-        <p class="ss-login-brand__logo">Shannon Sentinel</p>
-        <h1 class="ss-login-brand__headline"
-            data-en="Start with a free X-Ray. Find your real risks in 2 minutes."
-            data-id="Mulai dengan X-Ray gratis. Temukan risiko nyata Anda dalam 2 menit.">
-          Mulai dengan X-Ray gratis. Temukan risiko nyata Anda dalam 2 menit.
-        </h1>
-        <ul class="ss-login-brand__bullets">
-          <li data-en="Free Cyber X-Ray — results in ~2 minutes"
-              data-id="Cyber X-Ray gratis — hasil dalam ~2 menit">
-            Cyber X-Ray gratis — hasil dalam ~2 menit
-          </li>
-          <li data-en="No credit card required"
-              data-id="Tidak perlu kartu kredit">
-            Tidak perlu kartu kredit
-          </li>
-          <li data-en="5–10 endpoints on Free Tier"
-              data-id="5–10 endpoint di Tier Gratis">
-            5–10 endpoint di Tier Gratis
-          </li>
-        </ul>
-        <p class="ss-login-brand__tenant">sentinel.shannondynamics.id</p>
+
+  <!-- Top bar -->
+  <header class="su-topbar">
+    <a href="/agentic-soc/" class="su-brand">
+      <i class="ti ti-shield"></i>
+      Shannon Sentinel
+    </a>
+  </header>
+
+  <!-- Page -->
+  <main class="su-page">
+    <div class="su-card">
+
+      <!-- Funnel accent header -->
+      <div class="su-card-header" id="funnel-header">
+        <div class="su-card-header__icon">
+          <span id="funnel-icon"><i class="ti ti-radar"></i></span>
+        </div>
+        <div>
+          <p class="su-card-header__eyebrow">Shannon Sentinel</p>
+          <p id="funnel-title" class="su-card-header__title">Mulai: Cyber X-Ray</p>
+          <p id="funnel-desc" class="su-card-header__desc">Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Form panel -->
-    <div class="ss-login-form-panel">
-      <div class="ss-login-card">
+      <!-- Card body -->
+      <div class="su-card-body">
 
-        <!-- Funnel context banner -->
-        <div class="ss-funnel-context" id="funnel-context">
-          <span id="funnel-icon" class="ss-funnel-context__icon"><i class="ti ti-radar"></i></span>
-          <div>
-            <p id="funnel-title" class="ss-funnel-context__title">Mulai: Cyber X-Ray</p>
-            <p id="funnel-desc" class="ss-funnel-context__desc">Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.</p>
-          </div>
+        <!-- Free tier notice -->
+        <div class="ss-notice ss-notice--info" style="margin-bottom: 24px;">
+          <i class="ti ti-info-circle"></i>
+          <span data-en="Free tier: 5–10 endpoints, 3–7 day retention, 50 AI analyses/month. No credit card required."
+                data-id="Tier gratis: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.">
+            Tier gratis: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.
+          </span>
         </div>
 
         <!-- Step indicator -->
-        <div class="ss-step-indicator">
-          <div class="ss-step-dot ss-step-dot--active" id="step-dot-1">
-            <span class="ss-step-dot__num">1</span>
-            <span class="ss-step-dot__label" data-en="Account" data-id="Akun">Akun</span>
+        <div class="su-steps" id="step-indicator">
+          <div class="su-step su-step--active" id="step-dot-1">
+            <div class="su-step__circle">1</div>
+            <span class="su-step__label" data-en="Account" data-id="Akun">Akun</span>
           </div>
-          <div class="ss-step-connector"></div>
-          <div class="ss-step-dot" id="step-dot-2">
-            <span class="ss-step-dot__num">2</span>
-            <span class="ss-step-dot__label" data-en="Verify domain" data-id="Verifikasi domain">Verifikasi domain</span>
+          <div class="su-step__connector" id="step-connector"></div>
+          <div class="su-step" id="step-dot-2">
+            <div class="su-step__circle">2</div>
+            <span class="su-step__label" data-en="Verify domain" data-id="Verifikasi domain">Verifikasi domain</span>
           </div>
         </div>
 
-        <!-- Step 1 -->
+        <!-- ── Step 1 ── -->
         <div id="signup-step-1">
-          <div class="ss-login-card__header">
-            <h2 data-en="Create your free account" data-id="Buat akun gratis Anda">Buat akun gratis Anda</h2>
-            <p class="ss-login-card__sub">
-              <span data-en="Already have an account?" data-id="Sudah punya akun?">Sudah punya akun?</span>
-              <a href="/agentic-soc/login/" data-en="Sign in" data-id="Masuk">Masuk</a>
-            </p>
-          </div>
 
-          <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
-            <i class="ti ti-info-circle"></i>
-            <span data-en="Free tier includes: 5–10 endpoints, 3–7 day retention, 50 AI analyses/month. No credit card required."
-                  data-id="Tier gratis mencakup: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.">
-              Tier gratis mencakup: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.
-            </span>
-          </div>
+          <h2 style="font-family:var(--ss-font-headline); font-size:22px; font-weight:700; margin-bottom:24px; letter-spacing:-0.01em;"
+              data-en="Create your free account" data-id="Buat akun gratis Anda">
+            Buat akun gratis Anda
+          </h2>
 
           <div id="signup-error-1" class="ss-form-error" hidden>
             <span data-en="Please fill all required fields."
                   data-id="Mohon isi semua kolom yang wajib.">Mohon isi semua kolom yang wajib.</span>
           </div>
 
-          <div class="ss-form-group">
-            <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan</label>
-            <input type="text" id="su-company" placeholder="PT Contoh Corp" oninput="updateSlug(this.value)">
+          <!-- Section: Account credentials -->
+          <div class="su-section">
+            <p class="su-section__label" data-en="Your account" data-id="Akun Anda">Akun Anda</p>
+
+            <div class="ss-form-group">
+              <label data-en="Your name" data-id="Nama Anda">Nama Anda</label>
+              <input type="text" id="su-name" placeholder="Rudi Hartono">
+            </div>
+
+            <div class="ss-form-group">
+              <label data-en="Work email" data-id="Email kerja">Email kerja</label>
+              <input type="email" id="su-email" placeholder="anda@perusahaan.com">
+            </div>
+
+            <div class="ss-form-group">
+              <label data-en="Password" data-id="Kata sandi">Kata sandi</label>
+              <input type="password" id="su-password" placeholder="Min. 8 karakter">
+            </div>
           </div>
 
-          <div class="ss-slug-preview" id="slug-preview">
-            <span class="ss-slug-preview__label" data-en="Your workspace URL:" data-id="URL workspace Anda:">URL workspace Anda:</span>
-            <code class="ss-slug-preview__url">sentinel.shannondynamics.id/t/<strong id="slug-value">nama-perusahaan</strong></code>
-            <button class="ss-slug-edit" onclick="editSlug()" data-en="Edit" data-id="Ubah">Ubah</button>
-          </div>
+          <!-- Section: Organisation details -->
+          <div class="su-section">
+            <p class="su-section__label" data-en="Your organisation" data-id="Organisasi Anda">Organisasi Anda</p>
 
-          <div class="ss-form-group">
-            <label data-en="Your name" data-id="Nama Anda">Nama Anda</label>
-            <input type="text" id="su-name" placeholder="Rudi Hartono">
-          </div>
+            <div class="ss-form-group">
+              <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan</label>
+              <input type="text" id="su-company" placeholder="PT Contoh Corp" oninput="updateSlug(this.value)">
+              <div class="su-slug-row">
+                <span class="su-slug-row__label" data-en="URL:" data-id="URL:">URL:</span>
+                <code class="su-slug-row__url">sentinel.shannondynamics.id/<strong id="slug-value">nama-perusahaan</strong></code>
+                <button class="su-slug-edit" onclick="editSlug()" data-en="Edit" data-id="Ubah">Ubah</button>
+              </div>
+            </div>
 
-          <div class="ss-form-group">
-            <label data-en="Work email" data-id="Email kerja">Email kerja</label>
-            <input type="email" id="su-email" placeholder="anda@perusahaan.com">
-          </div>
-
-          <div class="ss-form-group">
-            <label data-en="Password" data-id="Kata sandi">Kata sandi</label>
-            <input type="password" id="su-password" placeholder="Min. 8 karakter">
-          </div>
-
-          <div class="ss-form-group">
-            <label data-en="Industry" data-id="Industri">Industri</label>
-            <select id="su-industry">
-              <option value="" data-en="— Select industry —" data-id="— Pilih industri —">— Pilih industri —</option>
-              <option value="fintech">Fintech</option>
-              <option value="manufacturing" data-en="Manufacturing" data-id="Manufaktur">Manufaktur / Manufacturing</option>
-              <option value="retail" data-en="Retail" data-id="Ritel">Ritel / Retail</option>
-              <option value="healthcare" data-en="Healthcare" data-id="Kesehatan">Kesehatan / Healthcare</option>
-              <option value="logistics" data-en="Logistics" data-id="Logistik">Logistik / Logistics</option>
-              <option value="education" data-en="Education" data-id="Pendidikan">Pendidikan / Education</option>
-              <option value="gov" data-en="Government" data-id="Pemerintah">Pemerintah / Government</option>
-              <option value="other" data-en="Other" data-id="Lainnya">Lainnya / Other</option>
-            </select>
-          </div>
-
-          <div class="ss-form-group">
-            <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
-            <input type="text" id="su-domain" placeholder="perusahaan.com">
-            <p class="ss-form-hint" data-en="We'll verify ownership via a DNS TXT record." data-id="Kami akan verifikasi kepemilikan melalui DNS TXT record.">
-              Kami akan verifikasi kepemilikan melalui DNS TXT record.
+            <div class="su-row-2">
+              <div class="ss-form-group" style="margin-bottom:0;">
+                <label data-en="Industry" data-id="Industri">Industri</label>
+                <select id="su-industry">
+                  <option value="" data-en="— Select —" data-id="— Pilih —">— Pilih —</option>
+                  <option value="fintech">Fintech</option>
+                  <option value="manufacturing" data-en="Manufacturing" data-id="Manufaktur">Manufaktur</option>
+                  <option value="retail" data-en="Retail" data-id="Ritel">Ritel</option>
+                  <option value="healthcare" data-en="Healthcare" data-id="Kesehatan">Kesehatan</option>
+                  <option value="logistics" data-en="Logistics" data-id="Logistik">Logistik</option>
+                  <option value="education" data-en="Education" data-id="Pendidikan">Pendidikan</option>
+                  <option value="gov" data-en="Government" data-id="Pemerintah">Pemerintah</option>
+                  <option value="other" data-en="Other" data-id="Lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="ss-form-group" style="margin-bottom:0;">
+                <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
+                <input type="text" id="su-domain" placeholder="perusahaan.com">
+              </div>
+            </div>
+            <p class="ss-form-hint" style="margin-top:6px;"
+               data-en="We'll verify ownership via a DNS TXT record."
+               data-id="Kami verifikasi kepemilikan melalui DNS TXT record.">
+              Kami verifikasi kepemilikan melalui DNS TXT record.
             </p>
           </div>
 
-          <button class="ss-btn-primary ss-btn-full" onclick="goToStep2()"
+          <button class="ss-btn-primary ss-btn-full" style="margin-top:4px;" onclick="goToStep2()"
                   data-en="Continue →" data-id="Lanjut →">Lanjut →</button>
-        </div>
 
-        <!-- Step 2 -->
+          <p class="su-signin-hint">
+            <span data-en="Already have an account?" data-id="Sudah punya akun?">Sudah punya akun?</span>
+            <a href="/agentic-soc/login/" data-en="Sign in" data-id="Masuk">Masuk</a>
+          </p>
+
+        </div><!-- /signup-step-1 -->
+
+        <!-- ── Step 2 ── -->
         <div id="signup-step-2" hidden>
-          <button class="ss-back-btn" onclick="goToStep1()">
-            ← <span data-en="Back" data-id="Kembali">Kembali</span>
+
+          <button class="ss-btn-secondary" onclick="goToStep1()"
+                  style="margin-bottom:24px; display:inline-flex; align-items:center; gap:6px;">
+            <i class="ti ti-arrow-left"></i>
+            <span data-en="Back to account" data-id="Kembali ke akun">Kembali ke akun</span>
           </button>
 
-          <h2 style="font-size:20px; font-weight:500; margin-bottom:8px;"
+          <h2 class="su-step2-heading"
               data-en="Verify your domain" data-id="Verifikasi domain Anda">
             Verifikasi domain Anda
           </h2>
-          <p class="ss-verify-intro">
+          <p class="su-step2-intro">
             <span data-en="Add this TXT record to your DNS to prove ownership of"
                   data-id="Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan">
               Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan
@@ -203,57 +376,57 @@
             <strong id="verify-domain-label">perusahaan.com</strong>.
           </p>
 
-          <div class="ss-dns-card">
-            <div class="ss-dns-row">
-              <span class="ss-dns-field" data-en="Type" data-id="Tipe">Tipe</span>
-              <code class="ss-dns-val">TXT</code>
+          <div class="su-dns-card">
+            <div class="su-dns-row">
+              <span class="su-dns-field" data-en="Type" data-id="Tipe">Tipe</span>
+              <code class="su-dns-val">TXT</code>
             </div>
-            <div class="ss-dns-row">
-              <span class="ss-dns-field" data-en="Host / Name" data-id="Host / Nama">Host / Nama</span>
-              <code class="ss-dns-val" id="dns-host">_sentinel-verify.perusahaan.com</code>
-              <button class="ss-copy-btn" onclick="copyText('dns-host')" data-en="Copy" data-id="Salin">Salin</button>
+            <div class="su-dns-row">
+              <span class="su-dns-field" data-en="Host / Name" data-id="Host / Nama">Host</span>
+              <code class="su-dns-val" id="dns-host">_sentinel-verify.perusahaan.com</code>
+              <button class="su-copy-btn" onclick="copyText('dns-host')" data-en="Copy" data-id="Salin">Salin</button>
             </div>
-            <div class="ss-dns-row">
-              <span class="ss-dns-field" data-en="Value" data-id="Nilai">Nilai</span>
-              <code class="ss-dns-val" id="dns-value">sentinel-verify=a7f3c2e9b1d4</code>
-              <button class="ss-copy-btn" onclick="copyText('dns-value')" data-en="Copy" data-id="Salin">Salin</button>
+            <div class="su-dns-row">
+              <span class="su-dns-field" data-en="Value" data-id="Nilai">Nilai</span>
+              <code class="su-dns-val" id="dns-value">sentinel-verify=a7f3c2e9b1d4</code>
+              <button class="su-copy-btn" onclick="copyText('dns-value')" data-en="Copy" data-id="Salin">Salin</button>
             </div>
-            <div class="ss-dns-row">
-              <span class="ss-dns-field">TTL</span>
-              <code class="ss-dns-val">300</code>
+            <div class="su-dns-row">
+              <span class="su-dns-field">TTL</span>
+              <code class="su-dns-val">300</code>
             </div>
           </div>
 
-          <p class="ss-form-hint" style="margin-top:12px;"
-             data-en="DNS changes can take up to 48 hours, but usually propagate in minutes."
-             data-id="Perubahan DNS dapat memakan waktu hingga 48 jam, tetapi biasanya menyebar dalam beberapa menit.">
-            Perubahan DNS dapat memakan waktu hingga 48 jam, tetapi biasanya menyebar dalam beberapa menit.
+          <p class="ss-form-hint"
+             data-en="DNS changes usually propagate in minutes, but can take up to 48 hours."
+             data-id="Perubahan DNS biasanya menyebar dalam menit, tapi bisa memakan hingga 48 jam.">
+            Perubahan DNS biasanya menyebar dalam menit, tapi bisa memakan hingga 48 jam.
           </p>
 
           <div id="verify-idle">
-            <button class="ss-btn-primary ss-btn-full" onclick="startVerification()"
-                    style="margin-top:20px;"
-                    data-en="Check DNS now" data-id="Periksa DNS sekarang">Periksa DNS sekarang</button>
-            <p style="text-align:center; margin-top:12px; font-size:13px;">
-              <a href="#" onclick="skipVerification(); return false;"
-                 data-en="Skip for now (verify later)"
-                 data-id="Lewati untuk sekarang (verifikasi nanti)">Lewati untuk sekarang (verifikasi nanti)</a>
-            </p>
+            <div class="su-step2-actions">
+              <button class="ss-btn-primary" onclick="startVerification()"
+                      data-en="Check DNS now" data-id="Periksa DNS sekarang">Periksa DNS sekarang</button>
+            </div>
+            <a href="#" class="su-skip-link" onclick="skipVerification(); return false;"
+               data-en="Skip for now (verify later)" data-id="Lewati untuk sekarang (verifikasi nanti)">
+              Lewati untuk sekarang (verifikasi nanti)
+            </a>
           </div>
 
           <div id="verify-checking" hidden>
-            <div class="ss-verify-progress">
-              <div class="ss-verify-spinner"></div>
+            <div class="su-verify-progress">
+              <div class="su-verify-spinner"></div>
               <span data-en="Checking DNS records…" data-id="Memeriksa DNS record…">Memeriksa DNS record…</span>
             </div>
           </div>
 
           <div id="verify-success" hidden>
-            <div class="ss-verify-result ss-verify-result--success">
-              <span class="ss-verify-icon"><i class="ti ti-check"></i></span>
+            <div class="su-verify-result su-verify-result--success">
+              <span class="su-verify-icon"><i class="ti ti-circle-check-filled"></i></span>
               <div>
-                <p class="ss-verify-result__title" data-en="Domain verified!" data-id="Domain terverifikasi!">Domain terverifikasi!</p>
-                <p class="ss-verify-result__sub" data-en="Your account is ready." data-id="Akun Anda siap.">Akun Anda siap.</p>
+                <p class="su-verify-result__title" data-en="Domain verified!" data-id="Domain terverifikasi!">Domain terverifikasi!</p>
+                <p class="su-verify-result__sub" data-en="Your account is ready." data-id="Akun Anda siap.">Akun Anda siap.</p>
               </div>
             </div>
             <button class="ss-btn-primary ss-btn-full" onclick="completeSignup()"
@@ -262,29 +435,29 @@
           </div>
 
           <div id="verify-failed" hidden>
-            <div class="ss-verify-result ss-verify-result--failed">
-              <span class="ss-verify-icon">✗</span>
+            <div class="su-verify-result su-verify-result--failed">
+              <span class="su-verify-icon"><i class="ti ti-alert-circle"></i></span>
               <div>
-                <p class="ss-verify-result__title" data-en="TXT record not found yet." data-id="TXT record belum ditemukan.">TXT record belum ditemukan.</p>
-                <p class="ss-verify-result__sub" data-en="Add the record above and try again." data-id="Tambahkan record di atas dan coba lagi.">Tambahkan record di atas dan coba lagi.</p>
+                <p class="su-verify-result__title" data-en="TXT record not found yet." data-id="TXT record belum ditemukan.">TXT record belum ditemukan.</p>
+                <p class="su-verify-result__sub" data-en="Add the record above and try again." data-id="Tambahkan record di atas dan coba lagi.">Tambahkan record di atas dan coba lagi.</p>
               </div>
             </div>
             <button class="ss-btn-secondary ss-btn-full" onclick="retryVerification()"
                     style="margin-top:12px;"
                     data-en="Try again" data-id="Coba lagi">Coba lagi</button>
-            <p style="text-align:center; margin-top:10px; font-size:13px;">
-              <a href="#" onclick="skipVerification(); return false;"
-                 data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
-            </p>
+            <a href="#" class="su-skip-link" onclick="skipVerification(); return false;"
+               data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
           </div>
-        </div>
 
-      </div>
+        </div><!-- /signup-step-2 -->
 
-      <div class="ss-login-lang">
-        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
-      </div>
-    </div>
+      </div><!-- /su-card-body -->
+    </div><!-- /su-card -->
+  </main>
+
+  <!-- Language toggle -->
+  <div class="su-lang">
+    <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
@@ -313,12 +486,13 @@
     document.addEventListener('DOMContentLoaded', () => {
       const lang = localStorage.getItem('ss-lang') || 'id';
       const fc = FUNNEL_CONTENT[FUNNEL] || FUNNEL_CONTENT.xray;
-      const iconEl  = document.getElementById('funnel-icon');
-      const titleEl = document.getElementById('funnel-title');
-      const descEl  = document.getElementById('funnel-desc');
-      if (iconEl)  iconEl.innerHTML  = fc.icon;
-      if (titleEl) titleEl.textContent = fc.title[lang] || fc.title.id;
-      if (descEl)  descEl.textContent  = fc.desc[lang]  || fc.desc.id;
+
+      const headerEl = document.getElementById('funnel-header');
+      if (FUNNEL !== 'xray') headerEl.classList.add('su-card-header--' + FUNNEL);
+
+      document.getElementById('funnel-icon').innerHTML = fc.icon;
+      document.getElementById('funnel-title').textContent = fc.title[lang] || fc.title.id;
+      document.getElementById('funnel-desc').textContent  = fc.desc[lang]  || fc.desc.id;
     });
 
     let signupData = {};
@@ -386,8 +560,8 @@
       document.getElementById('verify-idle').hidden = false;
     }
 
-    function skipVerification() { signupData.domainVerified = false; createSessionAndRedirect(); }
-    function completeSignup()   { signupData.domainVerified = true;  createSessionAndRedirect(); }
+    function skipVerification()  { signupData.domainVerified = false; createSessionAndRedirect(); }
+    function completeSignup()    { signupData.domainVerified = true;  createSessionAndRedirect(); }
 
     function createSessionAndRedirect() {
       const session = {
@@ -402,10 +576,17 @@
     }
 
     function updateStepIndicator(step) {
-      document.querySelectorAll('.ss-step-dot').forEach((dot, i) => {
-        dot.classList.toggle('ss-step-dot--active', i + 1 === step);
-        dot.classList.toggle('ss-step-dot--done', i + 1 < step);
+      document.querySelectorAll('.su-step').forEach((dot, i) => {
+        dot.classList.toggle('su-step--active', i + 1 === step);
+        dot.classList.toggle('su-step--done',   i + 1 < step);
+        if (i + 1 < step) {
+          dot.querySelector('.su-step__circle').innerHTML = '<i class="ti ti-check" style="font-size:12px;"></i>';
+        } else if (i + 1 === step) {
+          dot.querySelector('.su-step__circle').textContent = String(i + 1);
+        }
       });
+      const connector = document.getElementById('step-connector');
+      if (connector) connector.classList.toggle('su-step__connector--done', step > 1);
     }
   </script>
 </body>
