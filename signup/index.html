@@ -177,17 +177,6 @@
     }
     .su-right-service__checks li i { font-size: 14px; color: rgba(255,255,255,0.5); flex-shrink: 0; margin-top: 1px; }
 
-    /* Testimonial / trust quote */
-    .su-right-quote {
-      position: relative; z-index: 1;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 20px;
-    }
-    .su-right-quote__text {
-      font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6;
-      font-style: italic; margin-bottom: 8px;
-    }
-    .su-right-quote__attr { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -425,16 +414,6 @@
         </ul>
       </div>
 
-      <!-- Trust quote -->
-      <div class="su-right-quote">
-        <p class="su-right-quote__text" id="rp-quote"
-           data-en='"We found 3 critical misconfigurations in 2 minutes that our team had missed for months."'
-           data-id='"Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."'>
-          "Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."
-        </p>
-        <p class="su-right-quote__attr" id="rp-attr">Adi Nugroho, IT Manager · Fintech Jakarta</p>
-      </div>
-
     </div><!-- /su-right -->
 
   </div><!-- /su-outer -->
@@ -453,9 +432,6 @@
                 id: 'Gambaran lengkap paparan siber Anda dalam ~2 menit. Tanpa tim IT — cukup dengan domain Anda.' },
       checks: { en: ['SPF / DKIM / DMARC configuration', 'Exposed subdomains & open ports', 'AI-generated risk summary'],
                 id: ['Konfigurasi SPF / DKIM / DMARC', 'Subdomain terekspos & port terbuka', 'Ringkasan risiko dari AI'] },
-      quote:  { en: '"We found 3 critical misconfigurations in 2 minutes that our team had missed for months."',
-                id: '"Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."' },
-      attr:   'Adi Nugroho, IT Manager · Fintech Jakarta',
       stepLabel: { en: 'Account', id: 'Akun' }
     },
     inbox: {
@@ -465,9 +441,6 @@
                 id: 'Deteksi phishing, BEC, dan login mencurigakan. Untuk tim keuangan & operasional.' },
       checks: { en: ['Phishing & BEC indicators', 'Suspicious login anomalies', 'Invoice fraud detection'],
                 id: ['Indikator phishing & BEC', 'Anomali login mencurigakan', 'Deteksi fraud faktur'] },
-      quote:  { en: '"Detected a CEO fraud attempt within hours of connecting our mail. Saved us from a major transfer."',
-                id: '"Mendeteksi upaya penipuan CEO dalam hitungan jam setelah menghubungkan email kami."' },
-      attr:   'Siti Rahayu, CFO · Perusahaan Distribusi',
       stepLabel: { en: 'Account', id: 'Akun' }
     },
     postincident: {
@@ -477,9 +450,6 @@
                 id: 'Upload log Anda dan dapatkan timeline insiden berbantuan AI dalam menit.' },
       checks: { en: ['Attack timeline reconstruction', 'IOC extraction (IPs, hashes)', 'MITRE ATT&CK mapping'],
                 id: ['Rekonstruksi timeline serangan', 'Ekstraksi IOC (IP, hash)', 'Pemetaan MITRE ATT&CK'] },
-      quote:  { en: '"Had a timeline of the breach in 20 minutes. Would have taken our team days manually."',
-                id: '"Mendapat timeline insiden dalam 20 menit. Tanpanya butuh berhari-hari secara manual."' },
-      attr:   'Budi Santoso, CISO · Perusahaan Manufaktur',
       stepLabel: { en: 'Account', id: 'Akun' }
     }
   };
@@ -494,9 +464,6 @@
     document.getElementById('rp-desc').textContent = meta.desc[lang]  || meta.desc.id;
     document.getElementById('rp-checks').innerHTML = (meta.checks[lang] || meta.checks.id)
       .map(c => `<li><i class="ti ti-check"></i>${c}</li>`).join('');
-    document.getElementById('rp-quote').textContent = meta.quote[lang] || meta.quote.id;
-    document.getElementById('rp-attr').textContent  = meta.attr;
-
     // Step label
     document.getElementById('step-label').textContent = meta.stepLabel[lang] || meta.stepLabel.id;
   });
