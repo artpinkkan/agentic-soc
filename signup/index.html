@@ -12,312 +12,254 @@
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
   </script>
   <style>
-    body {
-      display: block !important;
-      background: var(--ss-surface);
-      min-height: 100vh;
-    }
+    body { display: block !important; min-height: 100vh; background: var(--ss-surface); }
 
-    /* ── Top bar ─────────────────────────────── */
-    .su-topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px;
-      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-    }
-    .su-brand {
-      display: flex; align-items: center; gap: 8px;
-      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
-      color: var(--ss-brand); text-decoration: none !important;
-    }
-    .su-brand i { font-size: 20px; }
-
-    /* ── Page centering ──────────────────────── */
+    /* ── Page wrapper ───────────────────────── */
     .su-page {
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
-      padding: 80px 16px 40px;
+      padding: 24px 16px;
     }
 
-    /* ── Card shell ──────────────────────────── */
-    .su-card {
-      width: 100%; max-width: 500px;
-      background: var(--ss-surface-container-lowest);
-      border-radius: 20px;
-      box-shadow: var(--ss-shadow-float);
-      overflow: hidden;
+    /* ── Outer card (the full container) ──── */
+    .su-outer {
+      width: 100%; max-width: 980px;
+      display: flex; border-radius: 24px; overflow: hidden;
+      box-shadow: 0 24px 80px rgba(25,28,30,0.14), 0 4px 20px rgba(25,28,30,0.07);
+      min-height: 600px;
     }
 
-    /* ── Card funnel header ──────────────────── */
-    .su-card-header {
-      display: flex; align-items: flex-start; gap: 16px;
-      padding: 24px 28px;
-      background: var(--ss-brand-gradient);
-      color: #fff;
+    /* ── Left: form panel ───────────────────── */
+    .su-left {
+      flex: 1; min-width: 0;
+      background: #fff;
+      display: flex; flex-direction: column;
+      padding: 32px 40px 36px;
     }
-    .su-card-header--inbox        { background: linear-gradient(135deg, #1a6cc4 0%, #378ADD 100%); }
-    .su-card-header--postincident { background: linear-gradient(135deg, #b03030 0%, #E24B4A 100%); }
 
-    .su-card-header__icon {
-      width: 44px; height: 44px; border-radius: var(--ss-radius-md);
-      background: rgba(255,255,255,0.15);
+    /* Step nav row */
+    .su-step-nav {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 40px;
+    }
+    .su-back-circle {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1.5px solid var(--ss-border-md);
+      background: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
-    }
-    .su-card-header__eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;
-    }
-    .su-card-header__title {
-      font-family: var(--ss-font-headline); font-size: 18px;
-      font-weight: 700; line-height: 1.25; margin-bottom: 4px;
-      letter-spacing: -0.01em;
-    }
-    .su-card-header__desc { font-size: 13px; opacity: 0.85; line-height: 1.4; }
-
-    /* ── Card body ───────────────────────────── */
-    .su-card-body { padding: 28px 28px 32px; }
-
-    /* ── Step indicator ──────────────────────── */
-    .su-steps {
-      display: flex; align-items: center;
-      margin-bottom: 28px;
-    }
-    .su-step {
-      display: flex; align-items: center; gap: 8px;
+      color: var(--ss-neutral-500); font-size: 16px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
       flex-shrink: 0;
     }
-    .su-step__circle {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--ss-surface-container);
-      border: 2px solid var(--ss-border-md);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: var(--ss-neutral-500);
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-      flex-shrink: 0;
-    }
-    .su-step__label {
-      font-size: 13px; font-weight: 500; color: var(--ss-neutral-500);
-      white-space: nowrap;
-    }
-    .su-step--active .su-step__circle {
-      background: var(--ss-brand); border-color: var(--ss-brand); color: #fff;
-      box-shadow: 0 0 0 3px rgba(0,104,95,0.15);
-    }
-    .su-step--active .su-step__label { color: var(--ss-on-surface); font-weight: 600; }
-    .su-step--done .su-step__circle {
-      background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success);
-    }
-    .su-step--done .su-step__label { color: var(--ss-neutral-500); }
-    .su-step__connector {
-      flex: 1; height: 2px; background: var(--ss-border-md);
-      margin: 0 10px; border-radius: 100px;
-      transition: background 0.3s;
-    }
-    .su-step__connector--done { background: var(--ss-success); }
+    .su-back-circle:hover { background: var(--ss-surface-container-low); color: var(--ss-on-surface); border-color: var(--ss-neutral-500); }
+    .su-step-text { display: flex; flex-direction: column; gap: 1px; }
+    .su-step-fraction { font-size: 12px; font-weight: 700; color: var(--ss-neutral-500); letter-spacing: 0.02em; }
+    .su-step-title-label { font-size: 14px; font-weight: 600; color: var(--ss-on-surface); }
 
-    /* ── Field section groups ────────────────── */
-    .su-section {
-      margin-bottom: 20px; padding-top: 16px;
-      border-top: 1px solid var(--ss-border);
+    /* Form body */
+    .su-form-body { flex: 1; }
+    .su-heading {
+      font-family: var(--ss-font-headline); font-size: 26px; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--ss-on-surface);
+      margin-bottom: 6px; line-height: 1.2;
     }
-    .su-section:first-of-type { border-top: none; padding-top: 0; }
+    .su-subheading {
+      font-size: 14px; color: var(--ss-neutral-500); margin-bottom: 28px; line-height: 1.5;
+    }
+    .su-subheading a { color: var(--ss-brand); font-weight: 500; }
+
+    /* Field section labels */
+    .su-section { margin-bottom: 20px; }
+    .su-section + .su-section { padding-top: 18px; border-top: 1px solid var(--ss-border); }
     .su-section__label {
       font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--ss-neutral-500); margin-bottom: 14px;
+      text-transform: uppercase; color: var(--ss-neutral-500); margin-bottom: 12px;
     }
-    .su-section .ss-form-group { margin-bottom: 14px; }
+    .su-section .ss-form-group { margin-bottom: 12px; }
     .su-section .ss-form-group:last-child { margin-bottom: 0; }
     .su-section .ss-form-group input,
-    .su-section .ss-form-group select {
-      padding: 10px 13px; font-size: 14px;
-    }
+    .su-section .ss-form-group select { padding: 10px 13px; font-size: 14px; }
 
-    /* ── Slug preview ────────────────────────── */
+    /* 2-col row */
+    .su-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 420px) { .su-row-2 { grid-template-columns: 1fr; } }
+
+    /* Slug row */
     .su-slug-row {
       display: flex; align-items: center; gap: 8px;
-      background: var(--ss-surface-container-low);
-      border-radius: var(--ss-radius-sm);
-      padding: 8px 12px; margin-top: 6px; flex-wrap: wrap;
+      background: var(--ss-surface-container-low); border-radius: var(--ss-radius-sm);
+      padding: 7px 11px; margin-top: 6px; flex-wrap: wrap;
     }
-    .su-slug-row__label { font-size: 12px; color: var(--ss-neutral-500); flex-shrink: 0; }
-    .su-slug-row__url { font-size: 12px; color: var(--ss-neutral-700); flex: 1; font-family: monospace; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .su-slug-edit { font-size: 12px; color: var(--ss-brand); background: none; border: none; cursor: pointer; flex-shrink: 0; padding: 0; font-weight: 500; }
+    .su-slug-row__label { font-size: 11px; color: var(--ss-neutral-500); flex-shrink: 0; }
+    .su-slug-row__url { font-size: 11px; font-family: monospace; color: var(--ss-neutral-700); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .su-slug-edit { font-size: 11px; color: var(--ss-brand); background: none; border: none; cursor: pointer; flex-shrink: 0; font-weight: 600; padding: 0; }
     .su-slug-edit:hover { text-decoration: underline; }
 
-    /* ── Two-col row ─────────────────────────── */
-    .su-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 400px) { .su-row-2 { grid-template-columns: 1fr; } }
+    /* CTA + sign-in */
+    .su-cta-row { margin-top: 24px; }
+    .su-signin-hint { text-align: center; font-size: 13px; color: var(--ss-neutral-500); margin-top: 16px; }
+    .su-signin-hint a { color: var(--ss-brand); font-weight: 600; }
 
-    /* ── Sign-in link ────────────────────────── */
-    .su-signin-hint {
-      text-align: center; font-size: 13px; color: var(--ss-neutral-500);
-      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--ss-border);
-    }
-    .su-signin-hint a { font-weight: 600; }
+    /* Language toggle */
+    .su-lang-row { display: flex; justify-content: flex-end; margin-top: 20px; }
 
-    /* ── Step 2 styles ───────────────────────── */
-    .su-step2-heading {
-      font-family: var(--ss-font-headline); font-size: 22px; font-weight: 700;
-      margin-bottom: 6px; letter-spacing: -0.01em; color: var(--ss-on-surface);
-    }
-    .su-step2-intro {
-      font-size: 14px; color: var(--ss-neutral-500); margin-bottom: 20px; line-height: 1.55;
-    }
-    .su-dns-card {
-      border: 1px solid var(--ss-border-md); border-radius: var(--ss-radius-md);
-      overflow: hidden; margin: 0 0 16px;
-    }
-    .su-dns-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-bottom: 0.5px solid var(--ss-border);
-    }
+    /* ── Step 2: DNS verification ──────────── */
+    .su-verify-intro { font-size: 14px; color: var(--ss-neutral-500); margin-bottom: 20px; line-height: 1.55; }
+    .su-dns-card { border: 1px solid var(--ss-border-md); border-radius: var(--ss-radius-md); overflow: hidden; margin-bottom: 14px; }
+    .su-dns-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--ss-border); }
     .su-dns-row:last-child { border-bottom: none; }
-    .su-dns-field { font-size: 12px; color: var(--ss-neutral-500); min-width: 80px; font-weight: 500; }
-    .su-dns-val {
-      flex: 1; font-size: 12px; font-family: monospace;
-      background: var(--ss-surface-container-low);
-      padding: 4px 8px; border-radius: 6px; word-break: break-all;
-      color: var(--ss-neutral-700);
-    }
-    .su-copy-btn {
-      font-size: 11px; color: var(--ss-brand); background: none;
-      border: 1px solid var(--ss-brand); border-radius: 6px;
-      padding: 3px 10px; cursor: pointer; flex-shrink: 0; font-weight: 500;
-      transition: background 0.15s, color 0.15s;
-    }
+    .su-dns-field { font-size: 12px; color: var(--ss-neutral-500); min-width: 68px; font-weight: 500; }
+    .su-dns-val { flex: 1; font-size: 12px; font-family: monospace; background: var(--ss-surface-container-low); padding: 4px 8px; border-radius: 6px; word-break: break-all; color: var(--ss-neutral-700); }
+    .su-copy-btn { font-size: 11px; color: var(--ss-brand); background: none; border: 1px solid var(--ss-brand); border-radius: 6px; padding: 3px 9px; cursor: pointer; flex-shrink: 0; font-weight: 500; transition: background 0.15s, color 0.15s; }
     .su-copy-btn:hover { background: var(--ss-brand); color: #fff; }
-    .su-verify-progress {
-      display: flex; align-items: center; gap: 12px;
-      padding: 16px; background: var(--ss-surface-container-low);
-      border-radius: var(--ss-radius-md); margin-top: 16px; font-size: 14px;
-    }
-    .su-verify-spinner {
-      width: 18px; height: 18px; border: 2px solid var(--ss-border-md);
-      border-top-color: var(--ss-brand); border-radius: 50%;
-      animation: spin 0.8s linear infinite; flex-shrink: 0;
-    }
+    .su-verify-progress { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--ss-surface-container-low); border-radius: var(--ss-radius-md); margin-top: 16px; font-size: 14px; }
+    .su-verify-spinner { width: 18px; height: 18px; border: 2px solid var(--ss-border-md); border-top-color: var(--ss-brand); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .su-verify-result {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 14px 16px; border-radius: var(--ss-radius-md); margin-top: 16px;
-    }
-    .su-verify-result--success { background: var(--ss-success-light); border: 1px solid rgba(99,153,34,0.35); }
-    .su-verify-result--failed  { background: var(--ss-danger-light);  border: 1px solid rgba(226,75,74,0.35); }
-    .su-verify-icon { font-size: 18px; line-height: 1.4; flex-shrink: 0; }
+    .su-verify-result { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--ss-radius-md); margin-top: 16px; }
+    .su-verify-result--success { background: var(--ss-success-light); border: 1px solid rgba(99,153,34,0.3); }
+    .su-verify-result--failed  { background: var(--ss-danger-light);  border: 1px solid rgba(226,75,74,0.3); }
+    .su-verify-icon { font-size: 18px; flex-shrink: 0; }
     .su-verify-result--success .su-verify-icon { color: var(--ss-success); }
     .su-verify-result--failed  .su-verify-icon { color: var(--ss-danger); }
     .su-verify-result__title { font-weight: 600; font-size: 14px; }
     .su-verify-result__sub { font-size: 13px; color: var(--ss-neutral-500); margin-top: 3px; }
-    .su-step2-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .su-step2-actions .ss-btn-primary { flex: 1; }
-    .su-skip-link {
-      font-size: 13px; color: var(--ss-neutral-500); text-align: center;
-      display: block; margin-top: 12px;
-    }
+    .su-skip-link { display: block; text-align: center; font-size: 13px; color: var(--ss-neutral-500); margin-top: 12px; }
     .su-skip-link:hover { color: var(--ss-on-surface); }
 
-    /* ── Language toggle ─────────────────────── */
-    .su-lang { position: fixed; bottom: 20px; right: 20px; }
+    /* ── Right: brand panel ─────────────────── */
+    .su-right {
+      width: 42%; flex-shrink: 0;
+      background: #003d38;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 36px;
+      position: relative; overflow: hidden;
+    }
+    @media (max-width: 720px) { .su-right { display: none; } }
+
+    /* Decorative watermark */
+    .su-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      font-size: 320px; line-height: 1;
+      color: rgba(255,255,255,0.055);
+      pointer-events: none; user-select: none;
+    }
+
+    /* Brand label top-left */
+    .su-right-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.6); text-decoration: none !important;
+      position: relative; z-index: 1;
+    }
+    .su-right-brand i { font-size: 20px; color: rgba(255,255,255,0.5); }
+
+    /* Service info block (funnel-specific) */
+    .su-right-service {
+      position: relative; z-index: 1;
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+    }
+    .su-right-service__icon {
+      width: 48px; height: 48px; border-radius: var(--ss-radius-md);
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: #fff; margin-bottom: 16px;
+    }
+    .su-right-service__name {
+      font-family: var(--ss-font-headline); font-size: 20px; font-weight: 700;
+      color: #fff; margin-bottom: 8px; letter-spacing: -0.02em; line-height: 1.3;
+    }
+    .su-right-service__desc { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.55; margin-bottom: 20px; }
+    .su-right-service__checks { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .su-right-service__checks li {
+      font-size: 13px; color: rgba(255,255,255,0.8);
+      display: flex; align-items: flex-start; gap: 8px; line-height: 1.45;
+    }
+    .su-right-service__checks li i { font-size: 14px; color: rgba(255,255,255,0.5); flex-shrink: 0; margin-top: 1px; }
+
+    /* Testimonial / trust quote */
+    .su-right-quote {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+    }
+    .su-right-quote__text {
+      font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6;
+      font-style: italic; margin-bottom: 8px;
+    }
+    .su-right-quote__attr { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- Top bar -->
-  <header class="su-topbar">
-    <a href="/agentic-soc/" class="su-brand">
-      <i class="ti ti-shield"></i>
-      Shannon Sentinel
-    </a>
-  </header>
+<div class="su-page">
+  <div class="su-outer">
 
-  <!-- Page -->
-  <main class="su-page">
-    <div class="su-card">
+    <!-- ── Left: form ───────────────────── -->
+    <div class="su-left">
 
-      <!-- Funnel accent header -->
-      <div class="su-card-header" id="funnel-header">
-        <div class="su-card-header__icon">
-          <span id="funnel-icon"><i class="ti ti-radar"></i></span>
-        </div>
-        <div>
-          <p class="su-card-header__eyebrow">Shannon Sentinel</p>
-          <p id="funnel-title" class="su-card-header__title">Mulai: Cyber X-Ray</p>
-          <p id="funnel-desc" class="su-card-header__desc">Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.</p>
+      <!-- Step nav row -->
+      <div class="su-step-nav">
+        <button class="su-back-circle" id="back-btn" onclick="goToStep1()" hidden aria-label="Kembali">
+          <i class="ti ti-arrow-left"></i>
+        </button>
+        <div class="su-step-text">
+          <span class="su-step-fraction" id="step-fraction">1/2</span>
+          <span class="su-step-title-label" id="step-label"
+                data-step1-en="Account" data-step1-id="Akun"
+                data-step2-en="Verify domain" data-step2-id="Verifikasi domain">Akun</span>
         </div>
       </div>
 
-      <!-- Card body -->
-      <div class="su-card-body">
-
-        <!-- Free tier notice -->
-        <div class="ss-notice ss-notice--info" style="margin-bottom: 24px;">
-          <i class="ti ti-info-circle"></i>
-          <span data-en="Free tier: 5–10 endpoints, 3–7 day retention, 50 AI analyses/month. No credit card required."
-                data-id="Tier gratis: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.">
-            Tier gratis: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.
-          </span>
-        </div>
-
-        <!-- Step indicator -->
-        <div class="su-steps" id="step-indicator">
-          <div class="su-step su-step--active" id="step-dot-1">
-            <div class="su-step__circle">1</div>
-            <span class="su-step__label" data-en="Account" data-id="Akun">Akun</span>
-          </div>
-          <div class="su-step__connector" id="step-connector"></div>
-          <div class="su-step" id="step-dot-2">
-            <div class="su-step__circle">2</div>
-            <span class="su-step__label" data-en="Verify domain" data-id="Verifikasi domain">Verifikasi domain</span>
-          </div>
-        </div>
+      <!-- Form body -->
+      <div class="su-form-body">
 
         <!-- ── Step 1 ── -->
         <div id="signup-step-1">
 
-          <h2 style="font-family:var(--ss-font-headline); font-size:22px; font-weight:700; margin-bottom:24px; letter-spacing:-0.01em;"
+          <h1 class="su-heading"
               data-en="Create your free account" data-id="Buat akun gratis Anda">
             Buat akun gratis Anda
-          </h2>
+          </h1>
+          <p class="su-subheading">
+            <span data-en="Already have an account?" data-id="Sudah punya akun?">Sudah punya akun?</span>
+            <a href="/agentic-soc/login/" data-en="Sign in" data-id="Masuk">Masuk</a>
+          </p>
 
           <div id="signup-error-1" class="ss-form-error" hidden>
             <span data-en="Please fill all required fields."
                   data-id="Mohon isi semua kolom yang wajib.">Mohon isi semua kolom yang wajib.</span>
           </div>
 
-          <!-- Section: Account credentials -->
+          <!-- Account credentials -->
           <div class="su-section">
             <p class="su-section__label" data-en="Your account" data-id="Akun Anda">Akun Anda</p>
-
             <div class="ss-form-group">
               <label data-en="Your name" data-id="Nama Anda">Nama Anda</label>
               <input type="text" id="su-name" placeholder="Rudi Hartono">
             </div>
-
             <div class="ss-form-group">
               <label data-en="Work email" data-id="Email kerja">Email kerja</label>
               <input type="email" id="su-email" placeholder="anda@perusahaan.com">
             </div>
-
             <div class="ss-form-group">
               <label data-en="Password" data-id="Kata sandi">Kata sandi</label>
               <input type="password" id="su-password" placeholder="Min. 8 karakter">
             </div>
           </div>
 
-          <!-- Section: Organisation details -->
+          <!-- Organisation details -->
           <div class="su-section">
             <p class="su-section__label" data-en="Your organisation" data-id="Organisasi Anda">Organisasi Anda</p>
-
             <div class="ss-form-group">
               <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan</label>
               <input type="text" id="su-company" placeholder="PT Contoh Corp" oninput="updateSlug(this.value)">
               <div class="su-slug-row">
-                <span class="su-slug-row__label" data-en="URL:" data-id="URL:">URL:</span>
+                <span class="su-slug-row__label">URL:</span>
                 <code class="su-slug-row__url">sentinel.shannondynamics.id/<strong id="slug-value">nama-perusahaan</strong></code>
                 <button class="su-slug-edit" onclick="editSlug()" data-en="Edit" data-id="Ubah">Ubah</button>
               </div>
             </div>
-
             <div class="su-row-2">
               <div class="ss-form-group" style="margin-bottom:0;">
                 <label data-en="Industry" data-id="Industri">Industri</label>
@@ -334,60 +276,58 @@
                 </select>
               </div>
               <div class="ss-form-group" style="margin-bottom:0;">
-                <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
+                <label data-en="Company domain" data-id="Domain perusahaan">Domain</label>
                 <input type="text" id="su-domain" placeholder="perusahaan.com">
               </div>
             </div>
             <p class="ss-form-hint" style="margin-top:6px;"
-               data-en="We'll verify ownership via a DNS TXT record."
-               data-id="Kami verifikasi kepemilikan melalui DNS TXT record.">
-              Kami verifikasi kepemilikan melalui DNS TXT record.
+               data-en="We'll verify via DNS TXT record."
+               data-id="Kami verifikasi melalui DNS TXT record.">
+              Kami verifikasi melalui DNS TXT record.
             </p>
           </div>
 
-          <button class="ss-btn-primary ss-btn-full" style="margin-top:4px;" onclick="goToStep2()"
-                  data-en="Continue →" data-id="Lanjut →">Lanjut →</button>
+          <div class="su-cta-row">
+            <button class="ss-btn-primary ss-btn-full" onclick="goToStep2()"
+                    data-en="Continue →" data-id="Lanjut →">Lanjut →</button>
+            <p class="su-signin-hint" style="font-size:12px; color:var(--ss-neutral-500);">
+              <i class="ti ti-info-circle"></i>
+              <span data-en="Free: 5–10 endpoints · 50 AI analyses/month · No card needed"
+                    data-id="Gratis: 5–10 endpoint · 50 analisis AI/bulan · Tanpa kartu kredit">
+                Gratis: 5–10 endpoint · 50 analisis AI/bulan · Tanpa kartu kredit
+              </span>
+            </p>
+          </div>
 
-          <p class="su-signin-hint">
-            <span data-en="Already have an account?" data-id="Sudah punya akun?">Sudah punya akun?</span>
-            <a href="/agentic-soc/login/" data-en="Sign in" data-id="Masuk">Masuk</a>
-          </p>
-
-        </div><!-- /signup-step-1 -->
+        </div><!-- /step-1 -->
 
         <!-- ── Step 2 ── -->
         <div id="signup-step-2" hidden>
 
-          <button class="ss-btn-secondary" onclick="goToStep1()"
-                  style="margin-bottom:24px; display:inline-flex; align-items:center; gap:6px;">
-            <i class="ti ti-arrow-left"></i>
-            <span data-en="Back to account" data-id="Kembali ke akun">Kembali ke akun</span>
-          </button>
-
-          <h2 class="su-step2-heading"
+          <h1 class="su-heading"
               data-en="Verify your domain" data-id="Verifikasi domain Anda">
             Verifikasi domain Anda
-          </h2>
-          <p class="su-step2-intro">
-            <span data-en="Add this TXT record to your DNS to prove ownership of"
-                  data-id="Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan">
-              Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan
+          </h1>
+          <p class="su-verify-intro">
+            <span data-en="Add this DNS TXT record to prove ownership of"
+                  data-id="Tambahkan TXT record DNS ini untuk membuktikan kepemilikan">
+              Tambahkan TXT record DNS ini untuk membuktikan kepemilikan
             </span>
             <strong id="verify-domain-label">perusahaan.com</strong>.
           </p>
 
           <div class="su-dns-card">
             <div class="su-dns-row">
-              <span class="su-dns-field" data-en="Type" data-id="Tipe">Tipe</span>
+              <span class="su-dns-field">Tipe</span>
               <code class="su-dns-val">TXT</code>
             </div>
             <div class="su-dns-row">
-              <span class="su-dns-field" data-en="Host / Name" data-id="Host / Nama">Host</span>
+              <span class="su-dns-field">Host</span>
               <code class="su-dns-val" id="dns-host">_sentinel-verify.perusahaan.com</code>
               <button class="su-copy-btn" onclick="copyText('dns-host')" data-en="Copy" data-id="Salin">Salin</button>
             </div>
             <div class="su-dns-row">
-              <span class="su-dns-field" data-en="Value" data-id="Nilai">Nilai</span>
+              <span class="su-dns-field">Nilai</span>
               <code class="su-dns-val" id="dns-value">sentinel-verify=a7f3c2e9b1d4</code>
               <button class="su-copy-btn" onclick="copyText('dns-value')" data-en="Copy" data-id="Salin">Salin</button>
             </div>
@@ -396,18 +336,15 @@
               <code class="su-dns-val">300</code>
             </div>
           </div>
-
-          <p class="ss-form-hint"
-             data-en="DNS changes usually propagate in minutes, but can take up to 48 hours."
-             data-id="Perubahan DNS biasanya menyebar dalam menit, tapi bisa memakan hingga 48 jam.">
-            Perubahan DNS biasanya menyebar dalam menit, tapi bisa memakan hingga 48 jam.
+          <p class="ss-form-hint" data-en="Usually propagates in minutes, up to 48 hours."
+             data-id="Biasanya menyebar dalam menit, hingga 48 jam.">
+            Biasanya menyebar dalam menit, hingga 48 jam.
           </p>
 
           <div id="verify-idle">
-            <div class="su-step2-actions">
-              <button class="ss-btn-primary" onclick="startVerification()"
-                      data-en="Check DNS now" data-id="Periksa DNS sekarang">Periksa DNS sekarang</button>
-            </div>
+            <button class="ss-btn-primary ss-btn-full" onclick="startVerification()"
+                    style="margin-top:20px;"
+                    data-en="Check DNS now" data-id="Periksa DNS sekarang">Periksa DNS sekarang</button>
             <a href="#" class="su-skip-link" onclick="skipVerification(); return false;"
                data-en="Skip for now (verify later)" data-id="Lewati untuk sekarang (verifikasi nanti)">
               Lewati untuk sekarang (verifikasi nanti)
@@ -449,145 +386,214 @@
                data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
           </div>
 
-        </div><!-- /signup-step-2 -->
+        </div><!-- /step-2 -->
 
-      </div><!-- /su-card-body -->
-    </div><!-- /su-card -->
-  </main>
+      </div><!-- /su-form-body -->
 
-  <!-- Language toggle -->
-  <div class="su-lang">
-    <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
-  </div>
+      <!-- Language toggle at bottom of left panel -->
+      <div class="su-lang-row">
+        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+      </div>
 
-  <script src="/agentic-soc/shared.js"></script>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const FUNNEL = params.get('funnel') || 'xray';
+    </div><!-- /su-left -->
 
-    const FUNNEL_CONTENT = {
-      xray: {
-        icon: '<i class="ti ti-radar"></i>',
-        title: { en: 'Start: Cyber X-Ray', id: 'Mulai: Cyber X-Ray' },
-        desc:  { en: 'Check your domain, email security, exposed systems & endpoints. ~2 minutes.', id: 'Periksa domain, keamanan email, sistem terekspos & endpoint. ~2 menit.' }
-      },
-      inbox: {
-        icon: '<i class="ti ti-mail-check"></i>',
-        title: { en: 'Start: Inbox & Identity Guard', id: 'Mulai: Inbox & Identity Guard' },
-        desc:  { en: 'Detect phishing, invoice fraud, BEC and suspicious logins. For finance & ops teams.', id: 'Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Untuk tim keuangan & operasional.' }
-      },
-      postincident: {
-        icon: '<i class="ti ti-alert-circle"></i>',
-        title: { en: 'Start: Post-Incident Triage', id: 'Mulai: Triase Pasca-Insiden' },
-        desc:  { en: 'Already hacked or suspect a breach? Upload logs and get an AI-assisted triage now.', id: 'Sudah diretas atau curiga ada insiden? Upload log dan dapatkan triase AI sekarang.' }
-      }
+    <!-- ── Right: brand panel ──────────────── -->
+    <div class="su-right">
+
+      <!-- Watermark -->
+      <i class="ti ti-shield su-watermark" aria-hidden="true"></i>
+
+      <!-- Brand label -->
+      <a href="/agentic-soc/" class="su-right-brand">
+        <i class="ti ti-shield"></i>
+        Shannon Sentinel
+      </a>
+
+      <!-- Service info (updated by JS) -->
+      <div class="su-right-service">
+        <div class="su-right-service__icon" id="rp-icon">
+          <i class="ti ti-radar"></i>
+        </div>
+        <p class="su-right-service__name" id="rp-name">Cyber X-Ray</p>
+        <p class="su-right-service__desc" id="rp-desc">
+          Gambaran lengkap paparan siber Anda dalam ~2 menit. Tanpa tim IT.
+        </p>
+        <ul class="su-right-service__checks" id="rp-checks">
+          <li><i class="ti ti-check"></i> SPF / DKIM / DMARC configuration</li>
+          <li><i class="ti ti-check"></i> Exposed subdomains &amp; open ports</li>
+          <li><i class="ti ti-check"></i> AI-generated risk summary</li>
+        </ul>
+      </div>
+
+      <!-- Trust quote -->
+      <div class="su-right-quote">
+        <p class="su-right-quote__text" id="rp-quote"
+           data-en='"We found 3 critical misconfigurations in 2 minutes that our team had missed for months."'
+           data-id='"Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."'>
+          "Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."
+        </p>
+        <p class="su-right-quote__attr" id="rp-attr">Adi Nugroho, IT Manager · Fintech Jakarta</p>
+      </div>
+
+    </div><!-- /su-right -->
+
+  </div><!-- /su-outer -->
+</div><!-- /su-page -->
+
+<script src="/agentic-soc/shared.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const FUNNEL = params.get('funnel') || 'xray';
+
+  const FUNNEL_META = {
+    xray: {
+      icon:   '<i class="ti ti-radar"></i>',
+      name:   { en: 'Cyber X-Ray',              id: 'Cyber X-Ray' },
+      desc:   { en: 'Full picture of your cyber exposure in ~2 minutes. No IT team needed — just your domain.',
+                id: 'Gambaran lengkap paparan siber Anda dalam ~2 menit. Tanpa tim IT — cukup dengan domain Anda.' },
+      checks: { en: ['SPF / DKIM / DMARC configuration', 'Exposed subdomains & open ports', 'AI-generated risk summary'],
+                id: ['Konfigurasi SPF / DKIM / DMARC', 'Subdomain terekspos & port terbuka', 'Ringkasan risiko dari AI'] },
+      quote:  { en: '"We found 3 critical misconfigurations in 2 minutes that our team had missed for months."',
+                id: '"Kami menemukan 3 miskonfigurasi kritis dalam 2 menit yang tim kami lewatkan selama berbulan-bulan."' },
+      attr:   'Adi Nugroho, IT Manager · Fintech Jakarta',
+      stepLabel: { en: 'Account', id: 'Akun' }
+    },
+    inbox: {
+      icon:   '<i class="ti ti-mail-check"></i>',
+      name:   { en: 'Inbox & Identity Guard', id: 'Inbox & Identity Guard' },
+      desc:   { en: 'Detect phishing, BEC, and suspicious logins. For finance & ops teams.',
+                id: 'Deteksi phishing, BEC, dan login mencurigakan. Untuk tim keuangan & operasional.' },
+      checks: { en: ['Phishing & BEC indicators', 'Suspicious login anomalies', 'Invoice fraud detection'],
+                id: ['Indikator phishing & BEC', 'Anomali login mencurigakan', 'Deteksi fraud faktur'] },
+      quote:  { en: '"Detected a CEO fraud attempt within hours of connecting our mail. Saved us from a major transfer."',
+                id: '"Mendeteksi upaya penipuan CEO dalam hitungan jam setelah menghubungkan email kami."' },
+      attr:   'Siti Rahayu, CFO · Perusahaan Distribusi',
+      stepLabel: { en: 'Account', id: 'Akun' }
+    },
+    postincident: {
+      icon:   '<i class="ti ti-alert-circle"></i>',
+      name:   { en: 'Post-Incident Triage',  id: 'Triase Pasca-Insiden' },
+      desc:   { en: 'Upload your logs and get an AI-assisted incident timeline in minutes.',
+                id: 'Upload log Anda dan dapatkan timeline insiden berbantuan AI dalam menit.' },
+      checks: { en: ['Attack timeline reconstruction', 'IOC extraction (IPs, hashes)', 'MITRE ATT&CK mapping'],
+                id: ['Rekonstruksi timeline serangan', 'Ekstraksi IOC (IP, hash)', 'Pemetaan MITRE ATT&CK'] },
+      quote:  { en: '"Had a timeline of the breach in 20 minutes. Would have taken our team days manually."',
+                id: '"Mendapat timeline insiden dalam 20 menit. Tanpanya butuh berhari-hari secara manual."' },
+      attr:   'Budi Santoso, CISO · Perusahaan Manufaktur',
+      stepLabel: { en: 'Account', id: 'Akun' }
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lang = localStorage.getItem('ss-lang') || 'id';
+    const meta = FUNNEL_META[FUNNEL] || FUNNEL_META.xray;
+
+    // Right panel
+    document.getElementById('rp-icon').innerHTML  = meta.icon;
+    document.getElementById('rp-name').textContent = meta.name[lang]  || meta.name.id;
+    document.getElementById('rp-desc').textContent = meta.desc[lang]  || meta.desc.id;
+    document.getElementById('rp-checks').innerHTML = (meta.checks[lang] || meta.checks.id)
+      .map(c => `<li><i class="ti ti-check"></i>${c}</li>`).join('');
+    document.getElementById('rp-quote').textContent = meta.quote[lang] || meta.quote.id;
+    document.getElementById('rp-attr').textContent  = meta.attr;
+
+    // Step label
+    document.getElementById('step-label').textContent = meta.stepLabel[lang] || meta.stepLabel.id;
+  });
+
+  let signupData = {};
+
+  function updateSlug(companyName) {
+    const slug = companyName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').slice(0, 40);
+    document.getElementById('slug-value').textContent = slug || 'nama-perusahaan';
+    signupData.slug = slug;
+  }
+
+  function editSlug() {
+    const current = document.getElementById('slug-value').textContent;
+    const newSlug = prompt(document.documentElement.lang === 'en' ? 'Edit workspace slug:' : 'Edit slug workspace:', current);
+    if (newSlug) {
+      const clean = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
+      document.getElementById('slug-value').textContent = clean;
+      signupData.slug = clean;
+    }
+  }
+
+  function goToStep2() {
+    const company  = document.getElementById('su-company').value.trim();
+    const name     = document.getElementById('su-name').value.trim();
+    const email    = document.getElementById('su-email').value.trim();
+    const password = document.getElementById('su-password').value;
+    const domain   = document.getElementById('su-domain').value.trim();
+    if (!company || !name || !email || !password || !domain) {
+      document.getElementById('signup-error-1').hidden = false;
+      return;
+    }
+    document.getElementById('signup-error-1').hidden = true;
+    signupData = { company, name, email, password, domain,
+      slug: signupData.slug || company.toLowerCase().replace(/\s+/g, '-'),
+      industry: document.getElementById('su-industry').value };
+    document.getElementById('verify-domain-label').textContent = domain;
+    document.getElementById('dns-host').textContent = `_sentinel-verify.${domain}`;
+    document.getElementById('signup-step-1').hidden = true;
+    document.getElementById('signup-step-2').hidden = false;
+    updateStepNav(2);
+  }
+
+  function goToStep1() {
+    document.getElementById('signup-step-2').hidden = true;
+    document.getElementById('signup-step-1').hidden = false;
+    updateStepNav(1);
+  }
+
+  function updateStepNav(step) {
+    const lang = localStorage.getItem('ss-lang') || 'id';
+    const meta = FUNNEL_META[FUNNEL] || FUNNEL_META.xray;
+    const backBtn = document.getElementById('back-btn');
+    const fracEl  = document.getElementById('step-fraction');
+    const labelEl = document.getElementById('step-label');
+    backBtn.hidden = (step === 1);
+    fracEl.textContent = `${step}/2`;
+    if (step === 1) {
+      labelEl.textContent = meta.stepLabel[lang] || meta.stepLabel.id;
+    } else {
+      labelEl.textContent = lang === 'en' ? 'Verify domain' : 'Verifikasi domain';
+    }
+  }
+
+  function copyText(elId) {
+    navigator.clipboard.writeText(document.getElementById(elId).textContent).catch(() => {});
+  }
+
+  function startVerification() {
+    document.getElementById('verify-idle').hidden = true;
+    document.getElementById('verify-checking').hidden = false;
+    setTimeout(() => {
+      document.getElementById('verify-checking').hidden = true;
+      const success = Math.random() > 0.3;
+      document.getElementById(success ? 'verify-success' : 'verify-failed').hidden = false;
+    }, 2800);
+  }
+
+  function retryVerification() {
+    document.getElementById('verify-failed').hidden = true;
+    document.getElementById('verify-idle').hidden = false;
+  }
+
+  function skipVerification()  { signupData.domainVerified = false; createSessionAndRedirect(); }
+  function completeSignup()    { signupData.domainVerified = true;  createSessionAndRedirect(); }
+
+  function createSessionAndRedirect() {
+    const session = {
+      email: signupData.email, name: signupData.name,
+      company: signupData.company, slug: signupData.slug,
+      domain: signupData.domain, industry: signupData.industry,
+      domainVerified: signupData.domainVerified || false,
+      tier: 'free', state: 'free_active', funnel: FUNNEL, setupComplete: false
     };
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const lang = localStorage.getItem('ss-lang') || 'id';
-      const fc = FUNNEL_CONTENT[FUNNEL] || FUNNEL_CONTENT.xray;
-
-      const headerEl = document.getElementById('funnel-header');
-      if (FUNNEL !== 'xray') headerEl.classList.add('su-card-header--' + FUNNEL);
-
-      document.getElementById('funnel-icon').innerHTML = fc.icon;
-      document.getElementById('funnel-title').textContent = fc.title[lang] || fc.title.id;
-      document.getElementById('funnel-desc').textContent  = fc.desc[lang]  || fc.desc.id;
-    });
-
-    let signupData = {};
-
-    function updateSlug(companyName) {
-      const slug = companyName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').slice(0, 40);
-      document.getElementById('slug-value').textContent = slug || 'nama-perusahaan';
-      signupData.slug = slug;
-    }
-
-    function editSlug() {
-      const current = document.getElementById('slug-value').textContent;
-      const newSlug = prompt(document.documentElement.lang === 'en' ? 'Edit workspace slug:' : 'Edit slug workspace:', current);
-      if (newSlug) {
-        const clean = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
-        document.getElementById('slug-value').textContent = clean;
-        signupData.slug = clean;
-      }
-    }
-
-    function goToStep2() {
-      const company  = document.getElementById('su-company').value.trim();
-      const name     = document.getElementById('su-name').value.trim();
-      const email    = document.getElementById('su-email').value.trim();
-      const password = document.getElementById('su-password').value;
-      const domain   = document.getElementById('su-domain').value.trim();
-      if (!company || !name || !email || !password || !domain) {
-        document.getElementById('signup-error-1').hidden = false;
-        return;
-      }
-      document.getElementById('signup-error-1').hidden = true;
-      signupData = { company, name, email, password, domain,
-        slug: signupData.slug || company.toLowerCase().replace(/\s+/g, '-'),
-        industry: document.getElementById('su-industry').value };
-      document.getElementById('verify-domain-label').textContent = domain;
-      document.getElementById('dns-host').textContent = `_sentinel-verify.${domain}`;
-      document.getElementById('signup-step-1').hidden = true;
-      document.getElementById('signup-step-2').hidden = false;
-      updateStepIndicator(2);
-    }
-
-    function goToStep1() {
-      document.getElementById('signup-step-2').hidden = true;
-      document.getElementById('signup-step-1').hidden = false;
-      updateStepIndicator(1);
-    }
-
-    function copyText(elId) {
-      const text = document.getElementById(elId).textContent;
-      navigator.clipboard.writeText(text).catch(() => {});
-    }
-
-    function startVerification() {
-      document.getElementById('verify-idle').hidden = true;
-      document.getElementById('verify-checking').hidden = false;
-      setTimeout(() => {
-        document.getElementById('verify-checking').hidden = true;
-        const success = Math.random() > 0.3;
-        document.getElementById(success ? 'verify-success' : 'verify-failed').hidden = false;
-      }, 2800);
-    }
-
-    function retryVerification() {
-      document.getElementById('verify-failed').hidden = true;
-      document.getElementById('verify-idle').hidden = false;
-    }
-
-    function skipVerification()  { signupData.domainVerified = false; createSessionAndRedirect(); }
-    function completeSignup()    { signupData.domainVerified = true;  createSessionAndRedirect(); }
-
-    function createSessionAndRedirect() {
-      const session = {
-        email: signupData.email, name: signupData.name,
-        company: signupData.company, slug: signupData.slug,
-        domain: signupData.domain, industry: signupData.industry,
-        domainVerified: signupData.domainVerified || false,
-        tier: 'free', state: 'free_active', funnel: FUNNEL, setupComplete: false
-      };
-      sessionStorage.setItem('ss-session', JSON.stringify(session));
-      window.location.href = '/agentic-soc/onboarding/';
-    }
-
-    function updateStepIndicator(step) {
-      document.querySelectorAll('.su-step').forEach((dot, i) => {
-        dot.classList.toggle('su-step--active', i + 1 === step);
-        dot.classList.toggle('su-step--done',   i + 1 < step);
-        if (i + 1 < step) {
-          dot.querySelector('.su-step__circle').innerHTML = '<i class="ti ti-check" style="font-size:12px;"></i>';
-        } else if (i + 1 === step) {
-          dot.querySelector('.su-step__circle').textContent = String(i + 1);
-        }
-      });
-      const connector = document.getElementById('step-connector');
-      if (connector) connector.classList.toggle('su-step__connector--done', step > 1);
-    }
-  </script>
+    sessionStorage.setItem('ss-session', JSON.stringify(session));
+    window.location.href = '/agentic-soc/onboarding/';
+  }
+</script>
 </body>
 </html>
