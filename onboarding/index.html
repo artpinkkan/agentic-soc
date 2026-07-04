@@ -358,7 +358,8 @@
         <!-- Cyber X-Ray -->
         <div class="ob-service-card ob-service-card--xray ob-service-card--popular"
              id="card-xray" data-funnel="xray"
-             data-badge="Paling populer"
+             data-badge="Most popular"
+             data-badge-en="Most popular" data-badge-id="Paling populer"
              onclick="selectService('xray')">
           <div style="display:flex; align-items:center; gap:14px;">
             <div class="ob-service-card__icon"><i class="ti ti-radar"></i></div>
@@ -1072,6 +1073,18 @@
         }
       }, 380);
     }
+
+    function applyBadgeLang() {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      document.querySelectorAll('[data-badge-en]').forEach(el => {
+        el.dataset.badge = lang === 'en' ? el.dataset.badgeEn : el.dataset.badgeId;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', applyBadgeLang);
+    new MutationObserver(applyBadgeLang).observe(
+      document.documentElement, { attributes: true, attributeFilter: ['lang'] }
+    );
   </script>
 </body>
 </html>
