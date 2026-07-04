@@ -71,8 +71,8 @@
       font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px;
       border-radius: 100px; text-transform: uppercase;
     }
-    .ss-action-card__urgency--urgent { background: #E24B4A; color: #fff; }
-    .ss-action-card__urgency--high   { background: rgba(239,159,39,0.85); color: #fff; }
+    .ss-action-card__urgency--urgent { background: var(--ss-danger); color: #fff; }
+    .ss-action-card__urgency--high   { background: var(--ss-warning); color: #fff; }
     .ss-action-card__title { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.35; font-family: var(--ss-font-headline); }
     .ss-action-card__desc  { font-size: 12px; color: rgba(255,255,255,0.68); line-height: 1.5; flex: 1; }
     .ss-action-card__btn {
@@ -289,15 +289,15 @@
       <h3 class="ss-upgrade-ladder__title" data-en="Your security journey" data-id="Perjalanan keamanan Anda">Perjalanan keamanan Anda</h3>
       <div class="ss-upgrade-ladder__steps">
         <div class="ss-upgrade-ladder__step ss-upgrade-ladder__step--current">
-          <div class="ss-upgrade-ladder__step-icon">🔍</div>
+          <div class="ss-upgrade-ladder__step-icon"><i class="ti ti-radar"></i></div>
           <div class="ss-upgrade-ladder__step-body">
             <p class="ss-upgrade-ladder__step-name"><span class="badge badge-free" data-en="Free" data-id="Gratis">Gratis</span> <span data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</span></p>
             <p class="ss-upgrade-ladder__step-desc" data-en="You are here. View your risk report and top 3 actions." data-id="Anda di sini. Lihat laporan risiko dan 3 tindakan prioritas.">Anda di sini. Lihat laporan risiko dan 3 tindakan prioritas.</p>
           </div>
-          <span class="ss-upgrade-ladder__step-status" data-en="Active" data-id="Aktif">✓ Aktif</span>
+          <span class="ss-upgrade-ladder__step-status" data-en="Active" data-id="Aktif"><i class="ti ti-check"></i> Aktif</span>
         </div>
         <div class="ss-upgrade-ladder__step">
-          <div class="ss-upgrade-ladder__step-icon">🛠️</div>
+          <div class="ss-upgrade-ladder__step-icon"><i class="ti ti-tool"></i></div>
           <div class="ss-upgrade-ladder__step-body">
             <p class="ss-upgrade-ladder__step-name"><span class="badge badge-sprint">Sprint</span> <span data-en="30-Day Fix" data-id="Perbaikan 30 Hari">Perbaikan 30 Hari</span></p>
             <p class="ss-upgrade-ladder__step-desc" data-en="Our team fixes your red findings. Email security, MFA, exposed services, endpoint baseline." data-id="Tim kami memperbaiki temuan merah Anda. Keamanan email, MFA, layanan terekspos, baseline endpoint.">Tim kami memperbaiki temuan merah Anda. Keamanan email, MFA, layanan terekspos, baseline endpoint.</p>
@@ -306,7 +306,7 @@
           <a href="mailto:sales@shannondynamics.id" class="ss-btn-upgrade" style="font-size:12px; padding:6px 14px; white-space:nowrap;" data-en="Start Sprint" data-id="Mulai Sprint">Mulai Sprint</a>
         </div>
         <div class="ss-upgrade-ladder__step">
-          <div class="ss-upgrade-ladder__step-icon">🛡️</div>
+          <div class="ss-upgrade-ladder__step-icon"><i class="ti ti-shield"></i></div>
           <div class="ss-upgrade-ladder__step-body">
             <p class="ss-upgrade-ladder__step-name"><span class="badge badge-mdr">MDR</span> <span data-en="Core Monitoring" data-id="Pemantauan Inti">Pemantauan Inti</span></p>
             <p class="ss-upgrade-ladder__step-desc" data-en="24/7 monitoring, 30-day retention, alert triage, basic response workflow." data-id="Pemantauan 24/7, retensi 30 hari, triase alert, alur respons dasar.">Pemantauan 24/7, retensi 30 hari, triase alert, alur respons dasar.</p>
@@ -315,7 +315,7 @@
           <a href="/agentic-soc/pricing/" class="ss-btn-secondary" style="font-size:12px; padding:6px 14px; white-space:nowrap;" data-en="See details" data-id="Lihat detail">Lihat detail</a>
         </div>
         <div class="ss-upgrade-ladder__step">
-          <div class="ss-upgrade-ladder__step-icon">🤖</div>
+          <div class="ss-upgrade-ladder__step-icon"><i class="ti ti-robot"></i></div>
           <div class="ss-upgrade-ladder__step-body">
             <p class="ss-upgrade-ladder__step-name"><span class="badge badge-mdr">MDR AI</span> <span data-en="AI-Aware MDR" data-id="MDR Berbasis AI">MDR Berbasis AI</span></p>
             <p class="ss-upgrade-ladder__step-desc" data-en="All Core MDR + AI phishing defense, deepfake/vishing playbooks, shared AI inference." data-id="Semua Core MDR + pertahanan phishing AI, playbook deepfake/vishing, inferensi AI bersama.">Semua Core MDR + pertahanan phishing AI, playbook deepfake/vishing, inferensi AI bersama.</p>
@@ -340,7 +340,7 @@
       </p>
       <div class="ss-platform-teaser__items">
         <div class="ss-platform-teaser__item">
-          <span class="ss-platform-teaser__icon">🛡️</span>
+          <span class="ss-platform-teaser__icon"><i class="ti ti-shield"></i></span>
           <div>
             <p class="ss-platform-teaser__item-title"
                data-en="Prevention edge" data-id="Edge pencegahan">Edge pencegahan</p>
@@ -352,7 +352,7 @@
           </div>
         </div>
         <div class="ss-platform-teaser__item">
-          <span class="ss-platform-teaser__icon">🤖</span>
+          <span class="ss-platform-teaser__icon"><i class="ti ti-robot"></i></span>
           <div>
             <p class="ss-platform-teaser__item-title"
                data-en="Per-action AI governance" data-id="Tata kelola AI per tindakan">Tata kelola AI per tindakan</p>

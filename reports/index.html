@@ -68,7 +68,7 @@
     }
     .ss-generate-bar input:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
 
-    /* ── OJK pack ── */
+    /* ── Compliance pack ── */
     .ss-ojk-pack {
       background: var(--ss-info-light); border: 0.5px solid #85B7EB;
       border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg);
@@ -78,40 +78,44 @@
     .ss-ojk-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
     .ss-ojk-list li { font-size: 13px; padding-left: 20px; position: relative; color: var(--ss-neutral-700); }
     .ss-ojk-list li::before { content: '📄'; position: absolute; left: 0; font-size: 11px; top: 1px; }
+    /* Lock gate */
+    .ss-lock-gate { position: absolute; inset: 0; background: rgba(247,249,251,0.92); border-radius: var(--ss-radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; }
+    .ss-lock-gate__icon { font-size: 22px; }
+    .ss-lock-gate__label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface); }
+    .ss-lock-gate__cta { font-size: 12px; color: var(--ss-brand); font-weight: 500; }
+    .ss-locked { border: 0.5px solid var(--ss-border-md) !important; }
   </style>
 </head>
 <body>
   <nav class="ss-nav" id="ss-nav">
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
-        <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
-        </svg>
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
         <span class="ss-nav__brand-name">Shannon Sentinel</span>
       </a>
       <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
       </button>
     </div>
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
       </a>
       <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <i class="ti ti-search ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
       </a>
       <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12l2 2 4-4"/></svg>
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
       </a>
       <a href="/agentic-soc/reports/" class="ss-nav__item active" title="Reports">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
       <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
     </div>
@@ -121,17 +125,15 @@
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
       </div>
       <div class="ss-nav__footer-divider"></div>
-      <div class="ss-nav__user-row">
-        <div class="ss-avatar" id="nav-avatar">TA</div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
         <div class="ss-nav__user-info">
-          <span id="nav-name" class="ss-nav__name">Tamaria</span>
-          <span id="nav-company" class="ss-nav__company">Gmail</span>
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
         </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
       </div>
-      <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
-        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
-      </button>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
     </div>
   </nav>
 
@@ -151,7 +153,7 @@
           <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
           <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
         </select>
-        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="generateOJK()" data-en="OJK Evidence Pack" data-id="Paket Bukti OJK">Paket Bukti OJK</button>
+        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="generateCompliancePack()" id="compliance-btn-label" data-en="Compliance Evidence Pack" data-id="Paket Bukti Kepatuhan">Paket Bukti Kepatuhan</button>
         <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="sendEmail()" data-en="Send via Email" data-id="Kirim via Email">Kirim via Email</button>
         <button class="ss-btn-primary" style="font-size:12px;padding:5px 14px;" onclick="exportPDF()" data-en="Export PDF" data-id="Ekspor PDF">Ekspor PDF</button>
       </div>
@@ -159,7 +161,7 @@
 
     <!-- Watermark notice -->
     <div class="ss-notice ss-notice--warning" style="margin-top: var(--ss-gap-lg);">
-      <span>⚠</span>
+      <i class="ti ti-alert-triangle"></i>
       <span data-en="Free Tier — watermarked preview only. Upgrade to Sprint for a clean, audit-ready PDF."
             data-id="Tier Gratis — hanya pratinjau bertanda air. Upgrade ke Sprint untuk PDF bersih siap audit.">
         Tier Gratis — hanya pratinjau bertanda air. Upgrade ke Sprint untuk PDF bersih siap audit.
@@ -202,8 +204,8 @@
             data-it-id="2 kontrol kritis gagal (DMARC, retensi log). 2 temuan tinggi (SSH terekspos, gap MFA). Patch dan perubahan konfigurasi diperlukan."
             data-finance-en="Financial risk identified: email fraud and unauthorized access to financial systems are possible without immediate action."
             data-finance-id="Risiko keuangan teridentifikasi: penipuan email dan akses tidak sah ke sistem keuangan mungkin terjadi tanpa tindakan segera."
-            data-auditor-en="4 findings do not meet compliance requirements: DMARC missing, log retention below OJK minimum, MFA gap, undocumented attack surface."
-            data-auditor-id="4 temuan tidak memenuhi persyaratan kepatuhan: DMARC tidak ada, retensi log di bawah minimum OJK, gap MFA, permukaan serangan tidak terdokumentasi.">
+            data-auditor-en="4 findings do not meet compliance requirements: DMARC missing, log retention below audit standard minimum, MFA gap, undocumented attack surface."
+            data-auditor-id="4 temuan tidak memenuhi persyaratan kepatuhan: DMARC tidak ada, retensi log di bawah minimum standar audit, gap MFA, permukaan serangan tidak terdokumentasi.">
             Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan eksekutif segera diperlukan.
           </strong>
         </div>
@@ -219,8 +221,8 @@
             <div id="f1-title"
               data-direktur-en="No DMARC policy — email spoofing risk to stakeholders"
               data-direktur-id="Tidak ada kebijakan DMARC — risiko pemalsuan email ke pemangku kepentingan"
-              data-it-en="DMARC missing on bankcontoh.co.id — SPF found, DKIM absent, policy p=none"
-              data-it-id="DMARC tidak ada di bankcontoh.co.id — SPF ditemukan, DKIM tidak ada, kebijakan p=none"
+              data-it-en="DMARC missing on company domain — SPF found, DKIM absent, policy p=none"
+              data-it-id="DMARC tidak ada di domain perusahaan — SPF ditemukan, DKIM tidak ada, kebijakan p=none"
               data-finance-en="No DMARC — invoice and payment emails can be spoofed, high fraud risk"
               data-finance-id="Tidak ada DMARC — email tagihan dan pembayaran dapat dipalsukan, risiko penipuan tinggi"
               data-auditor-en="DMARC policy absent — non-compliant with email authentication requirements"
@@ -230,12 +232,12 @@
             <div class="ss-finding-sub" id="f1-sub"
               data-direktur-en="Business impact: brand damage, fraud exposure"
               data-direktur-id="Dampak bisnis: kerusakan merek, eksposur penipuan"
-              data-it-en="Fix: add TXT record _dmarc.bankcontoh.co.id with p=quarantine · ~1 hr"
-              data-it-id="Perbaikan: tambahkan record TXT _dmarc.bankcontoh.co.id dengan p=quarantine · ~1 jam"
+              data-it-en="Fix: add TXT record _dmarc.domain.com with p=quarantine · ~1 hr"
+              data-it-id="Perbaikan: tambahkan record TXT _dmarc.domain.com dengan p=quarantine · ~1 jam"
               data-finance-en="Estimated fraud exposure: medium-high based on transaction volume"
               data-finance-id="Estimasi eksposur penipuan: sedang-tinggi berdasarkan volume transaksi"
-              data-auditor-en="Required by: OJK POJK 11/2022 §4.2 email security controls"
-              data-auditor-id="Disyaratkan oleh: OJK POJK 11/2022 §4.2 kontrol keamanan email">
+              data-auditor-en="Required by: standard email security policy §4.2 email security controls"
+              data-auditor-id="Disyaratkan oleh: kebijakan keamanan email standar §4.2 kontrol keamanan email">
               Dampak bisnis: kerusakan merek, eksposur penipuan
             </div>
           </div>
@@ -245,26 +247,26 @@
           <span class="badge badge-critical">KRITIS</span>
           <div class="ss-finding-main">
             <div id="f2-title"
-              data-direktur-en="Log retention 7 days — regulatory non-compliance"
-              data-direktur-id="Retensi log 7 hari — ketidakpatuhan regulasi"
-              data-it-en="Log retention 7 days vs OJK-required 90 days — affects SIEM coverage and forensics"
-              data-it-id="Retensi log 7 hari vs 90 hari yang disyaratkan OJK — memengaruhi cakupan SIEM dan forensik"
+              data-direktur-en="Log retention 7 days — below audit standard"
+              data-direktur-id="Retensi log 7 hari — di bawah standar audit"
+              data-it-en="Log retention 7 days vs audit-standard 90 days — affects SIEM coverage and forensics"
+              data-it-id="Retensi log 7 hari vs 90 hari standar audit — memengaruhi cakupan SIEM dan forensik"
               data-finance-en="Short log retention limits fraud investigation window — audit trail incomplete"
               data-finance-id="Retensi log pendek membatasi jendela investigasi penipuan — jejak audit tidak lengkap"
-              data-auditor-en="Log retention 7 days — OJK minimum is 90 days. Immediate remediation required."
-              data-auditor-id="Retensi log 7 hari — minimum OJK adalah 90 hari. Remediasi segera diperlukan.">
+              data-auditor-en="Log retention 7 days — audit standard minimum is 90 days. Immediate remediation required."
+              data-auditor-id="Retensi log 7 hari — minimum standar audit adalah 90 hari. Remediasi segera diperlukan.">
               Retensi log 7 hari — ketidakpatuhan regulasi
             </div>
             <div class="ss-finding-sub" id="f2-sub"
-              data-direktur-en="Regulatory risk: OJK audit exposure"
-              data-direktur-id="Risiko regulasi: eksposur audit OJK"
+              data-direktur-en="Regulatory risk: audit exposure"
+              data-direktur-id="Risiko regulasi: eksposur audit"
               data-it-en="Fix: configure log pipeline retention to 90+ days · ~1 week"
               data-it-id="Perbaikan: konfigurasi retensi pipeline log ke 90+ hari · ~1 minggu"
-              data-finance-en="Potential OJK fine if audited in current state"
-              data-finance-id="Potensi denda OJK jika diaudit dalam kondisi saat ini"
-              data-auditor-en="Ref: POJK 11/2022 §7.1 — log retention minimum 90 days"
-              data-auditor-id="Ref: POJK 11/2022 §7.1 — retensi log minimum 90 hari">
-              Risiko regulasi: eksposur audit OJK
+              data-finance-en="Potential regulatory fine if audited in current state"
+              data-finance-id="Potensi denda regulasi jika diaudit dalam kondisi saat ini"
+              data-auditor-en="Ref: security policy standard §7.1 — log retention minimum 90 days"
+              data-auditor-id="Ref: standar kebijakan keamanan §7.1 — retensi log minimum 90 hari">
+              Risiko regulasi: eksposur audit kepatuhan
             </div>
           </div>
         </div>
@@ -275,8 +277,8 @@
             <div id="f3-title"
               data-direktur-en="3 public subdomains exposed with outdated services"
               data-direktur-id="3 subdomain publik terekspos dengan layanan usang"
-              data-it-en="ssh.bankcontoh.co.id — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 open on panel.bankcontoh.co.id"
-              data-it-id="ssh.bankcontoh.co.id — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 terbuka di panel.bankcontoh.co.id"
+              data-it-en="ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 open on panel.domain.com"
+              data-it-id="ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 terbuka di panel.domain.com"
               data-finance-en="Exposed subdomains could provide entry to financial systems — access review recommended"
               data-finance-id="Subdomain terekspos dapat memberi akses ke sistem keuangan — tinjauan akses direkomendasikan"
               data-auditor-en="3 unprotected subdomains found — attack surface not documented in current risk register"
@@ -307,8 +309,8 @@
               data-it-id="4 akun admin (2 domain admin, 2 cloud admin) tanpa MFA — terdeteksi via analisis pola login"
               data-finance-en="2 accounts with financial system access have no MFA — unauthorized transfer risk"
               data-finance-id="2 akun dengan akses sistem keuangan tidak memiliki MFA — risiko transfer tidak sah"
-              data-auditor-en="4 privileged accounts without MFA — non-compliant with access control policy §3.1"
-              data-auditor-id="4 akun dengan hak istimewa tanpa MFA — tidak sesuai kebijakan kontrol akses §3.1">
+              data-auditor-en="4 privileged accounts without MFA — non-compliant with access control policy"
+              data-auditor-id="4 akun dengan hak istimewa tanpa MFA — tidak sesuai kebijakan kontrol akses">
               4 dari 12 akun admin tanpa MFA — risiko pengambilalihan akun
             </div>
             <div class="ss-finding-sub" id="f4-sub"
@@ -318,8 +320,8 @@
               data-it-id="Terdampak: domain.admin.01, domain.admin.03, cloud.admin.01, cloud.admin.04 · ~1 hari untuk diperbaiki"
               data-finance-en="Financial system admins: cloud.admin.01 and cloud.admin.04 — high priority"
               data-finance-id="Admin sistem keuangan: cloud.admin.01 dan cloud.admin.04 — prioritas tinggi"
-              data-auditor-en="Mandatory MFA for privileged accounts — POJK 11/2022 §5.3"
-              data-auditor-id="MFA wajib untuk akun dengan hak istimewa — POJK 11/2022 §5.3">
+              data-auditor-en="Mandatory MFA for privileged accounts — standard access control policy"
+              data-auditor-id="MFA wajib untuk akun dengan hak istimewa — kebijakan kontrol akses standar">
               Risiko: kompromi admin penuh mungkin terjadi tanpa MFA
             </div>
           </div>
@@ -336,12 +338,12 @@
             <div id="r1"
               data-direktur-en="Approve DMARC deployment — authorise IT to deploy p=quarantine policy today"
               data-direktur-id="Setujui deployment DMARC — otorisasi IT untuk menerapkan kebijakan p=quarantine hari ini"
-              data-it-en="Deploy DMARC: add TXT record p=quarantine to bankcontoh.co.id DNS"
-              data-it-id="Deploy DMARC: tambahkan record TXT p=quarantine ke DNS bankcontoh.co.id"
+              data-it-en="Deploy DMARC: add TXT record p=quarantine to company domain DNS"
+              data-it-id="Deploy DMARC: tambahkan record TXT p=quarantine ke DNS domain perusahaan"
               data-finance-en="Enable DMARC policy to prevent email fraud — no budget required, IT action only"
               data-finance-id="Aktifkan kebijakan DMARC untuk mencegah penipuan email — tidak ada anggaran diperlukan, hanya tindakan IT"
-              data-auditor-en="Deploy DMARC p=quarantine — closes email authentication gap per POJK 11/2022"
-              data-auditor-id="Deploy DMARC p=quarantine — menutup gap autentikasi email per POJK 11/2022">
+              data-auditor-en="Deploy DMARC p=quarantine — closes email authentication gap per security policy"
+              data-auditor-id="Deploy DMARC p=quarantine — menutup gap autentikasi email per kebijakan keamanan">
               Setujui deployment DMARC — otorisasi IT untuk menerapkan kebijakan p=quarantine hari ini
             </div>
             <div class="ss-finding-sub">~1 <span data-en="hour" data-id="jam">jam</span></div>
@@ -370,15 +372,15 @@
           <span style="font-size:13px; font-weight:600; min-width:20px; color:var(--ss-brand);">3.</span>
           <div class="ss-finding-main">
             <div id="r3"
-              data-direktur-en="Extend log retention to 90 days to meet OJK requirements"
-              data-direktur-id="Perpanjang retensi log ke 90 hari untuk memenuhi persyaratan OJK"
+              data-direktur-en="Extend log retention to 90 days to meet audit standards"
+              data-direktur-id="Perpanjang retensi log ke 90 hari untuk memenuhi standar audit"
               data-it-en="Reconfigure SIEM/log pipeline retention policy from 7 to 90 days"
               data-it-id="Konfigurasi ulang kebijakan retensi SIEM/pipeline log dari 7 ke 90 hari"
-              data-finance-en="Extend log retention — required for fraud investigation capability and OJK compliance"
-              data-finance-id="Perpanjang retensi log — diperlukan untuk kemampuan investigasi penipuan dan kepatuhan OJK"
+              data-finance-en="Extend log retention — required for fraud investigation capability and compliance"
+              data-finance-id="Perpanjang retensi log — diperlukan untuk kemampuan investigasi penipuan dan kepatuhan"
               data-auditor-en="Extend log retention to 90 days — document policy change and deployment date"
               data-auditor-id="Perpanjang retensi log ke 90 hari — dokumentasikan perubahan kebijakan dan tanggal deployment">
-              Perpanjang retensi log ke 90 hari untuk memenuhi persyaratan OJK
+              Perpanjang retensi log ke 90 hari untuk memenuhi persyaratan kepatuhan
             </div>
             <div class="ss-finding-sub">~1 <span data-en="week" data-id="minggu">minggu</span></div>
           </div>
@@ -403,13 +405,24 @@
       <button class="ss-btn-primary" onclick="generateReport()" data-en="Generate →" data-id="Buat →">Buat →</button>
     </div>
 
-    <!-- OJK evidence pack -->
+    <!-- Compliance lock gate -->
+    <div class="ss-card ss-locked" style="position:relative; min-height:100px; margin-top: var(--ss-gap-lg);">
+      <p style="opacity:0.3;" id="compliance-pack-label">Paket Bukti Kepatuhan</p>
+      <p style="opacity:0.2; font-size:12px;">Model inventory · Human oversight log · Incident evidence…</p>
+      <div class="ss-lock-gate">
+        <span class="ss-lock-gate__icon"><i class="ti ti-lock"></i></span>
+        <span class="ss-lock-gate__label" data-en="Available on MDR plans" data-id="Tersedia di paket MDR">Tersedia di paket MDR</span>
+        <a href="/agentic-soc/pricing/" class="ss-lock-gate__cta" data-en="See what's included →" data-id="Lihat apa yang termasuk →">Lihat apa yang termasuk →</a>
+      </div>
+    </div>
+
+    <!-- Compliance evidence pack (shown when button clicked) -->
     <div class="ss-ojk-pack" id="ojk-pack" hidden>
-      <h4 data-en="OJK AI Governance Evidence Pack v0" data-id="Paket Bukti Tata Kelola AI OJK v0">Paket Bukti Tata Kelola AI OJK v0</h4>
+      <h4 id="ojk-pack-title" data-en="Compliance Evidence Pack" data-id="Paket Bukti Kepatuhan">Paket Bukti Kepatuhan</h4>
       <p style="font-size:13px; color:var(--ss-neutral-700); margin-bottom:12px;"
-         data-en="Generated evidence documents for POJK 11/2022 compliance review:"
-         data-id="Dokumen bukti yang dibuat untuk tinjauan kepatuhan POJK 11/2022:">
-        Dokumen bukti yang dibuat untuk tinjauan kepatuhan POJK 11/2022:
+         data-en="Generated evidence documents for compliance review:"
+         data-id="Dokumen bukti yang dibuat untuk tinjauan kepatuhan:">
+        Dokumen bukti yang dibuat untuk tinjauan kepatuhan:
       </p>
       <ul class="ss-ojk-list">
         <li data-en="AI System Registry — Qwen 2.5 7B + Claude Sonnet fallback" data-id="Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet">Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet</li>
@@ -437,7 +450,7 @@
         <span>🔴</span>
         <ul style="margin:0; padding-left:16px; font-size:13px;">
           <li data-en="No DMARC policy — email spoofing risk" data-id="Tidak ada kebijakan DMARC — risiko pemalsuan email">Tidak ada kebijakan DMARC — risiko pemalsuan email</li>
-          <li data-en="Log retention 7 days (OJK minimum: 90)" data-id="Retensi log 7 hari (minimum OJK: 90)">Retensi log 7 hari (minimum OJK: 90)</li>
+          <li data-en="Log retention 7 days (audit standard minimum: 90)" data-id="Retensi log 7 hari (minimum standar audit: 90)">Retensi log 7 hari (minimum standar audit: 90)</li>
         </ul>
       </div>
       <div class="ss-modal__actions">
@@ -450,6 +463,14 @@
   <script src="/agentic-soc/shared.js"></script>
   <script>
     if (window.SS) document.getElementById('report-company-name').textContent = window.SS.company || 'Perusahaan Anda';
+
+    const COMPLIANCE_LABEL = {
+      fintech:       { en: 'Fintech Compliance Readiness Pack', id: 'Paket Kesiapan Kepatuhan Fintech' },
+      manufacturing: { en: 'ISO 27001 Evidence Pack', id: 'Paket Bukti ISO 27001' },
+      healthcare:    { en: 'HIPAA / Health Data Readiness Pack', id: 'Paket Kesiapan Data Kesehatan' },
+      gov:           { en: 'Government Security Compliance Pack', id: 'Paket Kepatuhan Keamanan Pemerintah' },
+      default:       { en: 'Compliance Evidence Pack', id: 'Paket Bukti Kepatuhan' }
+    };
 
     const AUDIENCE_FIELDS = ['aud-summary','aud-report-type','f1-title','f1-sub','f2-title','f2-sub','f3-title','f3-sub','f4-title','f4-sub','r1','r2','r3'];
 
@@ -467,7 +488,7 @@
     function exportPDF() { showReviewModal(); }
     function sendEmail() { showReviewModal(); }
 
-    function generateOJK() {
+    function generateCompliancePack() {
       const pack = document.getElementById('ojk-pack');
       pack.hidden = !pack.hidden;
     }
@@ -487,6 +508,16 @@
     document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem('ss-audience') || 'direktur';
       setAudience(saved);
+
+      const industry = (window.SS && window.SS.industry) || 'default';
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const label = (COMPLIANCE_LABEL[industry] || COMPLIANCE_LABEL.default)[lang];
+      const el = document.getElementById('compliance-pack-label');
+      if (el) el.textContent = label;
+      const titleEl = document.getElementById('ojk-pack-title');
+      if (titleEl) titleEl.textContent = label;
+      const btnEl = document.getElementById('compliance-btn-label');
+      if (btnEl) btnEl.textContent = label;
     });
   </script>
 </body>

@@ -40,8 +40,8 @@
     .ss-step__body { flex: 1; }
     .ss-step__title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
     .ss-step__desc { font-size: 13px; color: var(--ss-neutral-700); line-height: 1.5; }
-    .ss-hitl-card { border: 1.5px solid #F59E0B; background: #FFFBEB; border-radius: var(--ss-radius-md); padding: 12px 14px; margin-top: 10px; }
-    .ss-hitl-card__label { font-size: 11px; font-weight: 600; color: #92400E; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+    .ss-hitl-card { border: 1.5px solid var(--ss-warning); background: var(--ss-warning-light); border-radius: var(--ss-radius-md); padding: 12px 14px; margin-top: 10px; }
+    .ss-hitl-card__label { font-size: 11px; font-weight: 600; color: var(--ss-on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
     .ss-hitl-card__actions { display: flex; gap: 8px; margin-top: 10px; }
     .ss-hitl-approve { background: var(--ss-brand); color: #fff; border: none; padding: 7px 16px; border-radius: var(--ss-radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; }
     .ss-hitl-approve:hover { background: var(--ss-brand-dark); }
@@ -201,7 +201,7 @@
 
             <!-- Step 1: Auto-done -->
             <li class="ss-step">
-              <div class="ss-step__icon ss-step__icon--done">✓</div>
+              <div class="ss-step__icon ss-step__icon--done"><i class="ti ti-check"></i></div>
               <div class="ss-step__body">
                 <div class="ss-step__title" data-en="1. Alert ingested and classified" data-id="1. Alert diterima dan diklasifikasi">1. Alert diterima dan diklasifikasi</div>
                 <div class="ss-step__desc">
@@ -215,7 +215,7 @@
 
             <!-- Step 2: Auto-done -->
             <li class="ss-step">
-              <div class="ss-step__icon ss-step__icon--done">✓</div>
+              <div class="ss-step__icon ss-step__icon--done"><i class="ti ti-check"></i></div>
               <div class="ss-step__body">
                 <div class="ss-step__title" data-en="2. Log enrichment & correlation" data-id="2. Pengayaan log & korelasi">2. Pengayaan log &amp; korelasi</div>
                 <div class="ss-step__desc">
@@ -229,7 +229,7 @@
 
             <!-- Step 3: HITL - Block IPs -->
             <li class="ss-step" id="step-3">
-              <div class="ss-step__icon" id="icon-3" style="background:var(--ss-warning-light); color:#854F0B">!</div>
+              <div class="ss-step__icon ss-step__icon--pending" id="icon-3"><i class="ti ti-alert-triangle"></i></div>
               <div class="ss-step__body">
                 <div class="ss-step__title" data-en="3. Block source IPs at firewall" data-id="3. Blokir IP sumber di firewall">3. Blokir IP sumber di firewall</div>
                 <div class="ss-step__desc">
@@ -239,7 +239,7 @@
                   </span>
                 </div>
                 <div id="hitl-3" class="ss-hitl-card">
-                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <div class="ss-hitl-card__label"><i class="ti ti-alert-triangle"></i> <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
                   <p style="font-size:13px; color:var(--ss-neutral-700);"
                      data-en="This action modifies firewall rules. Review and approve before execution."
                      data-id="Tindakan ini memodifikasi aturan firewall. Tinjau dan setujui sebelum eksekusi.">
@@ -255,7 +255,7 @@
 
             <!-- Step 4: HITL - Disable password auth (locked until step 3 approved) -->
             <li class="ss-step" id="step-4" style="opacity:0.45;">
-              <div class="ss-step__icon ss-step__icon--locked" id="icon-4">🔒</div>
+              <div class="ss-step__icon ss-step__icon--locked" id="icon-4"><i class="ti ti-lock"></i></div>
               <div class="ss-step__body">
                 <div class="ss-step__title" data-en="4. Disable SSH password authentication" data-id="4. Nonaktifkan autentikasi kata sandi SSH">4. Nonaktifkan autentikasi kata sandi SSH</div>
                 <div class="ss-step__desc">
@@ -265,7 +265,7 @@
                   </span>
                 </div>
                 <div id="hitl-4" class="ss-hitl-card" style="display:none;">
-                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <div class="ss-hitl-card__label"><i class="ti ti-alert-triangle"></i> <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
                   <p style="font-size:13px; color:var(--ss-neutral-700);"
                      data-en="This action modifies SSH configuration. Ensure key-based auth is working before approving."
                      data-id="Tindakan ini memodifikasi konfigurasi SSH. Pastikan autentikasi berbasis kunci berfungsi sebelum menyetujui.">
@@ -281,7 +281,7 @@
 
             <!-- Step 5: HITL - Create ticket -->
             <li class="ss-step" id="step-5" style="opacity:0.45;">
-              <div class="ss-step__icon ss-step__icon--locked" id="icon-5">🔒</div>
+              <div class="ss-step__icon ss-step__icon--locked" id="icon-5"><i class="ti ti-lock"></i></div>
               <div class="ss-step__body">
                 <div class="ss-step__title" data-en="5. Create incident ticket & notify team" data-id="5. Buat tiket insiden & beri tahu tim">5. Buat tiket insiden &amp; beri tahu tim</div>
                 <div class="ss-step__desc">
@@ -291,7 +291,7 @@
                   </span>
                 </div>
                 <div id="hitl-5" class="ss-hitl-card" style="display:none;">
-                  <div class="ss-hitl-card__label">⚠ <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
+                  <div class="ss-hitl-card__label"><i class="ti ti-alert-triangle"></i> <span data-en="Human Approval Required" data-id="Persetujuan Manusia Diperlukan">Persetujuan Manusia Diperlukan</span></div>
                   <p style="font-size:13px; color:var(--ss-neutral-700);"
                      data-en="This will send notifications to the on-call team."
                      data-id="Ini akan mengirim notifikasi ke tim on-call.">
@@ -314,7 +314,7 @@
             <p>Blokir Firewall · Isolasi Host · Buat Tiket</p>
           </div>
           <div class="ss-lock-gate">
-            <span class="ss-lock-gate__icon">🔒</span>
+            <span class="ss-lock-gate__icon"><i class="ti ti-lock"></i></span>
             <span class="ss-lock-gate__label" data-en="Containment actions require Sprint or MDR plan" data-id="Tindakan penahanan memerlukan paket Sprint atau MDR">Tindakan penahanan memerlukan paket Sprint atau MDR</span>
             <a href="/agentic-soc/pricing/" class="ss-lock-gate__cta" data-en="See what's included →" data-id="Lihat apa yang termasuk →">Lihat apa yang termasuk →</a>
           </div>
@@ -322,7 +322,7 @@
 
         <!-- Upgrade notice -->
         <div class="ss-notice ss-notice--info" style="margin-top: var(--ss-gap-md);">
-          <span>ℹ</span>
+          <i class="ti ti-info-circle"></i>
           <span data-en="Free tier: view and approve triage steps, but containment actions (isolate, block, revoke) are executed by our team on Sprint/MDR plans."
                 data-id="Tier gratis: lihat dan setujui langkah triase, tetapi tindakan penahanan (isolasi, blokir, cabut) dieksekusi oleh tim kami di paket Sprint/MDR.">
             Tier gratis: lihat dan setujui langkah triase, tetapi tindakan penahanan (isolasi, blokir, cabut) dieksekusi oleh tim kami di paket Sprint/MDR.
@@ -393,12 +393,12 @@
       const hitlCard = document.getElementById('hitl-' + n);
       if (hitlCard) {
         const lang = localStorage.getItem('ss-lang') || 'id';
-        hitlCard.innerHTML = `<div style="font-size:13px; color:var(--ss-success); font-weight:500">✓ ${lang === 'en' ? 'Approved — executing…' : 'Disetujui — mengeksekusi…'}</div>`;
+        hitlCard.innerHTML = `<div style="font-size:13px; color:var(--ss-success); font-weight:500"><i class="ti ti-check"></i> ${lang === 'en' ? 'Approved — executing…' : 'Disetujui — mengeksekusi…'}</div>`;
         hitlCard.style.borderColor = 'var(--ss-success)';
         hitlCard.style.background = 'var(--ss-success-light)';
       }
       const icon = document.getElementById('icon-' + n);
-      if (icon) { icon.className = 'ss-step__icon ss-step__icon--approved'; icon.textContent = '✓'; }
+      if (icon) { icon.className = 'ss-step__icon ss-step__icon--approved'; icon.innerHTML = '<i class="ti ti-check"></i>'; }
 
       const lang = localStorage.getItem('ss-lang') || 'id';
       const labels = {

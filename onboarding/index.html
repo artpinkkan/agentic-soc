@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengaturan — Shannon Sentinel</title>
+  <title>Mulai — Shannon Sentinel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
@@ -14,54 +14,254 @@
       const sess = sessionStorage.getItem('ss-session');
       if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
       window.SS = JSON.parse(sess);
-      // Do NOT redirect if setupComplete=false — this IS the setup page
     })();
   </script>
   <style>
-    body { display: block !important; }
-    .ss-wizard-wrap { max-width: 640px; margin: var(--ss-gap-xl) auto; padding: 0 var(--ss-gap-lg); }
-    .ss-wizard-steps { display: flex; align-items: flex-start; justify-content: center; gap: 0; margin-bottom: var(--ss-gap-xl); }
-    .ss-wizard-step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .ss-wizard-step__circle { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--ss-border-md); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ss-neutral-500); }
-    .ss-wizard-step--active .ss-wizard-step__circle { background: var(--ss-brand); border-color: var(--ss-brand); color: #fff; }
-    .ss-wizard-step--done .ss-wizard-step__circle { background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success); }
-    .ss-wizard-step__label { font-size: 12px; color: var(--ss-neutral-500); }
-    .ss-wizard-step--active .ss-wizard-step__label { color: var(--ss-neutral-900); font-weight: 500; }
-    .ss-wizard-connector { flex: 1; height: 1.5px; background: var(--ss-border-md); margin: 13px 12px 0; min-width: 40px; }
-    .ss-wizard-card { background: var(--ss-surface); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg) var(--ss-gap-xl); }
-    .ss-wizard-card h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
-    .ss-wizard-card__sub { font-size: 14px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-lg); }
-    .ss-wizard-footer { display: flex; justify-content: space-between; align-items: center; margin-top: var(--ss-gap-lg); padding-top: var(--ss-gap-md); border-top: 0.5px solid var(--ss-border); }
-    .ss-skip-link { font-size: 13px; color: var(--ss-neutral-500); }
-    .ss-checks-list__label { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: 8px; }
-    .ss-checks-list ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    body { display: block !important; background: var(--ss-surface); }
+
+    /* ── Top bar ── */
+    .ob-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px var(--ss-gap-xl);
+      border-bottom: 0.5px solid var(--ss-border);
+      background: var(--ss-surface-container-lowest);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .ob-topbar__brand {
+      display: flex; align-items: center; gap: var(--ss-gap-sm);
+      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
+      color: var(--ss-brand); text-decoration: none !important;
+    }
+    .ob-topbar__brand i { font-size: 20px; }
+    .ob-topbar__right { display: flex; align-items: center; gap: 10px; }
+    .ob-user-chip { display: flex; align-items: center; gap: var(--ss-gap-sm); font-size: 13px; color: var(--ss-on-surface-variant); }
+    .ob-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ss-brand-light); color: var(--ss-brand-dark); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* ── Page wrapper ── */
+    .ob-page { padding: var(--ss-gap-xl) var(--ss-gap-lg); }
+
+    /* ── Step indicator ── */
+    .ob-steps {
+      display: flex; align-items: flex-start; justify-content: center;
+      max-width: 560px; margin: 0 auto var(--ss-gap-xl);
+    }
+    .ob-step { display: flex; flex-direction: column; align-items: center; gap: var(--ss-gap-xs); flex-shrink: 0; }
+    .ob-step__circle {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1.5px solid var(--ss-border-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--ss-neutral-500);
+      background: var(--ss-surface-container-lowest);
+    }
+    .ob-step--active .ob-step__circle  { background: var(--ss-brand); border-color: var(--ss-brand); color: #fff; }
+    .ob-step--done   .ob-step__circle  { background: var(--ss-success-light); border-color: var(--ss-success); color: var(--ss-success); font-size: 14px; }
+    .ob-step__label { font-size: 11px; color: var(--ss-neutral-500); white-space: nowrap; }
+    .ob-step--active .ob-step__label { color: var(--ss-on-surface); font-weight: 600; }
+    .ob-connector { flex: 1; height: 1.5px; background: var(--ss-border-md); margin: 14px var(--ss-gap-sm) 0; min-width: 30px; }
+    .ob-connector--done { background: var(--ss-success); }
+
+    /* ── Wizard card (steps 2–4) ── */
+    .ob-wrap { max-width: 620px; margin: 0 auto; }
+    .ob-card { background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg) var(--ss-gap-xl); box-shadow: var(--ss-shadow-card); }
+    .ob-card h2 { font-size: 20px; font-weight: 600; margin-bottom: var(--ss-gap-xs); font-family: var(--ss-font-headline); }
+    .ob-card__sub { font-size: 14px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-lg); line-height: 1.5; }
+    .ob-footer { display: flex; justify-content: space-between; align-items: center; margin-top: var(--ss-gap-lg); padding-top: var(--ss-gap-md); border-top: 0.5px solid var(--ss-border); }
+
+    /* ── Service selection (step 1) ── */
+    .ob-service-wrap { max-width: 940px; margin: 0 auto; }
+    .ob-service-header { text-align: center; margin-bottom: var(--ss-gap-xl); }
+    .ob-service-header h1 { font-family: var(--ss-font-headline); font-size: 26px; font-weight: 700; margin-bottom: var(--ss-gap-sm); letter-spacing: -0.02em; }
+    .ob-service-header p { font-size: 15px; color: var(--ss-neutral-500); }
+
+    .ob-service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--ss-gap-md); }
+    @media (max-width: 740px) { .ob-service-grid { grid-template-columns: 1fr; } }
+
+    /* ── Service card base ── */
+    .ob-service-card {
+      background: var(--ss-surface-container-lowest);
+      border-radius: var(--ss-radius-lg);
+      padding: var(--ss-gap-lg);
+      cursor: pointer;
+      transition: box-shadow 0.18s, transform 0.15s, background 0.18s;
+      display: flex; flex-direction: column; gap: var(--ss-gap-md);
+      box-shadow: var(--ss-shadow-card);
+      position: relative; overflow: visible;
+    }
+    /* Coloured top stripe — decorative, not a structural border */
+    .ob-service-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 4px; border-radius: var(--ss-radius-lg) var(--ss-radius-lg) 0 0;
+      background: var(--ob-accent);
+    }
+    .ob-service-card:hover { transform: translateY(-2px); box-shadow: var(--ss-shadow-float); }
+    .ob-service-card--selected { box-shadow: var(--ss-shadow-float); background: var(--ob-accent-bg); }
+
+    /* Popular badge */
+    .ob-service-card--popular::before {
+      content: attr(data-badge);
+      position: absolute; top: -10px; right: 14px;
+      background: var(--ob-accent); color: #fff;
+      font-size: 10px; font-weight: 700; padding: 3px 12px; border-radius: 100px;
+      white-space: nowrap; z-index: 1;
+    }
+
+    /* ── Per-service accent colours (tokens only) ── */
+    .ob-service-card--xray   { --ob-accent: var(--ss-brand);   --ob-accent-bg: var(--ss-brand-light); }
+    .ob-service-card--inbox  { --ob-accent: var(--ss-info);    --ob-accent-bg: var(--ss-info-light);  }
+    .ob-service-card--triage { --ob-accent: var(--ss-danger);  --ob-accent-bg: var(--ss-danger-light); }
+
+    /* Icon container */
+    .ob-service-card__icon {
+      width: 52px; height: 52px; border-radius: var(--ss-radius-md);
+      background: var(--ob-accent-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--ob-accent); flex-shrink: 0;
+    }
+    .ob-service-card--selected .ob-service-card__icon { background: rgba(0,0,0,0.06); }
+
+    .ob-service-card__label  { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ob-accent); opacity: 0.8; margin-bottom: 3px; }
+    .ob-service-card__name   { font-size: 16px; font-weight: 700; font-family: var(--ss-font-headline); margin-bottom: 3px; }
+    .ob-service-card__desc   { font-size: 13px; color: var(--ss-on-surface-variant); line-height: 1.55; }
+    .ob-service-card__divider { height: 0.5px; background: var(--ss-border); }
+
+    .ob-service-card__checks { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-xs); flex: 1; }
+    .ob-service-card__checks li { font-size: 12px; color: var(--ss-neutral-700); padding-left: 18px; position: relative; }
+    .ob-service-card__checks li::before { content: '✓'; color: var(--ob-accent); position: absolute; left: 0; font-weight: 700; font-size: 11px; }
+
+    .ob-service-card__cta {
+      width: 100%; padding: 10px; border-radius: var(--ss-radius-sm);
+      border: 1.5px solid var(--ob-accent); background: none;
+      color: var(--ob-accent); font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: var(--ss-font);
+      transition: background 0.15s, color 0.15s;
+    }
+    .ob-service-card--selected .ob-service-card__cta,
+    .ob-service-card__cta:hover { background: var(--ob-accent); color: #fff; }
+
+    .ob-service-card__use-case {
+      font-size: 11px; color: var(--ss-neutral-500);
+      padding: var(--ss-gap-xs) 10px; background: var(--ss-surface-container-low);
+      border-radius: var(--ss-radius-sm); line-height: 1.4;
+    }
+
+    /* ── Checks list (step 2) ── */
+    .ss-checks-list__label { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-sm); }
+    .ss-checks-list ul { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-xs); }
     .ss-checks-list li { font-size: 13px; padding-left: 18px; position: relative; }
     .ss-checks-list li::before { content: '✓'; color: var(--ss-brand); position: absolute; left: 0; font-size: 12px; }
+
+    /* ── Step 2 – Inbox: mail provider select ── */
+    .ss-provider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: var(--ss-gap-md) 0; }
+    .ss-provider-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border: 1.5px solid var(--ss-border-md);
+      border-radius: var(--ss-radius-md); cursor: pointer;
+      background: var(--ss-surface-container-lowest);
+      font-size: 14px; font-weight: 500; font-family: var(--ss-font);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .ss-provider-btn i { font-size: 20px; color: var(--ss-info); }
+    .ss-provider-btn:hover,
+    .ss-provider-btn--selected { border-color: var(--ss-info); background: var(--ss-info-light); }
+    .ss-provider-other { font-size: 12px; color: var(--ss-neutral-500); text-align: center; padding-top: var(--ss-gap-xs); }
+
+    /* ── Step 2 – Triage: incident form ── */
+    .ss-incident-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ss-gap-sm); margin: var(--ss-gap-xs) 0 var(--ss-gap-md); }
+    .ss-incident-type-btn {
+      padding: 10px 12px; border: 1.5px solid var(--ss-border-md);
+      border-radius: var(--ss-radius-sm); cursor: pointer;
+      background: var(--ss-surface-container-lowest);
+      font-size: 13px; font-family: var(--ss-font); text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .ss-incident-type-btn:hover,
+    .ss-incident-type-btn--selected { border-color: var(--ss-danger); background: var(--ss-danger-light); font-weight: 600; }
+
+    /* ── Step 3 – Inbox: OAuth connect ── */
+    .ss-oauth-panel { border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md); overflow: hidden; margin: var(--ss-gap-md) 0; }
+    .ss-oauth-panel__header {
+      padding: 12px var(--ss-gap-md); background: var(--ss-surface-container-low);
+      border-bottom: 0.5px solid var(--ss-border); font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: var(--ss-gap-sm);
+    }
+    .ss-oauth-panel__header i { color: var(--ss-brand); }
+    .ss-oauth-panel__body { padding: var(--ss-gap-md) var(--ss-gap-lg); }
+    .ss-oauth-btn {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; padding: 12px var(--ss-gap-md); margin-bottom: 10px;
+      border: 1.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md);
+      background: var(--ss-surface-container-lowest); cursor: pointer;
+      font-size: 14px; font-weight: 500; font-family: var(--ss-font);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .ss-oauth-btn:hover { border-color: var(--ss-info); background: var(--ss-info-light); }
+    .ss-oauth-btn i { font-size: 22px; flex-shrink: 0; color: var(--ss-info); }
+    .ss-oauth-btn__label { text-align: left; }
+    .ss-oauth-btn__title { font-size: 13px; font-weight: 600; }
+    .ss-oauth-btn__sub { font-size: 11px; color: var(--ss-neutral-500); margin-top: 1px; }
+    .ss-oauth-divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 12px; color: var(--ss-neutral-500); }
+    .ss-oauth-divider::before, .ss-oauth-divider::after { content: ''; flex: 1; height: 1px; background: var(--ss-border); }
+    .ss-oauth-manual { font-size: 12px; color: var(--ss-neutral-500); text-align: center; padding: var(--ss-gap-xs) 0; }
+    .ss-permissions-note { font-size: 12px; color: var(--ss-neutral-500); display: flex; align-items: flex-start; gap: var(--ss-gap-xs); margin-top: 10px; line-height: 1.4; }
+    .ss-permissions-note i { flex-shrink: 0; font-size: 14px; color: var(--ss-brand); margin-top: 1px; }
+
+    /* ── Step 3 – Xray: endpoint options ── */
     .ss-endpoint-options { display: flex; flex-direction: column; gap: 10px; margin: var(--ss-gap-md) 0; }
-    .ss-endpoint-option { border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md); padding: 14px 16px; cursor: pointer; transition: border-color 0.15s; }
+    .ss-endpoint-option { border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-md); padding: 14px var(--ss-gap-md); cursor: pointer; transition: border-color 0.15s; }
     .ss-endpoint-option--active:hover { border-color: var(--ss-brand); }
-    .ss-endpoint-option--active.selected { border-color: var(--ss-brand); background: #F2FCF8; }
-    .ss-endpoint-option--disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; background: var(--ss-neutral-50); }
-    .ss-endpoint-option__header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ss-endpoint-option--active.selected { border-color: var(--ss-brand); background: var(--ss-brand-light); }
+    .ss-endpoint-option--disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; background: var(--ss-surface-container-low); }
+    .ss-endpoint-option__header { display: flex; align-items: center; gap: 10px; margin-bottom: var(--ss-gap-sm); }
     .ss-endpoint-option__radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--ss-border-md); flex-shrink: 0; }
     .ss-endpoint-option__radio--selected { border-color: var(--ss-brand); background: var(--ss-brand); box-shadow: inset 0 0 0 3px #fff; }
     .ss-endpoint-option__title { font-weight: 500; font-size: 14px; }
     .ss-endpoint-option__desc { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: 10px; }
-    .ss-endpoint-downloads { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .ss-endpoint-downloads { display: flex; gap: var(--ss-gap-sm); margin-bottom: 10px; flex-wrap: wrap; }
     .ss-download-btn { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); color: var(--ss-brand); background: var(--ss-brand-light); text-decoration: none; }
     .ss-manager-address { font-size: 12px; color: var(--ss-neutral-500); }
-    .ss-manager-address code { background: var(--ss-neutral-100); padding: 2px 6px; border-radius: 4px; }
+    .ss-manager-address code { background: var(--ss-surface-container-low); padding: 2px var(--ss-gap-xs); border-radius: 4px; }
     .ss-endpoint-counter { font-size: 13px; color: var(--ss-neutral-500); padding: 10px 0; display: flex; align-items: center; gap: 4px; }
+
+    /* ── Step 3 – Triage: log upload ── */
+    .ss-log-upload-area {
+      border: 2px dashed var(--ss-border-md); border-radius: var(--ss-radius-md);
+      padding: var(--ss-gap-xl) var(--ss-gap-lg); text-align: center; cursor: pointer;
+      color: var(--ss-neutral-500); font-size: 13px;
+      display: flex; flex-direction: column; gap: var(--ss-gap-sm); align-items: center;
+      transition: border-color 0.15s, background 0.15s;
+      margin: var(--ss-gap-md) 0;
+    }
+    .ss-log-upload-area:hover { border-color: var(--ss-danger); background: var(--ss-danger-light); color: var(--ss-danger); }
+    .ss-log-upload-area i { font-size: 32px; color: var(--ss-neutral-500); }
+    .ss-log-upload-area:hover i { color: var(--ss-danger); }
+    .ss-log-upload-area__title { font-weight: 600; font-size: 14px; }
+    .ss-log-formats { display: flex; gap: var(--ss-gap-xs); flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+    .ss-log-format-tag { font-size: 11px; font-weight: 600; padding: 2px var(--ss-gap-sm); border-radius: 100px; background: var(--ss-danger-light); color: var(--ss-danger); }
+    .ss-triage-note { display: flex; align-items: flex-start; gap: var(--ss-gap-sm); font-size: 12px; color: var(--ss-neutral-500); line-height: 1.4; padding: 10px 12px; background: var(--ss-danger-light); border-radius: var(--ss-radius-sm); margin-top: 4px; }
+    .ss-triage-note i { flex-shrink: 0; font-size: 14px; color: var(--ss-danger); margin-top: 1px; }
+
+    /* ── Scan step (4) ── */
     .ss-scan-header { display: flex; align-items: center; gap: 20px; margin-bottom: var(--ss-gap-lg); }
     .ss-scan-ring { position: relative; }
     .ss-scan-pct { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 13px; font-weight: 500; }
-    .ss-scan-checklist { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: var(--ss-gap-md) 0; }
+
+    /* Scan arc colour per funnel — overrides SVG presentation attribute */
+    .ss-scan-ring--xray   #scan-arc     { stroke: var(--ss-brand); }
+    .ss-scan-ring--xray   #scan-bg-ring { stroke: var(--ss-brand-light); }
+    .ss-scan-ring--inbox  #scan-arc     { stroke: var(--ss-info); }
+    .ss-scan-ring--inbox  #scan-bg-ring { stroke: var(--ss-info-light); }
+    .ss-scan-ring--triage #scan-arc     { stroke: var(--ss-danger); }
+    .ss-scan-ring--triage #scan-bg-ring { stroke: var(--ss-danger-light); }
+
+    .ss-scan-checklist { list-style: none; display: flex; flex-direction: column; gap: var(--ss-gap-xs); margin: var(--ss-gap-md) 0; }
     .ss-scan-item { font-size: 14px; color: var(--ss-neutral-500); padding-left: 24px; position: relative; }
-    .ss-scan-item::before { content: '·'; position: absolute; left: 8px; }
+    .ss-scan-item::before { content: '·'; position: absolute; left: var(--ss-gap-sm); }
     .ss-scan-item--done { color: var(--ss-neutral-900); }
     .ss-scan-item--done::before { content: '✓'; color: var(--ss-brand); font-weight: 500; }
     .ss-scan-done { text-align: center; padding: var(--ss-gap-lg) 0; }
-    .ss-scan-done__icon { font-size: 36px; margin-bottom: 12px; }
+    .ss-scan-done i { font-size: 42px; color: var(--ss-success); display: block; margin-bottom: 14px; }
+
+    /* ── What's next ── */
     .ss-whats-next { margin-top: var(--ss-gap-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); background: var(--ss-surface-container-low); border-radius: var(--ss-radius-md); }
     .ss-whats-next__label { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-md); }
     .ss-whats-next__steps { display: flex; flex-direction: column; gap: 12px; }
@@ -70,387 +270,753 @@
     .ss-whats-next__num { width: 22px; height: 22px; border-radius: 50%; background: var(--ss-brand-light); color: var(--ss-brand-dark); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .ss-whats-next__step--active .ss-whats-next__num { background: var(--ss-brand); color: #fff; }
     .ss-whats-next__title { font-size: 13px; font-weight: 600; }
-    .ss-whats-next__sub { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
+    .ss-whats-next__sub   { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
     .ss-whats-next__platform-link { display: block; margin-top: var(--ss-gap-md); font-size: 12px; color: var(--ss-neutral-500); padding-top: var(--ss-gap-md); border-top: 0.5px solid var(--ss-border); }
-    .ss-log-upload-area { border: 1.5px dashed var(--ss-border-md); border-radius: var(--ss-radius-md); padding: var(--ss-gap-lg); text-align: center; cursor: pointer; color: var(--ss-neutral-500); font-size: 13px; display: flex; flex-direction: column; gap: 6px; align-items: center; transition: border-color 0.15s; }
-    .ss-log-upload-area:hover { border-color: var(--ss-brand); color: var(--ss-brand); }
-    .ss-log-upload-area__icon { font-size: 28px; }
+    .ss-skip-link { font-size: 13px; color: var(--ss-neutral-500); }
   </style>
 </head>
 <body>
 
-  <div class="ss-wizard-wrap">
+  <!-- Top bar -->
+  <header class="ob-topbar">
+    <a href="/agentic-soc/dashboard/" class="ob-topbar__brand">
+      <i class="ti ti-shield"></i>
+      Shannon Sentinel
+    </a>
+    <div class="ob-topbar__right">
+      <div class="ob-user-chip">
+        <div class="ob-avatar" id="ob-avatar">?</div>
+        <span id="ob-name"></span>
+      </div>
+      <button id="lang-btn" class="ss-btn-ghost" style="padding:4px 10px; font-size:12px;" onclick="toggleLang()">EN</button>
+    </div>
+  </header>
+
+  <div class="ob-page">
+
     <!-- Step indicator -->
-    <div class="ss-wizard-steps">
-      <div class="ss-wizard-step ss-wizard-step--active" id="step-dot-1">
-        <div class="ss-wizard-step__circle">1</div>
-        <span class="ss-wizard-step__label" data-en="Setup" data-id="Pengaturan">Pengaturan</span>
+    <div class="ob-steps" id="ob-steps">
+      <div class="ob-step ob-step--active" id="step-dot-1">
+        <div class="ob-step__circle">1</div>
+        <span class="ob-step__label" data-en="Service" data-id="Layanan">Layanan</span>
       </div>
-      <div class="ss-wizard-connector"></div>
-      <div class="ss-wizard-step" id="step-dot-2">
-        <div class="ss-wizard-step__circle">2</div>
-        <span class="ss-wizard-step__label" data-en="Connect" data-id="Sambungkan">Sambungkan</span>
+      <div class="ob-connector" id="conn-1-2"></div>
+      <div class="ob-step" id="step-dot-2">
+        <div class="ob-step__circle">2</div>
+        <span class="ob-step__label" data-en="Setup" data-id="Pengaturan">Pengaturan</span>
       </div>
-      <div class="ss-wizard-connector"></div>
-      <div class="ss-wizard-step" id="step-dot-3">
-        <div class="ss-wizard-step__circle">3</div>
-        <span class="ss-wizard-step__label" data-en="Scanning" data-id="Pemindaian">Pemindaian</span>
+      <div class="ob-connector" id="conn-2-3"></div>
+      <div class="ob-step" id="step-dot-3">
+        <div class="ob-step__circle">3</div>
+        <span class="ob-step__label" data-en="Connect" data-id="Sambungkan">Sambungkan</span>
       </div>
-    </div>
-
-    <!-- Step 1: Domain -->
-    <div id="wizard-step-1" class="ss-wizard-card">
-      <h2 id="ob-step1-h2" data-en="Connect your domain" data-id="Hubungkan domain Anda">Hubungkan domain Anda</h2>
-      <p id="ob-step1-sub" class="ss-wizard-card__sub"
-         data-en="We'll run a passive scan on your public domain."
-         data-id="Kami akan menjalankan pemindaian pasif pada domain publik Anda.">
-        Kami akan menjalankan pemindaian pasif pada domain publik Anda.
-      </p>
-
-      <div class="ss-form-group">
-        <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
-        <input type="text" id="ob-domain" placeholder="perusahaan.com">
-      </div>
-
-      <div id="domain-verified-notice" class="ss-notice ss-notice--success" hidden>
-        <span>✓</span>
-        <span data-en="Domain verified during signup." data-id="Domain terverifikasi saat pendaftaran.">Domain terverifikasi saat pendaftaran.</span>
-      </div>
-      <div id="domain-unverified-notice" class="ss-notice ss-notice--warning" hidden>
-        <span>⚠</span>
-        <span data-en="Domain not yet verified. You can verify later in settings."
-              data-id="Domain belum terverifikasi. Anda dapat memverifikasi nanti di pengaturan.">
-          Domain belum terverifikasi. Anda dapat memverifikasi nanti di pengaturan.
-        </span>
-      </div>
-
-      <div class="ss-checks-list" id="ob-checks-list">
-        <p class="ss-checks-list__label" data-en="We will check:" data-id="Kami akan memeriksa:">Kami akan memeriksa:</p>
-        <ul id="ob-checks-ul">
-          <li>SPF record</li>
-          <li>DKIM configuration</li>
-          <li>DMARC policy</li>
-          <li data-en="Exposed subdomains" data-id="Subdomain yang terekspos">Subdomain yang terekspos</li>
-          <li data-en="Open ports on public-facing services" data-id="Port terbuka pada layanan publik">Port terbuka pada layanan publik</li>
-        </ul>
-      </div>
-
-      <p class="ss-form-hint" style="margin-top:12px;"
-         data-en="This scan is passive and non-intrusive."
-         data-id="Pemindaian ini bersifat pasif dan tidak mengganggu operasional.">
-        Pemindaian ini bersifat pasif dan tidak mengganggu operasional.
-      </p>
-
-      <div class="ss-wizard-footer">
-        <div></div>
-        <button class="ss-btn-primary" onclick="goStep(2)"
-                data-en="Next →" data-id="Lanjut →">Lanjut →</button>
+      <div class="ob-connector" id="conn-3-4"></div>
+      <div class="ob-step" id="step-dot-4">
+        <div class="ob-step__circle">4</div>
+        <span class="ob-step__label" data-en="Scan" data-id="Pindai">Pindai</span>
       </div>
     </div>
 
-    <!-- Step 2: Endpoints -->
-    <div id="wizard-step-2" class="ss-wizard-card" hidden>
-      <h2 data-en="Connect your endpoints" data-id="Hubungkan endpoint Anda">Hubungkan endpoint Anda</h2>
-      <p class="ss-wizard-card__sub"
-         data-en="Choose how to connect your devices. You can add more later."
-         data-id="Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.">
-        Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.
-      </p>
-
-      <div class="ss-endpoint-options" id="ob-wazuh-panel">
-        <!-- Wazuh — Active -->
-        <div class="ss-endpoint-option ss-endpoint-option--active selected" id="opt-wazuh">
-          <div class="ss-endpoint-option__header">
-            <div class="ss-endpoint-option__radio ss-endpoint-option__radio--selected" id="radio-wazuh"></div>
-            <div>
-              <p class="ss-endpoint-option__title">Wazuh Agent</p>
-              <span class="badge badge-low" data-en="Recommended" data-id="Direkomendasikan">Direkomendasikan</span>
-            </div>
-          </div>
-          <p class="ss-endpoint-option__desc"
-             data-en="Install Wazuh agent on your endpoints."
-             data-id="Pasang Wazuh agent pada endpoint Anda.">
-            Pasang Wazuh agent pada endpoint Anda.
-          </p>
-          <div class="ss-endpoint-downloads">
-            <a href="#" class="ss-download-btn">Windows .exe</a>
-            <a href="#" class="ss-download-btn">Linux .deb</a>
-            <a href="#" class="ss-download-btn">macOS .pkg</a>
-          </div>
-          <div class="ss-manager-address">
-            <span class="ss-manager-address__label" data-en="Manager address:" data-id="Alamat manager:">Alamat manager:</span>
-            <code>sentinel.shannondynamics.id:1514</code>
-          </div>
-        </div>
-
-        <!-- Syslog — Coming soon -->
-        <div class="ss-endpoint-option ss-endpoint-option--disabled">
-          <div class="ss-endpoint-option__header">
-            <div class="ss-endpoint-option__radio" style="background:var(--ss-neutral-200)"></div>
-            <div>
-              <p class="ss-endpoint-option__title" style="color:var(--ss-neutral-500)">Forward Syslog</p>
-              <span class="badge badge-neutral" data-en="Coming soon" data-id="Segera hadir">Segera hadir</span>
-            </div>
-          </div>
-          <p class="ss-endpoint-option__desc"
-             data-en="Forward syslog to Shannon's central collector. Available in v2."
-             data-id="Forward syslog ke kolektor pusat Shannon. Tersedia di v2.">
-            Forward syslog ke kolektor pusat Shannon. Tersedia di v2.
-          </p>
-        </div>
-
-        <!-- Manual upload — Coming soon -->
-        <div class="ss-endpoint-option ss-endpoint-option--disabled">
-          <div class="ss-endpoint-option__header">
-            <div class="ss-endpoint-option__radio" style="background:var(--ss-neutral-200)"></div>
-            <div>
-              <p class="ss-endpoint-option__title" style="color:var(--ss-neutral-500)"
-                 data-en="Manual log upload" data-id="Upload log manual">Upload log manual</p>
-              <span class="badge badge-neutral" data-en="Coming soon" data-id="Segera hadir">Segera hadir</span>
-            </div>
-          </div>
-          <p class="ss-endpoint-option__desc"
-             data-en="Upload CSV, JSON, or text log files. Available in v2."
-             data-id="Upload file log CSV, JSON, atau teks. Tersedia di v2.">
-            Upload file log CSV, JSON, atau teks. Tersedia di v2.
-          </p>
-        </div>
+    <!-- ─────────────────────────────────────── -->
+    <!-- Step 1: Service selection               -->
+    <!-- ─────────────────────────────────────── -->
+    <div id="wizard-step-1" class="ob-service-wrap">
+      <div class="ob-service-header">
+        <h1 data-en="What would you like to check first?"
+            data-id="Apa yang ingin Anda periksa terlebih dahulu?">
+          Apa yang ingin Anda periksa terlebih dahulu?
+        </h1>
+        <p data-en="Choose a starting point. You can run more services later."
+           data-id="Pilih titik awal. Anda bisa menjalankan layanan lain nanti.">
+          Pilih titik awal. Anda bisa menjalankan layanan lain nanti.
+        </p>
       </div>
 
-      <!-- Log upload panel for postincident funnel -->
-      <div id="ob-postincident-upload" hidden>
-        <p class="ss-wizard-card__sub" data-en="Upload your log files for AI-assisted incident triage." data-id="Upload file log Anda untuk triase insiden berbantuan AI.">Upload file log Anda untuk triase insiden berbantuan AI.</p>
-        <div class="ss-log-upload-area" onclick="document.getElementById('log-file-input').click()">
-          <span class="ss-log-upload-area__icon">📂</span>
-          <span data-en="Click to upload logs (CSV, JSON, TXT, EVTX)" data-id="Klik untuk upload log (CSV, JSON, TXT, EVTX)">Klik untuk upload log (CSV, JSON, TXT, EVTX)</span>
-          <span style="font-size:11px;" data-en="or drag and drop" data-id="atau seret dan lepas">atau seret dan lepas</span>
+      <div class="ob-service-grid">
+
+        <!-- Cyber X-Ray -->
+        <div class="ob-service-card ob-service-card--xray ob-service-card--popular"
+             id="card-xray" data-funnel="xray"
+             data-badge="Paling populer"
+             onclick="selectService('xray')">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="ob-service-card__icon"><i class="ti ti-radar"></i></div>
+            <div>
+              <span class="ob-service-card__label"
+                    data-en="Exposure Diagnostics" data-id="Diagnostik Eksposur">Diagnostik Eksposur</span>
+              <p class="ob-service-card__name"
+                 data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</p>
+            </div>
+          </div>
+          <p class="ob-service-card__desc"
+             data-en="Get a full picture of your cyber exposure in ~2 minutes. No IT team needed — just your domain."
+             data-id="Gambaran lengkap paparan siber Anda dalam ~2 menit. Tanpa tim IT — cukup dengan domain Anda.">
+            Gambaran lengkap paparan siber Anda dalam ~2 menit. Tanpa tim IT — cukup dengan domain Anda.
+          </p>
+          <div class="ob-service-card__divider"></div>
+          <ul class="ob-service-card__checks">
+            <li data-en="SPF / DKIM / DMARC configuration" data-id="Konfigurasi SPF / DKIM / DMARC">Konfigurasi SPF / DKIM / DMARC</li>
+            <li data-en="Exposed subdomains &amp; open ports" data-id="Subdomain terekspos &amp; port terbuka">Subdomain terekspos &amp; port terbuka</li>
+            <li data-en="Endpoint security posture" data-id="Postur keamanan endpoint">Postur keamanan endpoint</li>
+            <li data-en="Evidence readiness score" data-id="Skor kesiapan bukti">Skor kesiapan bukti</li>
+            <li data-en="AI-generated risk summary" data-id="Ringkasan risiko dari AI">Ringkasan risiko dari AI</li>
+          </ul>
+          <p class="ob-service-card__use-case"
+             data-en="Best for: Any company that hasn't done a security audit in the last 12 months."
+             data-id="Cocok untuk: Perusahaan yang belum audit keamanan dalam 12 bulan terakhir.">
+            Cocok untuk: Perusahaan yang belum audit keamanan dalam 12 bulan terakhir.
+          </p>
+          <button class="ob-service-card__cta" onclick="selectAndStart('xray')"
+                  data-en="Start Cyber X-Ray →" data-id="Mulai Cyber X-Ray →">
+            Mulai Cyber X-Ray →
+          </button>
         </div>
-        <input type="file" id="log-file-input" accept=".csv,.json,.txt,.evtx,.log" style="display:none" multiple>
-      </div>
 
-      <div class="ss-endpoint-counter">
-        <span data-en="Endpoints connected:" data-id="Endpoint terhubung:">Endpoint terhubung:</span>
-        <strong id="ep-count">0</strong> / 10
-        <button class="ss-btn-ghost" style="margin-left:8px; font-size:12px;"
-                onclick="simulateEndpointConnect()"
-                data-en="+ Simulate connect" data-id="+ Simulasi koneksi">+ Simulasi koneksi</button>
-      </div>
+        <!-- Inbox & Identity Guard -->
+        <div class="ob-service-card ob-service-card--inbox"
+             id="card-inbox" data-funnel="inbox"
+             onclick="selectService('inbox')">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="ob-service-card__icon"><i class="ti ti-mail-check"></i></div>
+            <div>
+              <span class="ob-service-card__label"
+                    data-en="Email &amp; Identity Security" data-id="Keamanan Email &amp; Identitas">Keamanan Email &amp; Identitas</span>
+              <p class="ob-service-card__name"
+                 data-en="Inbox &amp; Identity Guard" data-id="Inbox &amp; Identity Guard">Inbox &amp; Identity Guard</p>
+            </div>
+          </div>
+          <p class="ob-service-card__desc"
+             data-en="Detect phishing, invoice fraud, BEC, and suspicious logins. Connects to your mail provider."
+             data-id="Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Terhubung ke penyedia email Anda.">
+            Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Terhubung ke penyedia email Anda.
+          </p>
+          <div class="ob-service-card__divider"></div>
+          <ul class="ob-service-card__checks">
+            <li data-en="Email spoofing &amp; DMARC gaps" data-id="Spoofing email &amp; celah DMARC">Spoofing email &amp; celah DMARC</li>
+            <li data-en="Suspicious login &amp; MFA anomalies" data-id="Login mencurigakan &amp; anomali MFA">Login mencurigakan &amp; anomali MFA</li>
+            <li data-en="VPN / SSO authentication analysis" data-id="Analisis autentikasi VPN / SSO">Analisis autentikasi VPN / SSO</li>
+            <li data-en="BEC &amp; invoice fraud indicators" data-id="Indikator BEC &amp; fraud faktur">Indikator BEC &amp; fraud faktur</li>
+            <li data-en="AI phishing risk summary" data-id="Ringkasan risiko phishing dari AI">Ringkasan risiko phishing dari AI</li>
+          </ul>
+          <p class="ob-service-card__use-case"
+             data-en="Best for: Finance &amp; ops teams worried about CEO fraud or invoice scams."
+             data-id="Cocok untuk: Tim keuangan &amp; operasional khawatir penipuan CEO atau faktur palsu.">
+            Cocok untuk: Tim keuangan &amp; operasional khawatir penipuan CEO atau faktur palsu.
+          </p>
+          <button class="ob-service-card__cta" onclick="selectAndStart('inbox')"
+                  data-en="Start Inbox Guard →" data-id="Mulai Inbox Guard →">
+            Mulai Inbox Guard →
+          </button>
+        </div>
 
-      <div class="ss-wizard-footer">
-        <button class="ss-btn-secondary" onclick="goStep(1)"
-                data-en="← Back" data-id="← Kembali">← Kembali</button>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <a href="#" class="ss-skip-link" onclick="goStep(3); return false;"
-             data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
+        <!-- Post-Incident Triage -->
+        <div class="ob-service-card ob-service-card--triage"
+             id="card-postincident" data-funnel="postincident"
+             onclick="selectService('postincident')">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="ob-service-card__icon"><i class="ti ti-alert-circle"></i></div>
+            <div>
+              <span class="ob-service-card__label"
+                    data-en="Incident Response" data-id="Respons Insiden">Respons Insiden</span>
+              <p class="ob-service-card__name"
+                 data-en="Post-Incident Triage" data-id="Triase Pasca-Insiden">Triase Pasca-Insiden</p>
+            </div>
+          </div>
+          <p class="ob-service-card__desc"
+             data-en="Already hacked or suspect a breach? Upload your logs and get an AI-assisted incident timeline in minutes."
+             data-id="Sudah diretas atau curiga ada insiden? Upload log Anda dan dapatkan timeline insiden berbantuan AI dalam menit.">
+            Sudah diretas atau curiga ada insiden? Upload log Anda dan dapatkan timeline insiden berbantuan AI dalam menit.
+          </p>
+          <div class="ob-service-card__divider"></div>
+          <ul class="ob-service-card__checks">
+            <li data-en="Log parsing &amp; normalisation" data-id="Parsing &amp; normalisasi log">Parsing &amp; normalisasi log</li>
+            <li data-en="Attack timeline reconstruction" data-id="Rekonstruksi timeline serangan">Rekonstruksi timeline serangan</li>
+            <li data-en="IOC extraction (IPs, hashes, domains)" data-id="Ekstraksi IOC (IP, hash, domain)">Ekstraksi IOC (IP, hash, domain)</li>
+            <li data-en="MITRE ATT&amp;CK technique mapping" data-id="Pemetaan teknik MITRE ATT&amp;CK">Pemetaan teknik MITRE ATT&amp;CK</li>
+            <li data-en="AI-generated incident brief" data-id="Ringkasan insiden dari AI">Ringkasan insiden dari AI</li>
+          </ul>
+          <p class="ob-service-card__use-case"
+             data-en="Best for: IT teams actively dealing with or investigating a security incident."
+             data-id="Cocok untuk: Tim IT yang sedang menangani atau menyelidiki insiden keamanan.">
+            Cocok untuk: Tim IT yang sedang menangani atau menyelidiki insiden keamanan.
+          </p>
+          <button class="ob-service-card__cta" onclick="selectAndStart('postincident')"
+                  data-en="Start Triage →" data-id="Mulai Triase →">
+            Mulai Triase →
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────── -->
+    <!-- Step 2: Context setup (funnel-specific) -->
+    <!-- ─────────────────────────────────────── -->
+    <div id="wizard-step-2" class="ob-wrap" hidden>
+      <div class="ob-card">
+        <h2 id="ob-step2-h2">Hubungkan domain Anda</h2>
+        <p class="ob-card__sub" id="ob-step2-sub">Kami akan menjalankan pemindaian pasif pada domain publik Anda.</p>
+
+        <!-- Xray: domain input -->
+        <div id="ob-step2-xray">
+          <div class="ss-form-group">
+            <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
+            <input type="text" id="ob-domain" placeholder="perusahaan.com">
+          </div>
+          <div id="domain-verified-notice" class="ss-notice ss-notice--success" hidden>
+            <i class="ti ti-check"></i>
+            <span data-en="Domain verified during signup." data-id="Domain terverifikasi saat pendaftaran.">Domain terverifikasi saat pendaftaran.</span>
+          </div>
+          <div id="domain-unverified-notice" class="ss-notice ss-notice--warning" hidden>
+            <i class="ti ti-alert-triangle"></i>
+            <span data-en="Domain not yet verified. You can verify later in settings."
+                  data-id="Domain belum terverifikasi. Dapat diverifikasi nanti di pengaturan.">
+              Domain belum terverifikasi. Dapat diverifikasi nanti di pengaturan.
+            </span>
+          </div>
+        </div>
+
+        <!-- Inbox: email domain + mail provider -->
+        <div id="ob-step2-inbox" hidden>
+          <div class="ss-form-group">
+            <label data-en="Work email domain" data-id="Domain email kerja">Domain email kerja</label>
+            <input type="text" id="ob-mail-domain" placeholder="perusahaan.com">
+          </div>
+          <div class="ss-form-group">
+            <label data-en="Mail provider" data-id="Penyedia email">Penyedia email</label>
+            <div class="ss-provider-grid">
+              <button class="ss-provider-btn" id="prov-google" onclick="selectProvider('google')">
+                <i class="ti ti-brand-google"></i>
+                <span data-en="Google Workspace" data-id="Google Workspace">Google Workspace</span>
+              </button>
+              <button class="ss-provider-btn" id="prov-microsoft" onclick="selectProvider('microsoft')">
+                <i class="ti ti-brand-windows"></i>
+                <span data-en="Microsoft 365" data-id="Microsoft 365">Microsoft 365</span>
+              </button>
+            </div>
+            <p class="ss-provider-other"
+               data-en="Other providers (Yahoo Mail, Zoho, etc.) — manual config on next step."
+               data-id="Penyedia lain (Yahoo Mail, Zoho, dll.) — konfigurasi manual di langkah berikutnya.">
+              Penyedia lain (Yahoo Mail, Zoho, dll.) — konfigurasi manual di langkah berikutnya.
+            </p>
+          </div>
+        </div>
+
+        <!-- Postincident: incident context -->
+        <div id="ob-step2-postincident" hidden>
+          <div class="ss-form-group">
+            <label data-en="When did the incident occur?" data-id="Kapan insiden terjadi?">Kapan insiden terjadi?</label>
+            <input type="date" id="ob-incident-date">
+          </div>
+          <div class="ss-form-group">
+            <label data-en="Type of incident" data-id="Jenis insiden">Jenis insiden</label>
+            <div class="ss-incident-type-grid">
+              <button class="ss-incident-type-btn" onclick="selectIncidentType(this)"
+                      data-en="Ransomware" data-id="Ransomware">Ransomware</button>
+              <button class="ss-incident-type-btn" onclick="selectIncidentType(this)"
+                      data-en="Data Breach" data-id="Kebocoran Data">Kebocoran Data</button>
+              <button class="ss-incident-type-btn" onclick="selectIncidentType(this)"
+                      data-en="Phishing" data-id="Phishing">Phishing</button>
+              <button class="ss-incident-type-btn" onclick="selectIncidentType(this)"
+                      data-en="Unauthorised Access" data-id="Akses Tidak Sah">Akses Tidak Sah</button>
+              <button class="ss-incident-type-btn" onclick="selectIncidentType(this)"
+                      data-en="Not sure yet" data-id="Belum yakin">Belum yakin</button>
+            </div>
+          </div>
+          <div class="ss-form-group">
+            <label data-en="Affected systems (optional)" data-id="Sistem yang terpengaruh (opsional)">Sistem yang terpengaruh (opsional)</label>
+            <textarea id="ob-affected-systems" rows="2"
+                      style="width:100%; padding:9px 12px; border:0.5px solid var(--ss-border-md); border-radius:var(--ss-radius-sm); font-size:13px; font-family:var(--ss-font); resize:vertical; color:var(--ss-on-surface); background:var(--ss-surface-container-lowest);"
+                      placeholder="mis. Server file, email, domain controller"></textarea>
+          </div>
+        </div>
+
+        <!-- Shared: what we will check -->
+        <div class="ss-checks-list" id="ob-checks-list">
+          <p class="ss-checks-list__label" data-en="We will check:" data-id="Kami akan memeriksa:">Kami akan memeriksa:</p>
+          <ul id="ob-checks-ul"></ul>
+        </div>
+
+        <p class="ss-form-hint" style="margin-top:12px;" id="ob-step2-hint"
+           data-en="This scan is passive and non-intrusive."
+           data-id="Pemindaian ini bersifat pasif dan tidak mengganggu operasional.">
+          Pemindaian ini bersifat pasif dan tidak mengganggu operasional.
+        </p>
+
+        <div class="ob-footer">
+          <button class="ss-btn-secondary" onclick="goStep(1)"
+                  data-en="← Back" data-id="← Kembali">← Kembali</button>
           <button class="ss-btn-primary" onclick="goStep(3)"
-                  data-en="Start scan →" data-id="Mulai penilaian →">Mulai penilaian →</button>
+                  data-en="Next →" data-id="Lanjut →">Lanjut →</button>
         </div>
       </div>
     </div>
 
-    <!-- Step 3: Scanning -->
-    <div id="wizard-step-3" class="ss-wizard-card" hidden>
-      <div class="ss-scan-header">
-        <div class="ss-scan-ring" id="scan-ring">
-          <svg viewBox="0 0 80 80" width="80" height="80">
-            <circle cx="40" cy="40" r="34" fill="none" stroke="#dff4ed" stroke-width="6"/>
-            <circle id="scan-arc" cx="40" cy="40" r="34" fill="none"
-                    stroke="#00685f" stroke-width="6"
-                    stroke-dasharray="213.6" stroke-dashoffset="213.6"
-                    stroke-linecap="round"
-                    transform="rotate(-90 40 40)"/>
-          </svg>
-          <span class="ss-scan-pct" id="scan-pct">0%</span>
-        </div>
-        <div>
-          <h2 data-en="Running your Cyber X-Ray…" data-id="Menjalankan Cyber X-Ray Anda…">Menjalankan Cyber X-Ray Anda…</h2>
-          <p class="ss-wizard-card__sub" data-en="Estimated: ~2 minutes" data-id="Estimasi: ~2 menit">Estimasi: ~2 menit</p>
-        </div>
-      </div>
+    <!-- ─────────────────────────────────────── -->
+    <!-- Step 3: Connect assets (funnel-specific)-->
+    <!-- ─────────────────────────────────────── -->
+    <div id="wizard-step-3" class="ob-wrap" hidden>
+      <div class="ob-card">
+        <h2 id="ob-step3-h2"
+            data-en="Connect your endpoints" data-id="Hubungkan endpoint Anda">Hubungkan endpoint Anda</h2>
+        <p class="ob-card__sub" id="ob-step3-sub"
+           data-en="Choose how to connect your devices. You can add more later."
+           data-id="Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.">
+          Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.
+        </p>
 
-      <ul class="ss-scan-checklist" id="scan-checklist">
-        <li class="ss-scan-item" data-en="Starting domain scan…" data-id="Memulai pemindaian domain…">Memulai pemindaian domain…</li>
-        <li class="ss-scan-item" data-en="SPF record found" data-id="SPF record ditemukan">SPF record ditemukan</li>
-        <li class="ss-scan-item" data-en="DKIM checked" data-id="DKIM diperiksa">DKIM diperiksa</li>
-        <li class="ss-scan-item" data-en="Checking subdomain exposure…" data-id="Memeriksa paparan subdomain…">Memeriksa paparan subdomain…</li>
-        <li class="ss-scan-item" data-en="Subdomain scan complete" data-id="Subdomain scan selesai">Subdomain scan selesai</li>
-        <li class="ss-scan-item" data-en="Calculating evidence readiness score…" data-id="Menghitung skor kesiapan bukti…">Menghitung skor kesiapan bukti…</li>
-        <li class="ss-scan-item" data-en="Score calculated" data-id="Skor dihitung">Skor dihitung</li>
-        <li class="ss-scan-item" data-en="Generating AI summary…" data-id="Membuat ringkasan AI…">Membuat ringkasan AI…</li>
-        <li class="ss-scan-item" data-en="Report ready" data-id="Laporan siap">Laporan siap</li>
-      </ul>
-
-      <div class="ss-scan-done" id="scan-done" hidden>
-        <div class="ss-scan-done__icon">✅</div>
-        <h2 data-en="Your Cyber X-Ray report is ready!" data-id="Laporan Cyber X-Ray Anda siap!">
-          Laporan Cyber X-Ray Anda siap!
-        </h2>
-        <a href="/agentic-soc/dashboard/" class="ss-btn-primary"
-           style="display:inline-block; margin-top:16px;"
-           data-en="View report →" data-id="Lihat laporan →">Lihat laporan →</a>
-      </div>
-
-      <div class="ss-whats-next" id="whats-next" hidden>
-        <p class="ss-whats-next__label" data-en="Your free report is ready. Here's what you can do next:" data-id="Laporan gratis Anda siap. Ini yang bisa Anda lakukan selanjutnya:">Laporan gratis Anda siap. Ini yang bisa Anda lakukan selanjutnya:</p>
-        <div class="ss-whats-next__steps">
-          <div class="ss-whats-next__step ss-whats-next__step--active">
-            <span class="ss-whats-next__num">1</span>
-            <div>
-              <p class="ss-whats-next__title" data-en="Review your X-Ray report" data-id="Tinjau laporan X-Ray Anda">Tinjau laporan X-Ray Anda</p>
-              <p class="ss-whats-next__sub" data-en="See exactly what's exposed and what's missing." data-id="Lihat persis apa yang terekspos dan apa yang hilang.">Lihat persis apa yang terekspos dan apa yang hilang.</p>
+        <!-- Xray: Wazuh agent -->
+        <div id="ob-xray-connect">
+          <div class="ss-endpoint-options">
+            <div class="ss-endpoint-option ss-endpoint-option--active selected">
+              <div class="ss-endpoint-option__header">
+                <div class="ss-endpoint-option__radio ss-endpoint-option__radio--selected"></div>
+                <div>
+                  <p class="ss-endpoint-option__title">Wazuh Agent</p>
+                  <span class="badge badge-low" data-en="Recommended" data-id="Direkomendasikan">Direkomendasikan</span>
+                </div>
+              </div>
+              <p class="ss-endpoint-option__desc"
+                 data-en="Install on one or more endpoints. Sends telemetry to your Shannon dashboard."
+                 data-id="Pasang pada satu atau beberapa endpoint. Mengirim telemetri ke dashboard Shannon Anda.">
+                Pasang pada satu atau beberapa endpoint. Mengirim telemetri ke dashboard Shannon Anda.
+              </p>
+              <div class="ss-endpoint-downloads">
+                <a href="#" class="ss-download-btn">Windows .exe</a>
+                <a href="#" class="ss-download-btn">Linux .deb</a>
+                <a href="#" class="ss-download-btn">macOS .pkg</a>
+              </div>
+              <div class="ss-manager-address">
+                <span data-en="Manager address:" data-id="Alamat manager:">Alamat manager:</span>
+                <code>sentinel.shannondynamics.id:1514</code>
+              </div>
+            </div>
+            <div class="ss-endpoint-option ss-endpoint-option--disabled">
+              <div class="ss-endpoint-option__header">
+                <div class="ss-endpoint-option__radio" style="background:var(--ss-neutral-200)"></div>
+                <div>
+                  <p class="ss-endpoint-option__title" style="color:var(--ss-neutral-500)">Forward Syslog</p>
+                  <span class="badge badge-neutral" data-en="Coming soon" data-id="Segera hadir">Segera hadir</span>
+                </div>
+              </div>
+              <p class="ss-endpoint-option__desc"
+                 data-en="Forward syslog to Shannon's central collector."
+                 data-id="Forward syslog ke kolektor pusat Shannon.">
+                Forward syslog ke kolektor pusat Shannon.
+              </p>
             </div>
           </div>
-          <div class="ss-whats-next__step">
-            <span class="ss-whats-next__num">2</span>
-            <div>
-              <p class="ss-whats-next__title" data-en="Fix the red findings — 30-Day Sprint" data-id="Perbaiki temuan merah — Sprint 30 Hari">Perbaiki temuan merah — Sprint 30 Hari</p>
-              <p class="ss-whats-next__sub" data-en="Our team helps you close the most critical gaps. From Rp 35 jt." data-id="Tim kami membantu menutup celah paling kritis. Mulai Rp 35 jt.">Tim kami membantu menutup celah paling kritis. Mulai Rp 35 jt.</p>
-            </div>
-          </div>
-          <div class="ss-whats-next__step">
-            <span class="ss-whats-next__num">3</span>
-            <div>
-              <p class="ss-whats-next__title" data-en="Stay monitored — MDR" data-id="Tetap dimonitor — MDR">Tetap dimonitor — MDR</p>
-              <p class="ss-whats-next__sub" data-en="24/7 detection, AI-assisted triage, human escalation." data-id="Deteksi 24/7, triase berbantuan AI, eskalasi manusia.">Deteksi 24/7, triase berbantuan AI, eskalasi manusia.</p>
-            </div>
+          <div class="ss-endpoint-counter">
+            <span data-en="Endpoints connected:" data-id="Endpoint terhubung:">Endpoint terhubung:</span>
+            <strong id="ep-count">0</strong> / 10
+            <button class="ss-btn-ghost" style="margin-left:var(--ss-gap-sm); font-size:12px;"
+                    onclick="simulateEndpointConnect()"
+                    data-en="+ Simulate connect" data-id="+ Simulasi koneksi">+ Simulasi koneksi</button>
           </div>
         </div>
-        <a href="/agentic-soc/pricing/#platform" class="ss-whats-next__platform-link"
-           data-en="Curious where this goes long-term? See the full platform direction →"
-           data-id="Penasaran arah jangka panjangnya? Lihat arah platform lengkap →">
-          Penasaran arah jangka panjangnya? Lihat arah platform lengkap →
-        </a>
+
+        <!-- Inbox: OAuth mail connect -->
+        <div id="ob-inbox-connect" hidden>
+          <div class="ss-oauth-panel">
+            <div class="ss-oauth-panel__header">
+              <i class="ti ti-lock"></i>
+              <span data-en="Read-only access — we never send, delete, or modify emails."
+                    data-id="Akses read-only — kami tidak pernah mengirim, menghapus, atau mengubah email.">
+                Akses read-only — kami tidak pernah mengirim, menghapus, atau mengubah email.
+              </span>
+            </div>
+            <div class="ss-oauth-panel__body">
+              <button class="ss-oauth-btn" onclick="simulateOAuthConnect('google')">
+                <i class="ti ti-brand-google"></i>
+                <div class="ss-oauth-btn__label">
+                  <p class="ss-oauth-btn__title"
+                     data-en="Connect Google Workspace" data-id="Hubungkan Google Workspace">Hubungkan Google Workspace</p>
+                  <p class="ss-oauth-btn__sub"
+                     data-en="Gmail logs, login activity, MFA status"
+                     data-id="Log Gmail, aktivitas login, status MFA">Log Gmail, aktivitas login, status MFA</p>
+                </div>
+              </button>
+              <button class="ss-oauth-btn" onclick="simulateOAuthConnect('microsoft')">
+                <i class="ti ti-brand-windows"></i>
+                <div class="ss-oauth-btn__label">
+                  <p class="ss-oauth-btn__title"
+                     data-en="Connect Microsoft 365" data-id="Hubungkan Microsoft 365">Hubungkan Microsoft 365</p>
+                  <p class="ss-oauth-btn__sub"
+                     data-en="Exchange logs, Entra ID sign-ins, MFA events"
+                     data-id="Log Exchange, sign-in Entra ID, event MFA">Log Exchange, sign-in Entra ID, event MFA</p>
+                </div>
+              </button>
+              <div class="ss-oauth-divider"
+                   data-en="or configure manually" data-id="atau konfigurasi manual">atau konfigurasi manual</div>
+              <p class="ss-oauth-manual"
+                 data-en="Manual IMAP / syslog forwarding — coming soon"
+                 data-id="Penerusan IMAP / syslog manual — segera hadir">
+                Penerusan IMAP / syslog manual — segera hadir
+              </p>
+            </div>
+          </div>
+          <p class="ss-permissions-note">
+            <i class="ti ti-shield-check"></i>
+            <span data-en="Shannon only requests mail header metadata and login event logs — never message body content."
+                  data-id="Shannon hanya meminta metadata header email dan log event login — tidak pernah konten isi pesan.">
+              Shannon hanya meminta metadata header email dan log event login — tidak pernah konten isi pesan.
+            </span>
+          </p>
+          <div id="inbox-connected-notice" class="ss-notice ss-notice--success" hidden style="margin-top:12px;">
+            <i class="ti ti-check"></i>
+            <span id="inbox-connected-label"
+                  data-en="Mail provider connected. Ready to scan."
+                  data-id="Penyedia email terhubung. Siap untuk dipindai.">Penyedia email terhubung. Siap untuk dipindai.</span>
+          </div>
+        </div>
+
+        <!-- Postincident: log upload -->
+        <div id="ob-postincident-upload" hidden>
+          <div class="ss-log-upload-area" onclick="document.getElementById('log-file-input').click()">
+            <i class="ti ti-folder-open"></i>
+            <span class="ss-log-upload-area__title"
+                  data-en="Drop log files here or click to upload"
+                  data-id="Letakkan file log di sini atau klik untuk upload">
+              Letakkan file log di sini atau klik untuk upload
+            </span>
+            <span style="font-size:12px;"
+                  data-en="Supports multiple files at once"
+                  data-id="Mendukung beberapa file sekaligus">Mendukung beberapa file sekaligus</span>
+            <div class="ss-log-formats">
+              <span class="ss-log-format-tag">EVTX</span>
+              <span class="ss-log-format-tag">CSV</span>
+              <span class="ss-log-format-tag">JSON</span>
+              <span class="ss-log-format-tag">TXT</span>
+              <span class="ss-log-format-tag">Syslog</span>
+            </div>
+          </div>
+          <input type="file" id="log-file-input" accept=".csv,.json,.txt,.evtx,.log" style="display:none" multiple>
+          <div class="ss-triage-note">
+            <i class="ti ti-alert-triangle"></i>
+            <span data-en="If this is an active incident, don't wait for a full log export. Upload whatever you have now — partial logs still produce a useful triage."
+                  data-id="Jika ini adalah insiden aktif, jangan tunggu ekspor log lengkap. Upload apa pun yang Anda punya sekarang — log parsial tetap menghasilkan triase yang berguna.">
+              Jika ini adalah insiden aktif, jangan tunggu ekspor log lengkap. Upload apa pun yang Anda punya sekarang — log parsial tetap menghasilkan triase yang berguna.
+            </span>
+          </div>
+        </div>
+
+        <div class="ob-footer">
+          <button class="ss-btn-secondary" onclick="goStep(2)"
+                  data-en="← Back" data-id="← Kembali">← Kembali</button>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <a href="#" class="ss-skip-link" onclick="goStep(4); return false;"
+               data-en="Skip for now" data-id="Lewati untuk sekarang">Lewati untuk sekarang</a>
+            <button class="ss-btn-primary" onclick="goStep(4)" id="ob-step3-cta"
+                    data-en="Start scan →" data-id="Mulai penilaian →">Mulai penilaian →</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <!-- ─────────────────────────────────────── -->
+    <!-- Step 4: Scanning                        -->
+    <!-- ─────────────────────────────────────── -->
+    <div id="wizard-step-4" class="ob-wrap" hidden>
+      <div class="ob-card">
+        <div class="ss-scan-header">
+          <div class="ss-scan-ring" id="scan-ring">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <circle id="scan-bg-ring" cx="40" cy="40" r="34" fill="none" stroke="#e1f5ee" stroke-width="6"/>
+              <circle id="scan-arc" cx="40" cy="40" r="34" fill="none"
+                      stroke="#00685f" stroke-width="6"
+                      stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                      stroke-linecap="round"
+                      transform="rotate(-90 40 40)"/>
+            </svg>
+            <span class="ss-scan-pct" id="scan-pct">0%</span>
+          </div>
+          <div>
+            <h2 id="scan-title"
+                data-en="Running your scan…" data-id="Menjalankan pemindaian Anda…">Menjalankan pemindaian Anda…</h2>
+            <p class="ob-card__sub" style="margin-bottom:0;" id="scan-eta"
+               data-en="Estimated: ~2 minutes" data-id="Estimasi: ~2 menit">Estimasi: ~2 menit</p>
+          </div>
+        </div>
+
+        <ul class="ss-scan-checklist" id="scan-checklist"></ul>
+
+        <div class="ss-scan-done" id="scan-done" hidden>
+          <i class="ti ti-circle-check-filled"></i>
+          <h2 id="scan-done-title"
+              data-en="Your report is ready!" data-id="Laporan Anda siap!">Laporan Anda siap!</h2>
+          <a href="/agentic-soc/dashboard/" class="ss-btn-primary"
+             style="display:inline-block; margin-top:16px;"
+             data-en="View report →" data-id="Lihat laporan →">Lihat laporan →</a>
+        </div>
+
+        <div class="ss-whats-next" id="whats-next" hidden>
+          <p class="ss-whats-next__label"
+             data-en="Your report is ready. Here's what you can do next:"
+             data-id="Laporan Anda siap. Ini yang bisa Anda lakukan selanjutnya:">
+            Laporan Anda siap. Ini yang bisa Anda lakukan selanjutnya:
+          </p>
+          <div class="ss-whats-next__steps" id="whats-next-steps"></div>
+          <a href="/agentic-soc/pricing/#platform" class="ss-whats-next__platform-link"
+             data-en="Curious where this goes long-term? See the full platform direction →"
+             data-id="Penasaran arah jangka panjangnya? Lihat arah platform lengkap →">
+            Penasaran arah jangka panjangnya? Lihat arah platform lengkap →
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ob-page -->
 
   <script src="/agentic-soc/shared.js"></script>
   <script>
     let epCount = 0;
+    let selectedFunnel = (window.SS && window.SS.funnel) || null;
+    let selectedProvider = null;
 
-    const FUNNEL_STEP1 = {
+    const FUNNEL_META = {
       xray: {
-        h2: { en: 'Connect your domain', id: 'Hubungkan domain Anda' },
-        sub: { en: "We'll run a passive scan on your public domain.", id: 'Kami akan menjalankan pemindaian pasif pada domain publik Anda.' },
-        checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Subdomain yang terekspos', 'Port terbuka pada layanan publik']
+        step2: {
+          h2:   { en: 'Connect your domain', id: 'Hubungkan domain Anda' },
+          sub:  { en: "We'll run a passive scan on your public domain — no login required.", id: 'Kami akan menjalankan pemindaian pasif pada domain publik Anda — tanpa perlu login.' },
+          hint: { en: 'This scan is passive and non-intrusive.', id: 'Pemindaian ini bersifat pasif dan tidak mengganggu operasional.' },
+          checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Subdomain yang terekspos', 'Port terbuka pada layanan publik']
+        },
+        step3: {
+          h2:  { en: 'Connect your endpoints', id: 'Hubungkan endpoint Anda' },
+          sub: { en: 'Install Wazuh Agent on your devices to get endpoint telemetry. You can add more later.', id: 'Pasang Wazuh Agent pada perangkat Anda untuk mendapatkan telemetri endpoint. Anda dapat menambah lebih banyak nanti.' },
+          cta: { en: 'Start scan →', id: 'Mulai pindai →' }
+        },
+        scan: {
+          ringClass: 'ss-scan-ring--xray',
+          title:     { en: 'Running your Cyber X-Ray…', id: 'Menjalankan Cyber X-Ray Anda…' },
+          eta:       { en: 'Estimated: ~2 minutes', id: 'Estimasi: ~2 menit' },
+          doneTitle: { en: 'Your Cyber X-Ray report is ready!', id: 'Laporan Cyber X-Ray Anda siap!' },
+          items: [
+            { en: 'Starting domain scan…', id: 'Memulai pemindaian domain…' },
+            { en: 'SPF record found', id: 'SPF record ditemukan' },
+            { en: 'DKIM checked', id: 'DKIM diperiksa' },
+            { en: 'Checking subdomain exposure…', id: 'Memeriksa paparan subdomain…' },
+            { en: 'Subdomain scan complete', id: 'Subdomain scan selesai' },
+            { en: 'Calculating evidence readiness score…', id: 'Menghitung skor kesiapan bukti…' },
+            { en: 'Score calculated', id: 'Skor dihitung' },
+            { en: 'Generating AI summary…', id: 'Membuat ringkasan AI…' },
+            { en: 'Report ready', id: 'Laporan siap' }
+          ]
+        },
+        whatsNext: [
+          { title: { en: 'Review your Cyber X-Ray report', id: 'Tinjau laporan Cyber X-Ray Anda' }, sub: { en: "See exactly what's exposed and what's missing.", id: 'Lihat persis apa yang terekspos dan apa yang kurang.' }, active: true },
+          { title: { en: 'Fix the red findings — 30-Day Sprint', id: 'Perbaiki temuan merah — Sprint 30 Hari' }, sub: { en: 'Our team closes your most critical gaps. From Rp 35 jt.', id: 'Tim kami menutup celah paling kritis. Mulai Rp 35 jt.' }, active: false },
+          { title: { en: 'Stay monitored — MDR', id: 'Tetap dimonitor — MDR' }, sub: { en: '24/7 detection, AI-assisted triage, human escalation.', id: 'Deteksi 24/7, triase berbantuan AI, eskalasi manusia.' }, active: false }
+        ]
       },
       inbox: {
-        h2: { en: 'Set up email security scanning', id: 'Siapkan pemindaian keamanan email' },
-        sub: { en: "We'll check your email domain for phishing and fraud exposure.", id: 'Kami akan memeriksa domain email Anda untuk paparan phishing dan penipuan.' },
-        checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Email spoofing risk', 'BEC / phishing indicators']
+        step2: {
+          h2:   { en: 'Set up email security scanning', id: 'Siapkan pemindaian keamanan email' },
+          sub:  { en: "We'll check your email domain for phishing, spoofing, and BEC exposure.", id: 'Kami akan memeriksa domain email Anda untuk paparan phishing, spoofing, dan BEC.' },
+          hint: { en: "We only check DNS records and your mail provider's security headers.", id: 'Kami hanya memeriksa record DNS dan header keamanan penyedia email Anda.' },
+          checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Email spoofing risk', 'BEC / phishing indicators']
+        },
+        step3: {
+          h2:  { en: 'Connect your mail provider', id: 'Hubungkan penyedia email Anda' },
+          sub: { en: 'Grant read-only access so Shannon can analyse login events and mail headers for threats.', id: 'Berikan akses read-only agar Shannon dapat menganalisis event login dan header email untuk ancaman.' },
+          cta: { en: 'Start analysis →', id: 'Mulai analisis →' }
+        },
+        scan: {
+          ringClass: 'ss-scan-ring--inbox',
+          title:     { en: 'Analysing your inbox security…', id: 'Menganalisis keamanan email Anda…' },
+          eta:       { en: 'Estimated: ~3 minutes', id: 'Estimasi: ~3 menit' },
+          doneTitle: { en: 'Your Inbox Guard report is ready!', id: 'Laporan Inbox Guard Anda siap!' },
+          items: [
+            { en: 'Checking email domain…', id: 'Memeriksa domain email…' },
+            { en: 'SPF record found', id: 'SPF record ditemukan' },
+            { en: 'DKIM checked', id: 'DKIM diperiksa' },
+            { en: 'Analysing DMARC policy…', id: 'Menganalisis kebijakan DMARC…' },
+            { en: 'Phishing indicator scan complete', id: 'Pemindaian indikator phishing selesai' },
+            { en: 'Checking BEC exposure…', id: 'Memeriksa paparan BEC…' },
+            { en: 'Analysing login anomalies…', id: 'Menganalisis anomali login…' },
+            { en: 'Generating AI phishing risk summary…', id: 'Membuat ringkasan risiko phishing AI…' },
+            { en: 'Report ready', id: 'Laporan siap' }
+          ]
+        },
+        whatsNext: [
+          { title: { en: 'Review your phishing &amp; spoofing report', id: 'Tinjau laporan phishing &amp; spoofing Anda' }, sub: { en: 'See your DMARC gaps, BEC indicators, and login anomalies.', id: 'Lihat celah DMARC, indikator BEC, dan anomali login Anda.' }, active: true },
+          { title: { en: 'Block the threats — Email Security Sprint', id: 'Blokir ancaman — Sprint Keamanan Email' }, sub: { en: 'We fix your DMARC, harden your mail stack, and set up alerts. From Rp 25 jt.', id: 'Kami memperbaiki DMARC, memperkuat mail stack, dan menyiapkan alert. Mulai Rp 25 jt.' }, active: false },
+          { title: { en: 'Stay protected — Inbox MDR', id: 'Tetap terlindungi — Inbox MDR' }, sub: { en: 'Continuous monitoring of your email, identity, and login events.', id: 'Pemantauan berkelanjutan email, identitas, dan event login Anda.' }, active: false }
+        ]
       },
       postincident: {
-        h2: { en: 'Upload your incident logs', id: 'Upload log insiden Anda' },
-        sub: { en: 'Upload log files and we will build an AI-assisted incident timeline.', id: 'Upload file log dan kami akan membuat timeline insiden berbantuan AI.' },
-        checks: ['Log parsing & normalization', 'Timeline construction', 'IOC extraction', 'MITRE ATT&CK mapping', 'Initial triage summary']
+        step2: {
+          h2:   { en: 'Tell us about the incident', id: 'Ceritakan tentang insiden' },
+          sub:  { en: 'This context helps our AI prioritise what to look for in your logs.', id: 'Konteks ini membantu AI kami memprioritaskan apa yang harus dicari di log Anda.' },
+          hint: { en: 'All data is processed securely and retained only for your analysis session.', id: 'Semua data diproses dengan aman dan hanya disimpan untuk sesi analisis Anda.' },
+          checks: ['Log parsing & normalisation', 'Timeline construction', 'IOC extraction', 'MITRE ATT&CK mapping', 'Initial triage summary']
+        },
+        step3: {
+          h2:  { en: 'Upload your incident logs', id: 'Upload log insiden Anda' },
+          sub: { en: 'Drag and drop log files below. The more you provide, the better the triage.', id: 'Seret dan lepaskan file log di bawah. Semakin banyak yang Anda berikan, semakin baik triasinya.' },
+          cta: { en: 'Start triage →', id: 'Mulai triase →' }
+        },
+        scan: {
+          ringClass: 'ss-scan-ring--triage',
+          title:     { en: 'Analysing your incident logs…', id: 'Menganalisis log insiden Anda…' },
+          eta:       { en: 'Estimated: ~4 minutes', id: 'Estimasi: ~4 menit' },
+          doneTitle: { en: 'Your incident triage report is ready!', id: 'Laporan triase insiden Anda siap!' },
+          items: [
+            { en: 'Parsing uploaded logs…', id: 'Memproses log yang diupload…' },
+            { en: 'Normalising log format…', id: 'Menormalkan format log…' },
+            { en: 'Building event timeline…', id: 'Membuat timeline kejadian…' },
+            { en: 'Extracting IOCs (IPs, hashes, domains)…', id: 'Mengekstrak IOC (IP, hash, domain)…' },
+            { en: 'Mapping to MITRE ATT&CK…', id: 'Memetakan ke MITRE ATT&CK…' },
+            { en: 'Correlating events across log sources…', id: 'Mengkorelasikan kejadian dari berbagai sumber log…' },
+            { en: 'AI triage analysis complete', id: 'Analisis triase AI selesai' },
+            { en: 'Generating incident brief…', id: 'Membuat ringkasan insiden…' },
+            { en: 'Triage report ready', id: 'Laporan triase siap' }
+          ]
+        },
+        whatsNext: [
+          { title: { en: 'Review your incident triage report', id: 'Tinjau laporan triase insiden Anda' }, sub: { en: 'See the attack timeline, extracted IOCs, and MITRE mapping.', id: 'Lihat timeline serangan, IOC yang diekstrak, dan pemetaan MITRE.' }, active: true },
+          { title: { en: 'Assign remediation — Incident Sprint', id: 'Tetapkan remediasi — Sprint Insiden' }, sub: { en: 'Our analysts help you contain, eradicate, and recover. Fast.', id: 'Analis kami membantu Anda menahan, memberantas, dan memulihkan. Cepat.' }, active: false },
+          { title: { en: 'Prevent recurrence — MDR', id: 'Cegah pengulangan — MDR' }, sub: { en: '24/7 monitoring to make sure it never happens again.', id: 'Pemantauan 24/7 untuk memastikan hal ini tidak terjadi lagi.' }, active: false }
+        ]
       }
     };
 
-    const SCAN_ITEMS = {
-      xray: [
-        { en: 'Starting domain scan…', id: 'Memulai pemindaian domain…' },
-        { en: 'SPF record found', id: 'SPF record ditemukan' },
-        { en: 'DKIM checked', id: 'DKIM diperiksa' },
-        { en: 'Checking subdomain exposure…', id: 'Memeriksa paparan subdomain…' },
-        { en: 'Subdomain scan complete', id: 'Subdomain scan selesai' },
-        { en: 'Calculating evidence readiness score…', id: 'Menghitung skor kesiapan bukti…' },
-        { en: 'Score calculated', id: 'Skor dihitung' },
-        { en: 'Generating AI summary…', id: 'Membuat ringkasan AI…' },
-        { en: 'Report ready', id: 'Laporan siap' }
-      ],
-      inbox: [
-        { en: 'Checking email domain…', id: 'Memeriksa domain email…' },
-        { en: 'SPF record found', id: 'SPF record ditemukan' },
-        { en: 'DKIM checked', id: 'DKIM diperiksa' },
-        { en: 'Analyzing DMARC policy…', id: 'Menganalisis kebijakan DMARC…' },
-        { en: 'Phishing indicator scan complete', id: 'Pemindaian indikator phishing selesai' },
-        { en: 'Checking BEC exposure…', id: 'Memeriksa paparan BEC…' },
-        { en: 'Risk score calculated', id: 'Skor risiko dihitung' },
-        { en: 'Generating AI summary…', id: 'Membuat ringkasan AI…' },
-        { en: 'Report ready', id: 'Laporan siap' }
-      ],
-      postincident: [
-        { en: 'Parsing uploaded logs…', id: 'Memproses log yang diupload…' },
-        { en: 'Normalizing log format…', id: 'Menormalkan format log…' },
-        { en: 'Building event timeline…', id: 'Membuat timeline kejadian…' },
-        { en: 'Extracting IOCs…', id: 'Mengekstrak IOC…' },
-        { en: 'Mapping to MITRE ATT&CK…', id: 'Memetakan ke MITRE ATT&CK…' },
-        { en: 'Correlating events…', id: 'Mengkorelasikan kejadian…' },
-        { en: 'AI triage analysis complete', id: 'Analisis triase AI selesai' },
-        { en: 'Generating incident summary…', id: 'Membuat ringkasan insiden…' },
-        { en: 'Triage report ready', id: 'Laporan triase siap' }
-      ]
-    };
-
-    // Hydrate domain from session
+    // Hydrate top bar
     (function() {
-      if (window.SS && window.SS.domain) {
-        document.getElementById('ob-domain').value = window.SS.domain;
-      }
-      if (window.SS && window.SS.domainVerified) {
-        document.getElementById('domain-verified-notice').hidden = false;
-      } else if (window.SS && window.SS.domain) {
-        document.getElementById('domain-unverified-notice').hidden = false;
-      }
       if (window.SS) {
-        const avatarEl = document.getElementById('nav-avatar');
+        const avatarEl = document.getElementById('ob-avatar');
+        const nameEl   = document.getElementById('ob-name');
         if (avatarEl && window.SS.name) {
-          avatarEl.textContent = window.SS.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+          avatarEl.textContent = window.SS.name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+        }
+        if (nameEl) nameEl.textContent = window.SS.name || '';
+        if (window.SS.domain) document.getElementById('ob-domain').value = window.SS.domain;
+        if (window.SS.domainVerified) {
+          document.getElementById('domain-verified-notice').hidden = false;
+        } else if (window.SS.domain) {
+          document.getElementById('domain-unverified-notice').hidden = false;
         }
       }
-
-      // Funnel-aware step 1
-      const funnel = (window.SS && window.SS.funnel) || 'xray';
-      const lang = localStorage.getItem('ss-lang') || 'id';
-      const fs = FUNNEL_STEP1[funnel] || FUNNEL_STEP1.xray;
-      const h2El = document.getElementById('ob-step1-h2');
-      const subEl = document.getElementById('ob-step1-sub');
-      if (h2El) h2El.textContent = fs.h2[lang] || fs.h2.id;
-      if (subEl) subEl.textContent = fs.sub[lang] || fs.sub.id;
-      const checksUl = document.getElementById('ob-checks-ul');
-      if (checksUl) {
-        checksUl.innerHTML = fs.checks.map(c => `<li>${c}</li>`).join('');
-      }
-
-      // Show log upload for postincident
-      if (funnel === 'postincident') {
-        const uploadPanel = document.getElementById('ob-postincident-upload');
-        const wazuhPanel  = document.getElementById('ob-wazuh-panel');
-        if (uploadPanel) uploadPanel.hidden = false;
-        if (wazuhPanel)  wazuhPanel.hidden  = true;
-      }
-
-      // Populate scan items based on funnel
-      const scanItems = SCAN_ITEMS[funnel] || SCAN_ITEMS.xray;
-      const scanList = document.getElementById('scan-checklist');
-      if (scanList) {
-        scanList.innerHTML = scanItems.map(item =>
-          `<li class="ss-scan-item">${item[lang] || item.id}</li>`
-        ).join('');
-      }
+      goStep(1);
     })();
 
-    function goStep(n) {
-      for (let i = 1; i <= 3; i++) {
-        const card = document.getElementById('wizard-step-' + i);
-        if (card) card.hidden = (i !== n);
-        const dot = document.getElementById('step-dot-' + i);
-        if (dot) {
-          dot.classList.toggle('ss-wizard-step--active', i === n);
-          dot.classList.toggle('ss-wizard-step--done', i < n);
-        }
-      }
-      if (n === 3) runScanAnimation();
+    function selectService(funnel) {
+      selectedFunnel = funnel;
+      ['xray','inbox','postincident'].forEach(f => {
+        const card = document.getElementById('card-' + f);
+        if (card) card.classList.toggle('ob-service-card--selected', f === funnel);
+      });
+    }
+
+    function selectAndStart(funnel) {
+      selectService(funnel);
+      const sess = JSON.parse(sessionStorage.getItem('ss-session') || '{}');
+      sess.funnel = funnel;
+      sessionStorage.setItem('ss-session', JSON.stringify(sess));
+      window.SS = sess;
+      selectedFunnel = funnel;
+      hydrateWizardSteps(funnel);
+      goStep(2);
+    }
+
+    function selectProvider(provider) {
+      selectedProvider = provider;
+      document.getElementById('prov-google').classList.toggle('ss-provider-btn--selected', provider === 'google');
+      document.getElementById('prov-microsoft').classList.toggle('ss-provider-btn--selected', provider === 'microsoft');
+    }
+
+    function simulateOAuthConnect(provider) {
+      const lang   = localStorage.getItem('ss-lang') || 'id';
+      const notice = document.getElementById('inbox-connected-notice');
+      const label  = document.getElementById('inbox-connected-label');
+      const names  = { google: 'Google Workspace', microsoft: 'Microsoft 365' };
+      notice.hidden = false;
+      label.textContent = lang === 'en'
+        ? names[provider] + ' connected. Ready to scan.'
+        : names[provider] + ' terhubung. Siap untuk dipindai.';
+    }
+
+    function selectIncidentType(btn) {
+      document.querySelectorAll('.ss-incident-type-btn').forEach(b => b.classList.remove('ss-incident-type-btn--selected'));
+      btn.classList.add('ss-incident-type-btn--selected');
     }
 
     function simulateEndpointConnect() {
       if (epCount < 10) { epCount++; document.getElementById('ep-count').textContent = epCount; }
     }
 
+    function hydrateWizardSteps(funnel) {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const meta = FUNNEL_META[funnel] || FUNNEL_META.xray;
+
+      // Step 2
+      document.getElementById('ob-step2-h2').textContent   = meta.step2.h2[lang]   || meta.step2.h2.id;
+      document.getElementById('ob-step2-sub').textContent  = meta.step2.sub[lang]  || meta.step2.sub.id;
+      document.getElementById('ob-step2-hint').textContent = meta.step2.hint[lang] || meta.step2.hint.id;
+      document.getElementById('ob-checks-ul').innerHTML    = meta.step2.checks.map(c => `<li>${c}</li>`).join('');
+
+      document.getElementById('ob-step2-xray').hidden         = (funnel !== 'xray');
+      document.getElementById('ob-step2-inbox').hidden        = (funnel !== 'inbox');
+      document.getElementById('ob-step2-postincident').hidden = (funnel !== 'postincident');
+
+      // Step 3
+      document.getElementById('ob-step3-h2').textContent  = meta.step3.h2[lang]  || meta.step3.h2.id;
+      document.getElementById('ob-step3-sub').textContent = meta.step3.sub[lang] || meta.step3.sub.id;
+      document.getElementById('ob-step3-cta').textContent = meta.step3.cta[lang] || meta.step3.cta.id;
+
+      document.getElementById('ob-xray-connect').hidden        = (funnel !== 'xray');
+      document.getElementById('ob-inbox-connect').hidden       = (funnel !== 'inbox');
+      document.getElementById('ob-postincident-upload').hidden = (funnel !== 'postincident');
+
+      // Step 4: ring colour class (CSS handles the actual colour via tokens)
+      const ringEl = document.getElementById('scan-ring');
+      if (ringEl) ringEl.className = 'ss-scan-ring ' + meta.scan.ringClass;
+
+      document.getElementById('scan-title').textContent      = meta.scan.title[lang]     || meta.scan.title.id;
+      document.getElementById('scan-eta').textContent        = meta.scan.eta[lang]       || meta.scan.eta.id;
+      document.getElementById('scan-done-title').textContent = meta.scan.doneTitle[lang] || meta.scan.doneTitle.id;
+
+      document.getElementById('scan-checklist').innerHTML = meta.scan.items.map(item =>
+        `<li class="ss-scan-item">${item[lang] || item.id}</li>`
+      ).join('');
+
+      // Step 4: what's next
+      document.getElementById('whats-next-steps').innerHTML = meta.whatsNext.map((step, i) => `
+        <div class="ss-whats-next__step${step.active ? ' ss-whats-next__step--active' : ''}">
+          <span class="ss-whats-next__num">${i + 1}</span>
+          <div>
+            <p class="ss-whats-next__title">${step.title[lang] || step.title.id}</p>
+            <p class="ss-whats-next__sub">${step.sub[lang] || step.sub.id}</p>
+          </div>
+        </div>`
+      ).join('');
+    }
+
+    function goStep(n) {
+      const TOTAL = 4;
+      for (let i = 1; i <= TOTAL; i++) {
+        const card = document.getElementById('wizard-step-' + i);
+        if (card) card.hidden = (i !== n);
+        const dot = document.getElementById('step-dot-' + i);
+        if (dot) {
+          dot.classList.toggle('ob-step--active', i === n);
+          dot.classList.toggle('ob-step--done',   i < n);
+          const circle = dot.querySelector('.ob-step__circle');
+          if (circle) circle.innerHTML = i < n ? '<i class="ti ti-check"></i>' : String(i);
+        }
+        if (i < TOTAL) {
+          const conn = document.getElementById('conn-' + i + '-' + (i + 1));
+          if (conn) conn.classList.toggle('ob-connector--done', i < n);
+        }
+      }
+      if (n === 4) runScanAnimation();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function runScanAnimation() {
-      const items = document.querySelectorAll('.ss-scan-item');
-      const arc = document.getElementById('scan-arc');
-      const pctEl = document.getElementById('scan-pct');
+      const items     = document.querySelectorAll('.ss-scan-item');
+      const arc       = document.getElementById('scan-arc');
+      const pctEl     = document.getElementById('scan-pct');
       const totalCirc = 213.6;
       let idx = 0;
       const interval = setInterval(() => {
@@ -464,7 +1030,7 @@
           clearInterval(interval);
           setTimeout(() => {
             document.getElementById('scan-ring').style.display = 'none';
-            document.getElementById('scan-done').hidden = false;
+            document.getElementById('scan-done').hidden  = false;
             document.getElementById('whats-next').hidden = false;
             const sess = JSON.parse(sessionStorage.getItem('ss-session') || '{}');
             sess.setupComplete = true;

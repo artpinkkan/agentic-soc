@@ -111,7 +111,7 @@
   <div class="ss-page">
     <!-- Free tier inference notice -->
     <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
-      <span>ℹ</span>
+      <i class="ti ti-info-circle"></i>
       <span data-en="Free tier uses shared inference pool (rate-limited). Upgrade to MDR for dedicated capacity and tenant-private GraphRAG context."
             data-id="Tier gratis menggunakan pool inferensi bersama (dibatasi). Upgrade ke MDR untuk kapasitas dedicated dan konteks GraphRAG privat per tenant.">
         Tier gratis menggunakan pool inferensi bersama (dibatasi). Upgrade ke MDR untuk kapasitas dedicated dan konteks GraphRAG privat per tenant.
@@ -171,7 +171,7 @@
         </div>
         <div class="ss-trace-row">
           <span class="ss-trace-label" data-en="Human review" data-id="Tinjauan manusia">Tinjauan manusia</span>
-          <span class="ss-trace-value" id="trace-hitl" style="color:var(--ss-warning);">⚠ Required</span>
+          <span class="ss-trace-value" id="trace-hitl" style="color:var(--ss-warning);"><i class="ti ti-alert-triangle"></i> Required</span>
         </div>
         <div class="ss-trace-row">
           <span class="ss-trace-label" data-en="Tenant" data-id="Tenant">Tenant</span>
@@ -194,22 +194,22 @@
             <tr>
               <td><span data-en="Input" data-id="Input">Input</span></td>
               <td data-en="Jailbreak / PII / scope" data-id="Jailbreak / PII / cakupan">Jailbreak / PII / cakupan</td>
-              <td class="ss-status-pass">✓ PASS</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> PASS</td>
             </tr>
             <tr>
               <td><span data-en="Retrieval" data-id="Retrieval">Retrieval</span></td>
               <td data-en="Untrusted-content tagging" data-id="Penandaan konten tidak tepercaya">Penandaan konten tidak tepercaya</td>
-              <td class="ss-status-pass">✓ PASS</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> PASS</td>
             </tr>
             <tr>
               <td><span data-en="Output" data-id="Output">Output</span></td>
               <td data-en="Dual-use filter / citation enforcement" data-id="Filter dual-use / penegakan kutipan">Filter dual-use / penegakan kutipan</td>
-              <td class="ss-status-pass">✓ PASS</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> PASS</td>
             </tr>
             <tr>
               <td><span data-en="Topical" data-id="Topikal">Topikal</span></td>
               <td data-en="Defensive-only scope check" data-id="Pemeriksaan cakupan hanya defensif">Pemeriksaan cakupan hanya defensif</td>
-              <td class="ss-status-pass">✓ PASS</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> PASS</td>
             </tr>
           </tbody>
         </table>
@@ -227,22 +227,22 @@
       <h3 data-en="Knowledge Sources Retrieved" data-id="Sumber Pengetahuan yang Diambil">Sumber Pengetahuan yang Diambil</h3>
       <div class="ss-kg-nodes" id="kg-nodes">
         <div class="ss-kg-node ss-kg-node--attck">
-          <span>🔗</span> MITRE ATT&CK T1110.001
+          <i class="ti ti-link"></i> MITRE ATT&CK T1110.001
         </div>
         <div class="ss-kg-node ss-kg-node--nvd">
-          <span>📋</span> NVD CVE-2023-38408
+          <i class="ti ti-clipboard"></i> NVD CVE-2023-38408
         </div>
         <div class="ss-kg-node ss-kg-node--kev">
-          <span>⚡</span> CISA KEV 2023-38408
+          <i class="ti ti-bolt"></i> CISA KEV 2023-38408
         </div>
         <div class="ss-kg-node ss-kg-node--sigma">
-          <span>📐</span> Sigma SSH Brute Force
+          <i class="ti ti-ruler-2"></i> Sigma SSH Brute Force
         </div>
         <div class="ss-kg-node ss-kg-node--epss">
-          <span>📊</span> EPSS 0.847
+          <i class="ti ti-chart-bar"></i> EPSS 0.847
         </div>
         <div class="ss-kg-node ss-kg-node--abuseipdb">
-          <span>🚨</span> AbuseIPDB ×3
+          <i class="ti ti-alert-circle"></i> AbuseIPDB ×3
         </div>
       </div>
     </div>
@@ -298,7 +298,7 @@
         routing: 'severity=HIGH → SLM primary',
         latency: '1,247 ms',
         confidence: '94%',
-        hitl: '⚠ Required',
+        hitl: '<i class="ti ti-alert-triangle"></i> Required',
         guardrails: [
           ['Input', 'Jailbreak / PII / scope', 'pass'],
           ['Retrieval', 'Untrusted-content tagging', 'pass'],
@@ -306,12 +306,12 @@
           ['Topical', 'Defensive-only scope check', 'pass'],
         ],
         nodes: [
-          ['attck', '🔗 MITRE ATT&CK T1110.001'],
-          ['nvd', '📋 NVD CVE-2023-38408'],
-          ['kev', '⚡ CISA KEV 2023-38408'],
-          ['sigma', '📐 Sigma SSH Brute Force'],
-          ['epss', '📊 EPSS 0.847'],
-          ['abuseipdb', '🚨 AbuseIPDB ×3'],
+          ['attck', '<i class="ti ti-link"></i> MITRE ATT&CK T1110.001'],
+          ['nvd', '<i class="ti ti-clipboard"></i> NVD CVE-2023-38408'],
+          ['kev', '<i class="ti ti-bolt"></i> CISA KEV 2023-38408'],
+          ['sigma', '<i class="ti ti-ruler-2"></i> Sigma SSH Brute Force'],
+          ['epss', '<i class="ti ti-chart-bar"></i> EPSS 0.847'],
+          ['abuseipdb', '<i class="ti ti-alert-circle"></i> AbuseIPDB ×3'],
         ]
       },
       '2': {
@@ -320,7 +320,7 @@
         routing: 'severity=HIGH → SLM primary',
         latency: '1,089 ms',
         confidence: '91%',
-        hitl: '⚠ Required',
+        hitl: '<i class="ti ti-alert-triangle"></i> Required',
         guardrails: [
           ['Input', 'Jailbreak / PII / scope', 'pass'],
           ['Retrieval', 'Untrusted-content tagging', 'pass'],
@@ -328,9 +328,9 @@
           ['Topical', 'Defensive-only scope check', 'pass'],
         ],
         nodes: [
-          ['attck', '🔗 MITRE ATT&CK T1110'],
-          ['sigma', '📐 Sigma SSH Brute Force'],
-          ['epss', '📊 EPSS 0.847'],
+          ['attck', '<i class="ti ti-link"></i> MITRE ATT&CK T1110'],
+          ['sigma', '<i class="ti ti-ruler-2"></i> Sigma SSH Brute Force'],
+          ['epss', '<i class="ti ti-chart-bar"></i> EPSS 0.847'],
         ]
       },
       '3': {
@@ -339,7 +339,7 @@
         routing: 'severity=LOW → SLM timeout → Claude fallback',
         latency: '2,341 ms',
         confidence: '97%',
-        hitl: '✓ Not required',
+        hitl: '<i class="ti ti-check"></i> Not required',
         guardrails: [
           ['Input', 'Jailbreak / PII / scope', 'pass'],
           ['Retrieval', 'Untrusted-content tagging', 'pass'],
@@ -347,9 +347,9 @@
           ['Topical', 'Defensive-only scope check', 'pass'],
         ],
         nodes: [
-          ['attck', '🔗 MITRE ATT&CK T1566'],
-          ['nvd', '📋 RFC 7489 DMARC'],
-          ['sigma', '📐 Sigma Email Security'],
+          ['attck', '<i class="ti ti-link"></i> MITRE ATT&CK T1566'],
+          ['nvd', '<i class="ti ti-clipboard"></i> RFC 7489 DMARC'],
+          ['sigma', '<i class="ti ti-ruler-2"></i> Sigma Email Security'],
         ]
       }
     };
@@ -363,8 +363,8 @@
       document.getElementById('trace-latency').textContent = r.latency;
       document.getElementById('trace-confidence').textContent = r.confidence;
       const hitlEl = document.getElementById('trace-hitl');
-      hitlEl.textContent = r.hitl;
-      hitlEl.style.color = r.hitl.includes('⚠') ? 'var(--ss-warning)' : 'var(--ss-success)';
+      hitlEl.innerHTML = r.hitl;
+      hitlEl.style.color = r.hitl.includes('Required') ? 'var(--ss-warning)' : 'var(--ss-success)';
 
       const lang = localStorage.getItem('ss-lang') || 'id';
       const tbody = document.getElementById('guardrail-body');
@@ -372,11 +372,11 @@
         <tr>
           <td>${layer}</td>
           <td>${check}</td>
-          <td class="${status === 'pass' ? 'ss-status-pass' : 'ss-status-flag'}">${status === 'pass' ? '✓ PASS' : '⚠ FLAG'}</td>
+          <td class="${status === 'pass' ? 'ss-status-pass' : 'ss-status-flag'}">${status === 'pass' ? '<i class="ti ti-check"></i> PASS' : '<i class="ti ti-alert-triangle"></i> FLAG'}</td>
         </tr>`).join('');
 
       document.getElementById('kg-nodes').innerHTML = r.nodes.map(([type, label]) =>
-        `<div class="ss-kg-node ss-kg-node--${type}"><span></span>${label}</div>`).join('');
+        `<div class="ss-kg-node ss-kg-node--${type}">${label}</div>`).join('');
     }
 
     document.addEventListener('DOMContentLoaded', () => {

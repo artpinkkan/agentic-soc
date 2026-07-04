@@ -48,6 +48,10 @@
     .ss-step-dot--active .ss-step-dot__label { color: var(--ss-neutral-900); font-weight: 500; }
     .ss-step-connector { flex: 1; height: 1.5px; background: var(--ss-border-md); margin: 0 8px 16px; }
     .ss-verify-intro { font-size: 14px; color: var(--ss-neutral-700); margin-bottom: var(--ss-gap-md); line-height: 1.5; }
+    .ss-funnel-context { display: flex; align-items: flex-start; gap: 10px; background: var(--ss-brand-light); border: 0.5px solid rgba(0,104,95,0.25); border-radius: var(--ss-radius-md); padding: 10px 14px; margin-bottom: var(--ss-gap-lg); }
+    .ss-funnel-context__icon { font-size: 20px; flex-shrink: 0; }
+    .ss-funnel-context__title { font-size: 13px; font-weight: 600; color: var(--ss-brand-dark); }
+    .ss-funnel-context__desc { font-size: 12px; color: var(--ss-on-surface-variant); }
   </style>
 </head>
 <body>
@@ -57,9 +61,9 @@
       <div class="ss-login-brand__inner">
         <p class="ss-login-brand__logo">Shannon Sentinel</p>
         <h1 class="ss-login-brand__headline"
-            data-en="AI-resilient security for Indonesian finance"
-            data-id="Keamanan berbasis AI untuk keuangan Indonesia">
-          Keamanan berbasis AI untuk keuangan Indonesia
+            data-en="Start with a free X-Ray. Find your real risks in 2 minutes."
+            data-id="Mulai dengan X-Ray gratis. Temukan risiko nyata Anda dalam 2 menit.">
+          Mulai dengan X-Ray gratis. Temukan risiko nyata Anda dalam 2 menit.
         </h1>
         <ul class="ss-login-brand__bullets">
           <li data-en="Free Cyber X-Ray — results in ~2 minutes"
@@ -74,10 +78,6 @@
               data-id="5–10 endpoint di Tier Gratis">
             5–10 endpoint di Tier Gratis
           </li>
-          <li data-en="OJK-ready compliance reporting"
-              data-id="Pelaporan kepatuhan siap OJK">
-            Pelaporan kepatuhan siap OJK
-          </li>
         </ul>
         <p class="ss-login-brand__tenant">sentinel.shannondynamics.id</p>
       </div>
@@ -86,6 +86,15 @@
     <!-- Form panel -->
     <div class="ss-login-form-panel">
       <div class="ss-login-card">
+
+        <!-- Funnel context banner -->
+        <div class="ss-funnel-context" id="funnel-context">
+          <span id="funnel-icon" class="ss-funnel-context__icon"><i class="ti ti-radar"></i></span>
+          <div>
+            <p id="funnel-title" class="ss-funnel-context__title">Mulai: Cyber X-Ray</p>
+            <p id="funnel-desc" class="ss-funnel-context__desc">Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.</p>
+          </div>
+        </div>
 
         <!-- Step indicator -->
         <div class="ss-step-indicator">
@@ -110,6 +119,14 @@
             </p>
           </div>
 
+          <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
+            <i class="ti ti-info-circle"></i>
+            <span data-en="Free tier includes: 5–10 endpoints, 3–7 day retention, 50 AI analyses/month. No credit card required."
+                  data-id="Tier gratis mencakup: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.">
+              Tier gratis mencakup: 5–10 endpoint, retensi 3–7 hari, 50 analisis AI/bulan. Tanpa kartu kredit.
+            </span>
+          </div>
+
           <div id="signup-error-1" class="ss-form-error" hidden>
             <span data-en="Please fill all required fields."
                   data-id="Mohon isi semua kolom yang wajib.">Mohon isi semua kolom yang wajib.</span>
@@ -117,7 +134,7 @@
 
           <div class="ss-form-group">
             <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan</label>
-            <input type="text" id="su-company" placeholder="PT Bank Contoh Tbk" oninput="updateSlug(this.value)">
+            <input type="text" id="su-company" placeholder="PT Contoh Corp" oninput="updateSlug(this.value)">
           </div>
 
           <div class="ss-slug-preview" id="slug-preview">
@@ -133,7 +150,7 @@
 
           <div class="ss-form-group">
             <label data-en="Work email" data-id="Email kerja">Email kerja</label>
-            <input type="email" id="su-email" placeholder="rudi@bankcontoh.co.id">
+            <input type="email" id="su-email" placeholder="anda@perusahaan.com">
           </div>
 
           <div class="ss-form-group">
@@ -145,17 +162,20 @@
             <label data-en="Industry" data-id="Industri">Industri</label>
             <select id="su-industry">
               <option value="" data-en="— Select industry —" data-id="— Pilih industri —">— Pilih industri —</option>
-              <option value="bank">Perbankan / Bank</option>
-              <option value="multifinance">Multifinance</option>
-              <option value="insurance" data-en="Insurance" data-id="Asuransi">Asuransi / Insurance</option>
               <option value="fintech">Fintech</option>
+              <option value="manufacturing" data-en="Manufacturing" data-id="Manufaktur">Manufaktur / Manufacturing</option>
+              <option value="retail" data-en="Retail" data-id="Ritel">Ritel / Retail</option>
+              <option value="healthcare" data-en="Healthcare" data-id="Kesehatan">Kesehatan / Healthcare</option>
+              <option value="logistics" data-en="Logistics" data-id="Logistik">Logistik / Logistics</option>
+              <option value="education" data-en="Education" data-id="Pendidikan">Pendidikan / Education</option>
+              <option value="gov" data-en="Government" data-id="Pemerintah">Pemerintah / Government</option>
               <option value="other" data-en="Other" data-id="Lainnya">Lainnya / Other</option>
             </select>
           </div>
 
           <div class="ss-form-group">
             <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
-            <input type="text" id="su-domain" placeholder="bankcontoh.co.id">
+            <input type="text" id="su-domain" placeholder="perusahaan.com">
             <p class="ss-form-hint" data-en="We'll verify ownership via a DNS TXT record." data-id="Kami akan verifikasi kepemilikan melalui DNS TXT record.">
               Kami akan verifikasi kepemilikan melalui DNS TXT record.
             </p>
@@ -180,7 +200,7 @@
                   data-id="Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan">
               Tambahkan TXT record ini ke DNS Anda untuk membuktikan kepemilikan
             </span>
-            <strong id="verify-domain-label">bankcontoh.co.id</strong>.
+            <strong id="verify-domain-label">perusahaan.com</strong>.
           </p>
 
           <div class="ss-dns-card">
@@ -190,7 +210,7 @@
             </div>
             <div class="ss-dns-row">
               <span class="ss-dns-field" data-en="Host / Name" data-id="Host / Nama">Host / Nama</span>
-              <code class="ss-dns-val" id="dns-host">_sentinel-verify.bankcontoh.co.id</code>
+              <code class="ss-dns-val" id="dns-host">_sentinel-verify.perusahaan.com</code>
               <button class="ss-copy-btn" onclick="copyText('dns-host')" data-en="Copy" data-id="Salin">Salin</button>
             </div>
             <div class="ss-dns-row">
@@ -230,7 +250,7 @@
 
           <div id="verify-success" hidden>
             <div class="ss-verify-result ss-verify-result--success">
-              <span class="ss-verify-icon">✓</span>
+              <span class="ss-verify-icon"><i class="ti ti-check"></i></span>
               <div>
                 <p class="ss-verify-result__title" data-en="Domain verified!" data-id="Domain terverifikasi!">Domain terverifikasi!</p>
                 <p class="ss-verify-result__sub" data-en="Your account is ready." data-id="Akun Anda siap.">Akun Anda siap.</p>
@@ -269,6 +289,38 @@
 
   <script src="/agentic-soc/shared.js"></script>
   <script>
+    const params = new URLSearchParams(window.location.search);
+    const FUNNEL = params.get('funnel') || 'xray';
+
+    const FUNNEL_CONTENT = {
+      xray: {
+        icon: '<i class="ti ti-radar"></i>',
+        title: { en: 'Start: Cyber X-Ray', id: 'Mulai: Cyber X-Ray' },
+        desc:  { en: 'Check your domain, email security, exposed systems & endpoints. ~2 minutes.', id: 'Periksa domain, keamanan email, sistem terekspos & endpoint. ~2 menit.' }
+      },
+      inbox: {
+        icon: '<i class="ti ti-mail-check"></i>',
+        title: { en: 'Start: Inbox & Identity Guard', id: 'Mulai: Inbox & Identity Guard' },
+        desc:  { en: 'Detect phishing, invoice fraud, BEC and suspicious logins. For finance & ops teams.', id: 'Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Untuk tim keuangan & operasional.' }
+      },
+      postincident: {
+        icon: '<i class="ti ti-alert-circle"></i>',
+        title: { en: 'Start: Post-Incident Triage', id: 'Mulai: Triase Pasca-Insiden' },
+        desc:  { en: 'Already hacked or suspect a breach? Upload logs and get an AI-assisted triage now.', id: 'Sudah diretas atau curiga ada insiden? Upload log dan dapatkan triase AI sekarang.' }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const fc = FUNNEL_CONTENT[FUNNEL] || FUNNEL_CONTENT.xray;
+      const iconEl  = document.getElementById('funnel-icon');
+      const titleEl = document.getElementById('funnel-title');
+      const descEl  = document.getElementById('funnel-desc');
+      if (iconEl)  iconEl.innerHTML  = fc.icon;
+      if (titleEl) titleEl.textContent = fc.title[lang] || fc.title.id;
+      if (descEl)  descEl.textContent  = fc.desc[lang]  || fc.desc.id;
+    });
+
     let signupData = {};
 
     function updateSlug(companyName) {
@@ -343,7 +395,7 @@
         company: signupData.company, slug: signupData.slug,
         domain: signupData.domain, industry: signupData.industry,
         domainVerified: signupData.domainVerified || false,
-        tier: 'free', state: 'free_active', setupComplete: false
+        tier: 'free', state: 'free_active', funnel: FUNNEL, setupComplete: false
       };
       sessionStorage.setItem('ss-session', JSON.stringify(session));
       window.location.href = '/agentic-soc/onboarding/';
