@@ -8,67 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="/agentic-soc/shared.css">
-  <style>
-    body { display: flex; align-items: stretch; min-height: 100vh; padding: 0; background: var(--ss-surface); }
-
-    /* ── Tier ladder ── */
-    .ss-login-brand__ladder  { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--ss-gap-lg); }
-    .ss-ladder-step          { display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: 0.75; }
-    .ss-ladder-step--active  { opacity: 1; font-weight: 600; }
-    .ss-ladder-step__dot     { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.45); flex-shrink: 0; }
-    .ss-ladder-step--active .ss-ladder-step__dot { background: #fff; }
-
-    /* ── Platform direction footnote ── */
-    .ss-login-brand__platform-note {
-      font-size: 12px; opacity: 0.7; line-height: 1.4;
-      padding-top: 10px; margin-top: 4px;
-      border-top: 0.5px solid rgba(255,255,255,0.2);
-    }
-
-    /* ── Brand panel bullets use → ── */
-    .ss-login-brand__bullets li::before { content: '→'; }
-
-    /* ── Form elements ── */
-    .ss-form-group { margin-bottom: var(--ss-gap-md); display: flex; flex-direction: column; gap: 6px; }
-    .ss-form-group label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface-variant); }
-    .ss-form-group input {
-      width: 100%; padding: 9px 12px;
-      border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm);
-      font-size: 14px; font-family: var(--ss-font); transition: border-color 0.15s;
-      background: var(--ss-surface-container-lowest); color: var(--ss-on-surface);
-    }
-    .ss-form-group input:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 3px rgba(0,104,95,0.12); }
-    .ss-form-forgot { font-size: 12px; color: var(--ss-neutral-500); align-self: flex-end; }
-    .ss-form-error  { background: var(--ss-danger-light); border: 0.5px solid var(--ss-danger); color: var(--ss-danger); font-size: 13px; padding: 9px 12px; border-radius: var(--ss-radius-sm); margin-bottom: var(--ss-gap-md); }
-
-    /* ── Login divider ── */
-    .ss-login-divider { display: flex; align-items: center; gap: 10px; margin: var(--ss-gap-lg) 0 var(--ss-gap-md); font-size: 12px; color: var(--ss-neutral-500); }
-    .ss-login-divider::before, .ss-login-divider::after { content: ''; flex: 1; height: 1px; background: var(--ss-border-md); }
-
-    /* ── Funnel cards ── */
-    .ss-funnel-cards { display: flex; flex-direction: column; gap: 8px; }
-    .ss-funnel-card {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px; border: 0.5px solid var(--ss-border-md);
-      border-radius: var(--ss-radius-md); text-decoration: none;
-      color: var(--ss-on-surface); background: var(--ss-surface-container-lowest);
-      transition: border-color 0.15s, box-shadow 0.15s; position: relative;
-    }
-    .ss-funnel-card:hover { border-color: var(--ss-brand); box-shadow: var(--ss-shadow-card); text-decoration: none; }
-    .ss-funnel-card--primary { border-color: var(--ss-brand); background: var(--ss-brand-light); }
-    .ss-funnel-card__icon  { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-    .ss-funnel-card__title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-    .ss-funnel-card__desc  { font-size: 12px; color: var(--ss-neutral-500); line-height: 1.4; }
-    .ss-funnel-card__badge {
-      position: absolute; top: -7px; right: 10px;
-      background: var(--ss-brand); color: #fff;
-      font-size: 10px; font-weight: 600;
-      padding: 2px 8px; border-radius: 100px;
-    }
-
-    /* ── Demo hint ── */
-    .ss-login-demo-hint { margin-top: 12px; font-size: 12px; color: var(--ss-neutral-500); text-align: center; }
-  </style>
   <script>
     (function() {
       const sess = sessionStorage.getItem('ss-session');
@@ -79,73 +18,182 @@
       document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     })();
   </script>
+  <style>
+    body { display: block !important; min-height: 100vh; background: var(--ss-surface); }
+
+    /* ── Page wrapper ───────────────────────── */
+    .lg-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── Outer card ──────────────────────────── */
+    .lg-outer {
+      width: 100%; max-width: 900px;
+      display: flex; border-radius: 24px; overflow: hidden;
+      box-shadow: 0 24px 80px rgba(25,28,30,0.14), 0 4px 20px rgba(25,28,30,0.07);
+      min-height: 540px;
+    }
+
+    /* ── Left: form panel ───────────────────── */
+    .lg-left {
+      flex: 1; min-width: 0;
+      background: #fff;
+      display: flex; flex-direction: column;
+      padding: 32px 40px 32px;
+    }
+
+    /* Brand link row at top */
+    .lg-top {
+      margin-bottom: 44px;
+    }
+    .lg-brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
+      color: var(--ss-brand); text-decoration: none !important;
+    }
+    .lg-brand i { font-size: 20px; }
+
+    /* Form body */
+    .lg-form-body { flex: 1; }
+    .lg-heading {
+      font-family: var(--ss-font-headline); font-size: 26px; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--ss-on-surface);
+      margin-bottom: 6px; line-height: 1.2;
+    }
+    .lg-subheading {
+      font-size: 14px; color: var(--ss-neutral-500); margin-bottom: 32px; line-height: 1.5;
+    }
+    .lg-subheading a { color: var(--ss-brand); font-weight: 600; }
+
+    .ss-form-group { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .ss-form-group label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface-variant); }
+    .ss-form-group input {
+      width: 100%; padding: 10px 13px;
+      border: 1px solid var(--ss-outline-variant); border-radius: var(--ss-radius-sm);
+      font-size: 14px; font-family: var(--ss-font);
+      background: var(--ss-surface-container-lowest); color: var(--ss-on-surface);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .ss-form-group input:focus {
+      outline: none; border-color: var(--ss-brand);
+      box-shadow: 0 0 0 3px rgba(0,104,95,0.10);
+    }
+    .lg-forgot {
+      font-size: 12px; color: var(--ss-neutral-500); align-self: flex-end;
+      text-decoration: none;
+    }
+    .lg-forgot:hover { color: var(--ss-brand); }
+
+    .ss-form-error {
+      background: var(--ss-danger-light); border-left: 3px solid var(--ss-danger);
+      color: var(--ss-danger); font-size: 13px;
+      padding: 9px 12px; border-radius: var(--ss-radius-sm); margin-bottom: 16px;
+    }
+
+    .lg-cta { margin-top: 8px; }
+    .lg-demo-hint {
+      text-align: center; font-size: 12px; color: var(--ss-neutral-500);
+      margin-top: 14px; line-height: 1.5;
+    }
+    .lg-demo-hint i { font-size: 12px; vertical-align: -1px; }
+
+    /* Language toggle */
+    .lg-lang-row { display: flex; justify-content: flex-end; margin-top: 24px; }
+
+    /* ── Right: brand panel ─────────────────── */
+    .lg-right {
+      width: 42%; flex-shrink: 0;
+      background: #003d38;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 36px;
+      position: relative; overflow: hidden;
+    }
+    @media (max-width: 680px) { .lg-right { display: none; } }
+
+    /* Watermark */
+    .lg-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      font-size: 320px; line-height: 1;
+      color: rgba(255,255,255,0.055);
+      pointer-events: none; user-select: none;
+    }
+
+    /* Brand label */
+    .lg-right-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--ss-font-headline); font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.6); text-decoration: none !important;
+      position: relative; z-index: 1;
+    }
+    .lg-right-brand i { font-size: 20px; color: rgba(255,255,255,0.5); }
+
+    /* Value props block */
+    .lg-right-body {
+      position: relative; z-index: 1;
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      padding: 20px 0;
+    }
+    .lg-right-headline {
+      font-family: var(--ss-font-headline); font-size: 20px; font-weight: 700;
+      color: #fff; letter-spacing: -0.02em; line-height: 1.35;
+      margin-bottom: 20px;
+    }
+    .lg-right-questions { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .lg-right-questions li {
+      font-size: 13px; color: rgba(255,255,255,0.75);
+      display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
+    }
+    .lg-right-questions li i { font-size: 15px; color: rgba(255,255,255,0.4); flex-shrink: 0; margin-top: 1px; }
+
+    /* Tier ladder */
+    .lg-right-ladder {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 18px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .lg-tier {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.5);
+    }
+    .lg-tier--active { color: rgba(255,255,255,0.9); font-weight: 600; }
+    .lg-tier__dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.25); flex-shrink: 0;
+    }
+    .lg-tier--active .lg-tier__dot { background: rgba(255,255,255,0.85); }
+  </style>
 </head>
 <body>
-  <div class="ss-login-split">
 
-    <!-- ── Left brand panel ── -->
-    <div class="ss-login-brand">
-      <div class="ss-login-brand__inner">
-        <p class="ss-login-brand__logo">Shannon Sentinel</p>
-        <h1 class="ss-login-brand__headline"
-            data-en="Find out your real cyber risk in 2 minutes."
-            data-id="Ketahui risiko siber nyata Anda dalam 2 menit.">
-          Ketahui risiko siber nyata Anda dalam 2 menit.
-        </h1>
+<div class="lg-page">
+  <div class="lg-outer">
 
-        <ul class="ss-login-brand__bullets">
-          <li data-en="Can attackers send fake emails as your company?"
-              data-id="Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?">
-            Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?
-          </li>
-          <li data-en="Are any of your systems visible from the internet?"
-              data-id="Apakah ada sistem Anda yang terlihat dari internet?">
-            Apakah ada sistem Anda yang terlihat dari internet?
-          </li>
-          <li data-en="If you got hacked today, do you have enough proof to investigate?"
-              data-id="Jika Anda diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?">
-            Jika Anda diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?
-          </li>
-        </ul>
+    <!-- ── Left: form ───────────────────────── -->
+    <div class="lg-left">
 
-        <div class="ss-login-brand__ladder">
-          <div class="ss-ladder-step ss-ladder-step--active">
-            <span class="ss-ladder-step__dot"></span>
-            <span data-en="Free — Cyber X-Ray" data-id="Gratis — Cyber X-Ray">Gratis — Cyber X-Ray</span>
-          </div>
-          <div class="ss-ladder-step">
-            <span class="ss-ladder-step__dot"></span>
-            <span data-en="Sprint — 30-day fix" data-id="Sprint — Perbaikan 30 hari">Sprint — Perbaikan 30 hari</span>
-          </div>
-          <div class="ss-ladder-step">
-            <span class="ss-ladder-step__dot"></span>
-            <span data-en="MDR — Always monitored" data-id="MDR — Selalu dimonitor">MDR — Selalu dimonitor</span>
-          </div>
-        </div>
-
-        <p class="ss-login-brand__platform-note"
-           data-en="Where we're headed: prevention + per-action AI governance, one platform."
-           data-id="Arah ke depan: pencegahan + tata kelola AI per tindakan, satu platform.">
-          Arah ke depan: pencegahan + tata kelola AI per tindakan, satu platform.
-        </p>
-
-        <p class="ss-login-brand__tenant">sentinel.shannondynamics.id</p>
+      <!-- Brand at top -->
+      <div class="lg-top">
+        <a href="/agentic-soc/" class="lg-brand">
+          <i class="ti ti-shield"></i>
+          Shannon Sentinel
+        </a>
       </div>
-    </div>
 
-    <!-- ── Right form panel ── -->
-    <div class="ss-login-form-panel">
-      <div class="ss-login-card">
+      <!-- Form body -->
+      <div class="lg-form-body">
 
-        <div class="ss-login-card__header">
-          <h2 data-en="Sign in to your account"
-              data-id="Masuk ke akun Anda">Masuk ke akun Anda</h2>
-          <p class="ss-login-card__sub">
-            <span data-en="Don't have an account?" data-id="Belum punya akun?">Belum punya akun?</span>
-            <a href="/agentic-soc/signup/"
-               data-en="Sign up free" data-id="Daftar gratis">Daftar gratis</a>
-          </p>
-        </div>
+        <h1 class="lg-heading"
+            data-en="Sign in to your account" data-id="Masuk ke akun Anda">
+          Masuk ke akun Anda
+        </h1>
+        <p class="lg-subheading">
+          <span data-en="Don't have an account?" data-id="Belum punya akun?">Belum punya akun?</span>
+          <a href="/agentic-soc/signup/" data-en="Sign up free" data-id="Daftar gratis">Daftar gratis</a>
+        </p>
 
         <div id="login-error" class="ss-form-error" hidden>
           <span data-en="Email and password are required."
@@ -160,53 +208,121 @@
         <div class="ss-form-group">
           <label for="login-password" data-en="Password" data-id="Kata sandi">Kata sandi</label>
           <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••">
-          <a href="#" class="ss-form-forgot"
+          <a href="#" class="lg-forgot"
              data-en="Forgot password?" data-id="Lupa kata sandi?">Lupa kata sandi?</a>
         </div>
 
-        <button class="ss-btn-primary ss-btn-full" onclick="handleLogin()"
-                data-en="Sign in" data-id="Masuk">Masuk</button>
+        <div class="lg-cta">
+          <button class="ss-btn-primary ss-btn-full" onclick="handleLogin()"
+                  data-en="Sign in" data-id="Masuk">Masuk</button>
+        </div>
 
-        <p class="ss-login-demo-hint">
+        <p class="lg-demo-hint">
+          <i class="ti ti-info-circle"></i>
           <span data-en="Demo: enter any email + password to sign in."
                 data-id="Demo: masukkan email + kata sandi apa pun untuk masuk.">
             Demo: masukkan email + kata sandi apa pun untuk masuk.
           </span>
         </p>
 
-      </div>
+      </div><!-- /lg-form-body -->
 
-      <div class="ss-login-lang">
+      <!-- Language toggle -->
+      <div class="lg-lang-row">
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
       </div>
-    </div>
 
-  </div>
+    </div><!-- /lg-left -->
 
-  <script src="/agentic-soc/shared.js"></script>
-  <script>
-    function handleLogin() {
-      const email    = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      const errEl    = document.getElementById('login-error');
+    <!-- ── Right: brand panel ──────────────── -->
+    <div class="lg-right">
 
-      if (!email || !password) { errEl.hidden = false; return; }
-      errEl.hidden = true;
+      <!-- Watermark -->
+      <i class="ti ti-shield lg-watermark" aria-hidden="true"></i>
 
-      const name    = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const domain  = email.includes('@') ? email.split('@')[1] : 'company';
-      const company = domain.split('.')[0];
-      const slug    = company.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      <!-- Brand label -->
+      <a href="/agentic-soc/" class="lg-right-brand">
+        <i class="ti ti-shield"></i>
+        Shannon Sentinel
+      </a>
 
-      sessionStorage.setItem('ss-session', JSON.stringify({
-        email, name,
-        company: company.charAt(0).toUpperCase() + company.slice(1),
-        slug, tier: 'free', state: 'free_active', funnel: 'xray', setupComplete: false
-      }));
-      window.location.href = '/agentic-soc/onboarding/';
-    }
+      <!-- Value props -->
+      <div class="lg-right-body">
+        <p class="lg-right-headline"
+           data-en="Know your real cyber risk in 2 minutes."
+           data-id="Ketahui risiko siber nyata Anda dalam 2 menit.">
+          Ketahui risiko siber nyata Anda dalam 2 menit.
+        </p>
+        <ul class="lg-right-questions">
+          <li>
+            <i class="ti ti-arrow-right"></i>
+            <span data-en="Can attackers send fake emails as your company?"
+                  data-id="Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?">
+              Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?
+            </span>
+          </li>
+          <li>
+            <i class="ti ti-arrow-right"></i>
+            <span data-en="Are any of your systems visible from the internet?"
+                  data-id="Apakah ada sistem Anda yang terlihat dari internet?">
+              Apakah ada sistem Anda yang terlihat dari internet?
+            </span>
+          </li>
+          <li>
+            <i class="ti ti-arrow-right"></i>
+            <span data-en="If you got hacked today, do you have enough evidence to investigate?"
+                  data-id="Jika diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?">
+              Jika diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?
+            </span>
+          </li>
+        </ul>
+      </div>
 
-    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-  </script>
+      <!-- Tier ladder -->
+      <div class="lg-right-ladder">
+        <div class="lg-tier lg-tier--active">
+          <span class="lg-tier__dot"></span>
+          <span data-en="Free — Cyber X-Ray" data-id="Gratis — Cyber X-Ray">Gratis — Cyber X-Ray</span>
+        </div>
+        <div class="lg-tier">
+          <span class="lg-tier__dot"></span>
+          <span data-en="Sprint — 30-day fix" data-id="Sprint — Perbaikan 30 hari">Sprint — Perbaikan 30 hari</span>
+        </div>
+        <div class="lg-tier">
+          <span class="lg-tier__dot"></span>
+          <span data-en="MDR — Always monitored" data-id="MDR — Selalu dimonitor">MDR — Selalu dimonitor</span>
+        </div>
+      </div>
+
+    </div><!-- /lg-right -->
+
+  </div><!-- /lg-outer -->
+</div><!-- /lg-page -->
+
+<script src="/agentic-soc/shared.js"></script>
+<script>
+  function handleLogin() {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl    = document.getElementById('login-error');
+
+    if (!email || !password) { errEl.hidden = false; return; }
+    errEl.hidden = true;
+
+    const name    = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const domain  = email.includes('@') ? email.split('@')[1] : 'company';
+    const company = domain.split('.')[0];
+    const slug    = company.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+    sessionStorage.setItem('ss-session', JSON.stringify({
+      email, name,
+      company: company.charAt(0).toUpperCase() + company.slice(1),
+      slug, tier: 'free', state: 'free_active', funnel: 'xray', setupComplete: false
+    }));
+    window.location.href = '/agentic-soc/onboarding/';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+</script>
 </body>
 </html>
