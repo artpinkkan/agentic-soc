@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harga — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
+  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+  </script>
+  <style>
+    body.pricing-page { display: block; min-height: 100vh; background: var(--ss-surface); }
+    .ss-pricing-header { display: flex; align-items: center; gap: var(--ss-gap-lg); padding: var(--ss-gap-md) var(--ss-gap-xl); border-bottom: 0.5px solid var(--ss-border); background: var(--ss-surface-container-lowest); position: sticky; top: 0; z-index: 10; }
+    .ss-pricing-header__logo { font-weight: 600; font-size: 15px; color: var(--ss-brand); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .ss-pricing-header__back { font-size: 13px; color: var(--ss-neutral-500); margin-left: auto; text-decoration: none; }
+    .ss-pricing-header__back:hover { color: var(--ss-on-surface); }
+    .ss-pricing-hero { text-align: center; padding: var(--ss-gap-xl) var(--ss-gap-xl) var(--ss-gap-lg); max-width: 640px; margin: 0 auto; }
+    .ss-pricing-hero__eyebrow { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: 10px; }
+    .ss-pricing-hero__h1 { font-family: var(--ss-font-headline); font-size: 28px; font-weight: 700; line-height: 1.25; margin-bottom: 12px; }
+    .ss-pricing-hero__sub { font-size: 15px; color: var(--ss-neutral-500); }
+    .ss-pricing-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ss-gap-md); padding: 0 var(--ss-gap-xl) var(--ss-gap-xl); max-width: 1100px; margin: 0 auto; }
+    .ss-pricing-card { background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg); display: flex; flex-direction: column; gap: var(--ss-gap-md); box-shadow: var(--ss-shadow-card); }
+    .ss-pricing-card--featured { border-color: var(--ss-brand); box-shadow: 0 0 0 2px var(--ss-brand-light), var(--ss-shadow-float); }
+    .ss-pricing-card__tier { display: flex; align-items: center; gap: 8px; }
+    .ss-pricing-card__popular { font-size: 11px; color: var(--ss-brand); font-weight: 500; }
+    .ss-pricing-card__name { font-size: 18px; font-weight: 600; }
+    .ss-pricing-card__price { font-size: 15px; font-weight: 600; color: var(--ss-brand-dark); }
+    .ss-pricing-card__tagline { font-size: 13px; color: var(--ss-neutral-500); line-height: 1.4; }
+    .ss-pricing-card__features { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .ss-pricing-card__features li { font-size: 13px; padding-left: 18px; position: relative; line-height: 1.4; }
+    .ss-pricing-card__features li::before { content: '✓'; color: var(--ss-brand); position: absolute; left: 0; font-size: 12px; }
+    .ss-pricing-compare { max-width: 1100px; margin: 0 auto var(--ss-gap-xl); padding: 0 var(--ss-gap-xl); }
+    .ss-pricing-compare__toggle { background: none; border: none; color: var(--ss-brand); font-size: 14px; font-weight: 500; cursor: pointer; padding: 8px 0; }
+    .ss-compare-table { width: 100%; border-collapse: collapse; margin-top: var(--ss-gap-md); font-size: 13px; }
+    .ss-compare-table th, .ss-compare-table td { padding: 8px 12px; border: 0.5px solid var(--ss-border); text-align: left; }
+    .ss-compare-table thead { background: var(--ss-surface-container-low); font-weight: 500; }
+    .ss-pricing-faq { max-width: 720px; margin: 0 auto var(--ss-gap-xl); padding: 0 var(--ss-gap-xl); }
+    .ss-pricing-faq h2 { font-size: 18px; font-weight: 600; margin-bottom: var(--ss-gap-md); }
+    .ss-pricing-platform { max-width: 900px; margin: 0 auto var(--ss-gap-xl); padding: var(--ss-gap-xl); text-align: center; }
+    .ss-pricing-platform__eyebrow { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--ss-neutral-500); margin-bottom: 10px; }
+    .ss-pricing-platform__h2 { font-family: var(--ss-font-headline); font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+    .ss-pricing-platform__sub { font-size: 14px; color: var(--ss-neutral-500); max-width: 620px; margin: 0 auto var(--ss-gap-xl); line-height: 1.5; }
+    .ss-pricing-platform__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ss-gap-md); text-align: left; margin-bottom: var(--ss-gap-lg); }
+    .ss-pricing-platform__card { background: var(--ss-surface-container-low); border: 1px dashed var(--ss-border-md); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg); }
+    .ss-pricing-platform__icon { font-size: 22px; display: block; margin-bottom: 10px; opacity: 0.75; }
+    .ss-pricing-platform__card h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+    .ss-pricing-platform__card p { font-size: 12px; color: var(--ss-neutral-500); line-height: 1.5; }
+    .ss-pricing-platform__footnote { font-size: 12px; color: var(--ss-neutral-500); font-style: italic; margin-bottom: var(--ss-gap-md); }
+    .ss-pricing-platform__contact { font-size: 13px; font-weight: 500; }
+    .ss-faq-item { border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-md); padding: var(--ss-gap-md); margin-bottom: 8px; }
+    .ss-faq-item summary { font-size: 14px; font-weight: 500; cursor: pointer; }
+    .ss-faq-item p { font-size: 13px; color: var(--ss-neutral-500); margin-top: 10px; line-height: 1.5; }
+    .ss-pricing-bottom-cta { text-align: center; padding: var(--ss-gap-xl); background: var(--ss-brand-light); border-top: 0.5px solid rgba(0,104,95,0.15); }
+    .ss-pricing-bottom-cta h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .ss-pricing-bottom-cta p { font-size: 15px; color: var(--ss-neutral-500); }
+    .badge-mdr { background: #EDE9FF; color: #4C1D95; border-color: rgba(76,29,149,0.25); }
+  </style>
+</head>
+<body class="pricing-page">
+
+  <header class="ss-pricing-header">
+    <a href="/agentic-soc/dashboard/" class="ss-pricing-header__logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+      Shannon Sentinel
+    </a>
+    <a href="/agentic-soc/dashboard/" class="ss-pricing-header__back" data-en="← Back to dashboard" data-id="← Kembali ke dasbor">← Kembali ke dasbor</a>
+    <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
+  </header>
+
+  <section class="ss-pricing-hero">
+    <p class="ss-pricing-hero__eyebrow" data-en="It's okay if you're not ready for full MDR yet." data-id="Tidak apa-apa jika Anda belum siap MDR penuh.">Tidak apa-apa jika Anda belum siap MDR penuh.</p>
+    <h1 class="ss-pricing-hero__h1" data-en="Start with a free X-Ray. Fix what's red. Then stay monitored." data-id="Mulai dengan X-Ray gratis. Perbaiki yang merah. Lalu tetap dimonitor.">Mulai dengan X-Ray gratis. Perbaiki yang merah. Lalu tetap dimonitor.</h1>
+    <p class="ss-pricing-hero__sub" data-en="Three steps, zero commitment at each stage until you're ready." data-id="Tiga langkah, tanpa komitmen di setiap tahap sampai Anda siap.">Tiga langkah, tanpa komitmen di setiap tahap sampai Anda siap.</p>
+  </section>
+
+  <section class="ss-pricing-cards">
+
+    <div class="ss-pricing-card">
+      <div class="ss-pricing-card__tier"><span class="badge badge-free" data-en="Free" data-id="Gratis">Gratis</span></div>
+      <h2 class="ss-pricing-card__name" data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</h2>
+      <p class="ss-pricing-card__price" data-en="Free — forever" data-id="Gratis — selamanya">Gratis — selamanya</p>
+      <p class="ss-pricing-card__tagline" data-en="Find out where your risks are. No credit card." data-id="Cari tahu di mana risiko Anda. Tanpa kartu kredit.">Cari tahu di mana risiko Anda. Tanpa kartu kredit.</p>
+      <ul class="ss-pricing-card__features">
+        <li data-en="5–10 endpoints (Wazuh agent)" data-id="5–10 endpoint (Wazuh agent)">5–10 endpoint (Wazuh agent)</li>
+        <li data-en="Domain &amp; email security check" data-id="Pemeriksaan domain &amp; keamanan email">Pemeriksaan domain &amp; keamanan email</li>
+        <li data-en="3–7 day log retention" data-id="Retensi log 3–7 hari">Retensi log 3–7 hari</li>
+        <li data-en="50 AI analyses / month" data-id="50 analisis AI / bulan">50 analisis AI / bulan</li>
+        <li data-en="10–25 phishing email submissions / month" data-id="10–25 submisi email phishing / bulan">10–25 submisi email phishing / bulan</li>
+        <li data-en="Watermarked report preview" data-id="Pratinjau laporan bertanda air">Pratinjau laporan bertanda air</li>
+        <li data-en="Self-service only (no human analyst)" data-id="Mandiri saja (tanpa analis manusia)">Mandiri saja (tanpa analis manusia)</li>
+      </ul>
+      <a href="/agentic-soc/signup/" class="ss-btn-secondary ss-btn-full" data-en="Start free →" data-id="Mulai gratis →">Mulai gratis →</a>
+    </div>
+
+    <div class="ss-pricing-card ss-pricing-card--featured">
+      <div class="ss-pricing-card__tier">
+        <span class="badge badge-sprint">Sprint</span>
+        <span class="ss-pricing-card__popular" data-en="Most common first step" data-id="Langkah pertama paling umum">Langkah pertama paling umum</span>
+      </div>
+      <h2 class="ss-pricing-card__name" data-en="30-Day Clean-Up Sprint" data-id="Sprint Perbaikan 30 Hari">Sprint Perbaikan 30 Hari</h2>
+      <p class="ss-pricing-card__price" data-en="Rp 35–75 jt · one-time" data-id="Rp 35–75 jt · satu kali">Rp 35–75 jt · satu kali</p>
+      <p class="ss-pricing-card__tagline" data-en="Our team fixes your red findings in 30 days." data-id="Tim kami memperbaiki temuan merah Anda dalam 30 hari.">Tim kami memperbaiki temuan merah Anda dalam 30 hari.</p>
+      <ul class="ss-pricing-card__features">
+        <li data-en="Everything in Free" data-id="Semua yang ada di Gratis">Semua yang ada di Gratis</li>
+        <li data-en="Email security hardening (DMARC, DKIM, SPF)" data-id="Penguatan keamanan email (DMARC, DKIM, SPF)">Penguatan keamanan email (DMARC, DKIM, SPF)</li>
+        <li data-en="MFA hygiene on critical accounts" data-id="Kebersihan MFA pada akun kritis">Kebersihan MFA pada akun kritis</li>
+        <li data-en="Exposed service review &amp; closure" data-id="Tinjauan &amp; penutupan layanan terekspos">Tinjauan &amp; penutupan layanan terekspos</li>
+        <li data-en="Endpoint baseline hardening" data-id="Penguatan baseline endpoint">Penguatan baseline endpoint</li>
+        <li data-en="Human analyst validation of red findings" data-id="Validasi analis manusia pada temuan merah">Validasi analis manusia pada temuan merah</li>
+        <li data-en="Executive before/after report (clean, no watermark)" data-id="Laporan eksekutif sebelum/sesudah (bersih, tanpa tanda air)">Laporan eksekutif sebelum/sesudah (bersih, tanpa tanda air)</li>
+        <li data-en="MDR conversion offer at end of sprint" data-id="Penawaran konversi MDR di akhir sprint">Penawaran konversi MDR di akhir sprint</li>
+      </ul>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary ss-btn-full" data-en="Talk to us →" data-id="Hubungi kami →">Hubungi kami →</a>
+    </div>
+
+    <div class="ss-pricing-card">
+      <div class="ss-pricing-card__tier"><span class="badge badge-mdr">MDR</span></div>
+      <h2 class="ss-pricing-card__name" data-en="Core MDR" data-id="MDR Inti">MDR Inti</h2>
+      <p class="ss-pricing-card__price" data-en="From Rp 25–60 jt / month" data-id="Mulai Rp 25–60 jt / bulan">Mulai Rp 25–60 jt / bulan</p>
+      <p class="ss-pricing-card__tagline" data-en="Always-on monitoring so you're never blind again." data-id="Pemantauan selalu aktif agar Anda tidak pernah buta lagi.">Pemantauan selalu aktif agar Anda tidak pernah buta lagi.</p>
+      <ul class="ss-pricing-card__features">
+        <li data-en="Everything in Sprint" data-id="Semua yang ada di Sprint">Semua yang ada di Sprint</li>
+        <li data-en="24/7 detection &amp; alert triage" data-id="Deteksi &amp; triase alert 24/7">Deteksi &amp; triase alert 24/7</li>
+        <li data-en="30-day log retention" data-id="Retensi log 30 hari">Retensi log 30 hari</li>
+        <li data-en="Unlimited AI analyses" data-id="Analisis AI tak terbatas">Analisis AI tak terbatas</li>
+        <li data-en="Basic incident response workflow" data-id="Alur respons insiden dasar">Alur respons insiden dasar</li>
+        <li data-en="Monthly executive report (clean PDF)" data-id="Laporan eksekutif bulanan (PDF bersih)">Laporan eksekutif bulanan (PDF bersih)</li>
+        <li data-en="Response SLA: 4h critical" data-id="SLA respons: 4 jam kritis">SLA respons: 4 jam kritis</li>
+      </ul>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-secondary ss-btn-full" data-en="Talk to us →" data-id="Hubungi kami →">Hubungi kami →</a>
+    </div>
+
+    <div class="ss-pricing-card">
+      <div class="ss-pricing-card__tier"><span class="badge badge-mdr">MDR AI</span></div>
+      <h2 class="ss-pricing-card__name" data-en="AI-Aware MDR" data-id="MDR Berbasis AI">MDR Berbasis AI</h2>
+      <p class="ss-pricing-card__price" data-en="From Rp 60–150 jt / month" data-id="Mulai Rp 60–150 jt / bulan">Mulai Rp 60–150 jt / bulan</p>
+      <p class="ss-pricing-card__tagline" data-en="For phishing-heavy, fraud-risk, and AI-exposed environments." data-id="Untuk lingkungan dengan risiko phishing, fraud, dan paparan AI tinggi.">Untuk lingkungan dengan risiko phishing, fraud, dan paparan AI tinggi.</p>
+      <ul class="ss-pricing-card__features">
+        <li data-en="Everything in Core MDR" data-id="Semua yang ada di MDR Inti">Semua yang ada di MDR Inti</li>
+        <li data-en="Mailbox/API-integrated phishing defense" data-id="Pertahanan phishing terintegrasi mailbox/API">Pertahanan phishing terintegrasi mailbox/API</li>
+        <li data-en="Identity correlation (MFA fatigue, impossible travel)" data-id="Korelasi identitas (kelelahan MFA, perjalanan tidak mungkin)">Korelasi identitas (kelelahan MFA, perjalanan tidak mungkin)</li>
+        <li data-en="Deepfake / vishing playbooks" data-id="Playbook deepfake / vishing">Playbook deepfake / vishing</li>
+        <li data-en="Shared SS-D-SLM AI inference" data-id="Inferensi AI SS-D-SLM bersama">Inferensi AI SS-D-SLM bersama</li>
+        <li data-en="SOAR approval: quarantine, revoke, block" data-id="Persetujuan SOAR: karantina, cabut, blokir">Persetujuan SOAR: karantina, cabut, blokir</li>
+        <li data-en="90-day retention + compliance evidence pack" data-id="Retensi 90 hari + paket bukti kepatuhan">Retensi 90 hari + paket bukti kepatuhan</li>
+      </ul>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary ss-btn-full" data-en="Talk to us →" data-id="Hubungi kami →">Hubungi kami →</a>
+    </div>
+
+  </section>
+
+  <div class="ss-pricing-compare">
+    <button class="ss-pricing-compare__toggle" onclick="toggleCompare()" data-en="Compare all features ↓" data-id="Bandingkan semua fitur ↓">Bandingkan semua fitur ↓</button>
+    <div id="compare-table" hidden>
+      <table class="ss-compare-table">
+        <thead>
+          <tr>
+            <th data-en="Feature" data-id="Fitur">Fitur</th>
+            <th data-en="Free" data-id="Gratis">Gratis</th>
+            <th>Sprint</th>
+            <th data-en="Core MDR" data-id="MDR Inti">MDR Inti</th>
+            <th data-en="AI MDR" data-id="MDR AI">MDR AI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-en="Endpoints" data-id="Endpoint">Endpoint</td><td>5–10</td><td>Up to 50</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td data-en="Log retention" data-id="Retensi log">Retensi log</td><td>3–7 days</td><td>30 days</td><td>30 days</td><td>90 days</td></tr>
+          <tr><td data-en="AI analyses/month" data-id="Analisis AI/bulan">Analisis AI/bulan</td><td>50</td><td>500</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td data-en="Human analyst" data-id="Analis manusia">Analis manusia</td><td>✗</td><td>✓ (sprint only)</td><td>✓</td><td>✓</td></tr>
+          <tr><td data-en="SOAR / containment" data-id="SOAR / penahanan">SOAR / penahanan</td><td>✗</td><td>✗</td><td>Basic</td><td>Full</td></tr>
+          <tr><td data-en="Phishing mailbox integration" data-id="Integrasi mailbox phishing">Integrasi mailbox phishing</td><td>Manual only</td><td>✗</td><td>✗</td><td>✓</td></tr>
+          <tr><td data-en="AI inference (SS-D-SLM)" data-id="Inferensi AI (SS-D-SLM)">Inferensi AI (SS-D-SLM)</td><td>Shared, capped</td><td>Shared</td><td>Shared</td><td>Shared + priority</td></tr>
+          <tr><td data-en="Compliance evidence pack" data-id="Paket bukti kepatuhan">Paket bukti kepatuhan</td><td>✗</td><td>✗</td><td>Basic</td><td>Full</td></tr>
+          <tr><td data-en="Response SLA" data-id="SLA respons">SLA respons</td><td>None</td><td>None</td><td>4h critical</td><td>2h critical</td></tr>
+          <tr><td data-en="Report (PDF)" data-id="Laporan (PDF)">Laporan (PDF)</td><td>Watermarked preview</td><td>Clean</td><td>Clean + monthly</td><td>Clean + monthly + board QBR</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Platform direction section -->
+  <section class="ss-pricing-platform" id="platform">
+    <span class="ss-pricing-platform__eyebrow"
+          data-en="PLATFORM DIRECTION — NOT YET LIVE"
+          data-id="ARAH PLATFORM — BELUM TERSEDIA">
+      ARAH PLATFORM — BELUM TERSEDIA
+    </span>
+    <h2 class="ss-pricing-platform__h2"
+        data-en="Where the platform is headed"
+        data-id="Ke mana arah platform ini">
+      Ke mana arah platform ini
+    </h2>
+    <p class="ss-pricing-platform__sub"
+       data-en="Every tier above ships the detect-and-respond brain. The direction we're building toward is one closed loop: prevent, detect, respond, and govern every AI action — not four separate products."
+       data-id="Setiap paket di atas mengirimkan otak deteksi-dan-respons. Arah yang kami bangun adalah satu lingkaran tertutup: cegah, deteksi, respons, dan kendalikan setiap tindakan AI — bukan empat produk terpisah.">
+      Setiap paket di atas mengirimkan otak deteksi-dan-respons. Arah yang kami bangun adalah satu lingkaran tertutup: cegah, deteksi, respons, dan kendalikan setiap tindakan AI — bukan empat produk terpisah.
+    </p>
+    <div class="ss-pricing-platform__grid">
+      <div class="ss-pricing-platform__card">
+        <span class="ss-pricing-platform__icon">🛡️</span>
+        <h3 data-en="Prevention edge" data-id="Edge pencegahan">Edge pencegahan</h3>
+        <p data-en="Identity-based access to private apps (they stay invisible on the network), inline traffic inspection, and data-loss prevention — stopping the bulk transfer, not just alerting on it afterward."
+           data-id="Akses berbasis identitas ke aplikasi privat (tetap tak terlihat di jaringan), inspeksi lalu lintas inline, dan pencegahan kebocoran data — menghentikan transfer massal, bukan hanya memberi tahu setelahnya.">
+          Akses berbasis identitas ke aplikasi privat (tetap tak terlihat di jaringan), inspeksi lalu lintas inline, dan pencegahan kebocoran data — menghentikan transfer massal, bukan hanya memberi tahu setelahnya.
+        </p>
+      </div>
+      <div class="ss-pricing-platform__card">
+        <span class="ss-pricing-platform__icon">🔁</span>
+        <h3 data-en="One closed loop" data-id="Satu lingkaran tertutup">Satu lingkaran tertutup</h3>
+        <p data-en="The edge enforces and streams everything to the brain. The brain detects, decides, and drives the response back through the edge — one console, one rulebook, instead of stitched-together tools."
+           data-id="Edge menegakkan dan mengalirkan semuanya ke otak. Otak mendeteksi, memutuskan, dan mengarahkan respons kembali melalui edge — satu konsol, satu aturan, bukan tools yang dijahit bersama.">
+          Edge menegakkan dan mengalirkan semuanya ke otak. Otak mendeteksi, memutuskan, dan mengarahkan respons kembali melalui edge — satu konsol, satu aturan, bukan tools yang dijahit bersama.
+        </p>
+      </div>
+      <div class="ss-pricing-platform__card">
+        <span class="ss-pricing-platform__icon">🤖</span>
+        <h3 data-en="Govern every AI action" data-id="Kendalikan setiap tindakan AI">Kendalikan setiap tindakan AI</h3>
+        <p data-en="The same policy engine that governs your people governs every AI agent — every tool call checked before it runs, with a full audit trail, not just a session-level approval."
+           data-id="Mesin kebijakan yang sama yang mengatur orang Anda mengatur setiap agen AI — setiap panggilan tool diperiksa sebelum dijalankan, dengan jejak audit lengkap, bukan hanya persetujuan tingkat sesi.">
+          Mesin kebijakan yang sama yang mengatur orang Anda mengatur setiap agen AI — setiap panggilan tool diperiksa sebelum dijalankan, dengan jejak audit lengkap, bukan hanya persetujuan tingkat sesi.
+        </p>
+      </div>
+    </div>
+    <p class="ss-pricing-platform__footnote"
+       data-en="None of this is sold or shipped today. It's the direction the roadmap points."
+       data-id="Tidak ada yang dijual atau dikirimkan hari ini. Ini adalah arah roadmap kami.">
+      Tidak ada yang dijual atau dikirimkan hari ini. Ini adalah arah roadmap kami.
+    </p>
+    <a href="mailto:sales@shannondynamics.id?subject=Platform%20direction" class="ss-pricing-platform__contact"
+       data-en="Want to shape this roadmap? Tell us your use case →"
+       data-id="Ingin ikut membentuk roadmap ini? Ceritakan kebutuhan Anda →">
+      Ingin ikut membentuk roadmap ini? Ceritakan kebutuhan Anda →
+    </a>
+  </section>
+
+  <section class="ss-pricing-faq">
+    <h2 data-en="Common questions" data-id="Pertanyaan umum">Pertanyaan umum</h2>
+    <details class="ss-faq-item">
+      <summary data-en="Do I need to commit to MDR right away?" data-id="Apakah saya harus langsung berkomitmen ke MDR?">Apakah saya harus langsung berkomitmen ke MDR?</summary>
+      <p data-en="No. Start with the free Cyber X-Ray. If you find red findings, the 30-Day Sprint is a one-time project — not a subscription. MDR comes after, once you've seen the value."
+         data-id="Tidak. Mulai dengan Cyber X-Ray gratis. Jika ada temuan merah, Sprint 30 Hari adalah proyek satu kali — bukan langganan. MDR hadir setelahnya, setelah Anda melihat nilainya.">
+        Tidak. Mulai dengan Cyber X-Ray gratis. Jika ada temuan merah, Sprint 30 Hari adalah proyek satu kali — bukan langganan. MDR hadir setelahnya, setelah Anda melihat nilainya.
+      </p>
+    </details>
+    <details class="ss-faq-item">
+      <summary data-en="Is this only for large enterprises?" data-id="Apakah ini hanya untuk perusahaan besar?">Apakah ini hanya untuk perusahaan besar?</summary>
+      <p data-en="No. Shannon Sentinel is designed for mid-market organizations — 50 to 2,000 employees — across any industry. The Free tier is genuinely free and useful without a dedicated IT team."
+         data-id="Tidak. Shannon Sentinel dirancang untuk organisasi menengah — 50 hingga 2.000 karyawan — di industri apa pun. Tier Gratis benar-benar gratis dan berguna tanpa tim IT khusus.">
+        Tidak. Shannon Sentinel dirancang untuk organisasi menengah — 50 hingga 2.000 karyawan — di industri apa pun. Tier Gratis benar-benar gratis dan berguna tanpa tim IT khusus.
+      </p>
+    </details>
+    <details class="ss-faq-item">
+      <summary data-en="What if we were already hacked?" data-id="Bagaimana jika kami sudah diretas?">Bagaimana jika kami sudah diretas?</summary>
+      <p data-en="Use the Post-Incident Triage free taster — upload your logs and get an AI-assisted draft timeline immediately. If you need hands-on help, contact us for Emergency Stabilization (Rp 150 jt one-time)."
+         data-id="Gunakan taster gratis Triase Pasca-Insiden — upload log Anda dan dapatkan draf timeline berbantuan AI segera. Jika butuh bantuan langsung, hubungi kami untuk Stabilisasi Darurat (Rp 150 jt satu kali).">
+        Gunakan taster gratis Triase Pasca-Insiden — upload log Anda dan dapatkan draf timeline berbantuan AI segera. Jika butuh bantuan langsung, hubungi kami untuk Stabilisasi Darurat (Rp 150 jt satu kali).
+      </p>
+    </details>
+  </section>
+
+  <section class="ss-pricing-bottom-cta">
+    <h2 data-en="Not sure which plan fits?" data-id="Tidak yakin paket mana yang cocok?">Tidak yakin paket mana yang cocok?</h2>
+    <p data-en="Start with the free X-Ray — it takes 2 minutes and shows you exactly where you stand." data-id="Mulai dengan X-Ray gratis — hanya 2 menit dan menunjukkan posisi Anda persis.">Mulai dengan X-Ray gratis — hanya 2 menit dan menunjukkan posisi Anda persis.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top: var(--ss-gap-lg);">
+      <a href="/agentic-soc/signup/?funnel=xray" class="ss-btn-primary" data-en="Start Cyber X-Ray — free →" data-id="Mulai Cyber X-Ray — gratis →">Mulai Cyber X-Ray — gratis →</a>
+      <a href="mailto:sales@shannondynamics.id" class="ss-btn-secondary" data-en="Talk to the team" data-id="Bicara dengan tim">Bicara dengan tim</a>
+    </div>
+  </section>
+
+  <script src="/agentic-soc/shared.js"></script>
+  <script>
+    function toggleCompare() {
+      const t = document.getElementById('compare-table');
+      const btn = document.querySelector('.ss-pricing-compare__toggle');
+      t.hidden = !t.hidden;
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      btn.textContent = t.hidden
+        ? (lang === 'en' ? 'Compare all features ↓' : 'Bandingkan semua fitur ↓')
+        : (lang === 'en' ? 'Hide comparison ↑' : 'Sembunyikan perbandingan ↑');
+    }
+  </script>
+</body>
+</html>

@@ -8,86 +8,158 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <style>
+    body { display: flex; align-items: stretch; min-height: 100vh; padding: 0; background: var(--ss-surface); }
+
+    /* ── Tier ladder ── */
+    .ss-login-brand__ladder  { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--ss-gap-lg); }
+    .ss-ladder-step          { display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: 0.75; }
+    .ss-ladder-step--active  { opacity: 1; font-weight: 600; }
+    .ss-ladder-step__dot     { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.45); flex-shrink: 0; }
+    .ss-ladder-step--active .ss-ladder-step__dot { background: #fff; }
+
+    /* ── Platform direction footnote ── */
+    .ss-login-brand__platform-note {
+      font-size: 12px; opacity: 0.7; line-height: 1.4;
+      padding-top: 10px; margin-top: 4px;
+      border-top: 0.5px solid rgba(255,255,255,0.2);
+    }
+
+    /* ── Brand panel bullets use → ── */
+    .ss-login-brand__bullets li::before { content: '→'; }
+
+    /* ── Form elements ── */
+    .ss-form-group { margin-bottom: var(--ss-gap-md); display: flex; flex-direction: column; gap: 6px; }
+    .ss-form-group label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface-variant); }
+    .ss-form-group input {
+      width: 100%; padding: 9px 12px;
+      border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm);
+      font-size: 14px; font-family: var(--ss-font); transition: border-color 0.15s;
+      background: var(--ss-surface-container-lowest); color: var(--ss-on-surface);
+    }
+    .ss-form-group input:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 3px rgba(0,104,95,0.12); }
+    .ss-form-forgot { font-size: 12px; color: var(--ss-neutral-500); align-self: flex-end; }
+    .ss-form-error  { background: #FCEBEB; border: 0.5px solid #F09595; color: #A32D2D; font-size: 13px; padding: 9px 12px; border-radius: var(--ss-radius-sm); margin-bottom: var(--ss-gap-md); }
+
+    /* ── Login divider ── */
+    .ss-login-divider { display: flex; align-items: center; gap: 10px; margin: var(--ss-gap-lg) 0 var(--ss-gap-md); font-size: 12px; color: var(--ss-neutral-500); }
+    .ss-login-divider::before, .ss-login-divider::after { content: ''; flex: 1; height: 1px; background: var(--ss-border-md); }
+
+    /* ── Funnel cards ── */
+    .ss-funnel-cards { display: flex; flex-direction: column; gap: 8px; }
+    .ss-funnel-card {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px; border: 0.5px solid var(--ss-border-md);
+      border-radius: var(--ss-radius-md); text-decoration: none;
+      color: var(--ss-on-surface); background: var(--ss-surface-container-lowest);
+      transition: border-color 0.15s, box-shadow 0.15s; position: relative;
+    }
+    .ss-funnel-card:hover { border-color: var(--ss-brand); box-shadow: var(--ss-shadow-card); text-decoration: none; }
+    .ss-funnel-card--primary { border-color: var(--ss-brand); background: var(--ss-brand-light); }
+    .ss-funnel-card__icon  { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .ss-funnel-card__title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .ss-funnel-card__desc  { font-size: 12px; color: var(--ss-neutral-500); line-height: 1.4; }
+    .ss-funnel-card__badge {
+      position: absolute; top: -7px; right: 10px;
+      background: var(--ss-brand); color: #fff;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 100px;
+    }
+
+    /* ── Demo hint ── */
+    .ss-login-demo-hint { margin-top: 12px; font-size: 12px; color: var(--ss-neutral-500); text-align: center; }
+  </style>
   <script>
-    // Redirect logged-in users
     (function() {
       const sess = sessionStorage.getItem('ss-session');
       if (sess) {
         const s = JSON.parse(sess);
         window.location.replace(s.setupComplete ? '/agentic-soc/dashboard/' : '/agentic-soc/onboarding/');
       }
-      // Apply lang before render
       document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     })();
   </script>
 </head>
 <body>
   <div class="ss-login-split">
-    <!-- Brand panel -->
+
+    <!-- ── Left brand panel ── -->
     <div class="ss-login-brand">
       <div class="ss-login-brand__inner">
         <p class="ss-login-brand__logo">Shannon Sentinel</p>
         <h1 class="ss-login-brand__headline"
-            data-en="AI-resilient security for Indonesian finance"
-            data-id="Keamanan berbasis AI untuk keuangan Indonesia">
-          Keamanan berbasis AI untuk keuangan Indonesia
+            data-en="Find out your real cyber risk in 2 minutes."
+            data-id="Ketahui risiko siber nyata Anda dalam 2 menit.">
+          Ketahui risiko siber nyata Anda dalam 2 menit.
         </h1>
+
         <ul class="ss-login-brand__bullets">
-          <li data-en="Cyber X-Ray assessment in ~2 minutes"
-              data-id="Penilaian Cyber X-Ray dalam ~2 menit">
-            Penilaian Cyber X-Ray dalam ~2 menit
+          <li data-en="Can attackers send fake emails as your company?"
+              data-id="Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?">
+            Bisakah penyerang mengirim email palsu atas nama perusahaan Anda?
           </li>
-          <li data-en="AI alert triage with full citations"
-              data-id="Triase alert AI dengan kutipan lengkap">
-            Triase alert AI dengan kutipan lengkap
+          <li data-en="Are any of your systems visible from the internet?"
+              data-id="Apakah ada sistem Anda yang terlihat dari internet?">
+            Apakah ada sistem Anda yang terlihat dari internet?
           </li>
-          <li data-en="OJK AI governance evidence pack"
-              data-id="Paket bukti tata kelola AI OJK">
-            Paket bukti tata kelola AI OJK
-          </li>
-          <li data-en="Bilingual — Bahasa Indonesia + English"
-              data-id="Dwibahasa — Bahasa Indonesia + Inggris">
-            Dwibahasa — Bahasa Indonesia + Inggris
+          <li data-en="If you got hacked today, do you have enough proof to investigate?"
+              data-id="Jika Anda diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?">
+            Jika Anda diretas hari ini, apakah Anda punya cukup bukti untuk investigasi?
           </li>
         </ul>
+
+        <div class="ss-login-brand__ladder">
+          <div class="ss-ladder-step ss-ladder-step--active">
+            <span class="ss-ladder-step__dot"></span>
+            <span data-en="Free — Cyber X-Ray" data-id="Gratis — Cyber X-Ray">Gratis — Cyber X-Ray</span>
+          </div>
+          <div class="ss-ladder-step">
+            <span class="ss-ladder-step__dot"></span>
+            <span data-en="Sprint — 30-day fix" data-id="Sprint — Perbaikan 30 hari">Sprint — Perbaikan 30 hari</span>
+          </div>
+          <div class="ss-ladder-step">
+            <span class="ss-ladder-step__dot"></span>
+            <span data-en="MDR — Always monitored" data-id="MDR — Selalu dimonitor">MDR — Selalu dimonitor</span>
+          </div>
+        </div>
+
+        <p class="ss-login-brand__platform-note"
+           data-en="Where we're headed: prevention + per-action AI governance, one platform."
+           data-id="Arah ke depan: pencegahan + tata kelola AI per tindakan, satu platform.">
+          Arah ke depan: pencegahan + tata kelola AI per tindakan, satu platform.
+        </p>
+
         <p class="ss-login-brand__tenant">sentinel.shannondynamics.id</p>
       </div>
     </div>
 
-    <!-- Form panel -->
+    <!-- ── Right form panel ── -->
     <div class="ss-login-form-panel">
       <div class="ss-login-card">
+
         <div class="ss-login-card__header">
           <h2 data-en="Sign in to your account"
               data-id="Masuk ke akun Anda">Masuk ke akun Anda</h2>
           <p class="ss-login-card__sub">
-            <span data-en="Don't have an account?"
-                  data-id="Belum punya akun?">Belum punya akun?</span>
+            <span data-en="Don't have an account?" data-id="Belum punya akun?">Belum punya akun?</span>
             <a href="/agentic-soc/signup/"
-               data-en="Sign up free"
-               data-id="Daftar gratis">Daftar gratis</a>
+               data-en="Sign up free" data-id="Daftar gratis">Daftar gratis</a>
           </p>
         </div>
 
         <div id="login-error" class="ss-form-error" hidden>
           <span data-en="Email and password are required."
-                data-id="Email dan kata sandi wajib diisi.">
-            Email dan kata sandi wajib diisi.
-          </span>
+                data-id="Email dan kata sandi wajib diisi.">Email dan kata sandi wajib diisi.</span>
         </div>
 
         <div class="ss-form-group">
-          <label for="login-email"
-                 data-en="Work email" data-id="Email kerja">Email kerja</label>
-          <input type="email" id="login-email" autocomplete="email"
-                 placeholder="rudi@bankcontoh.co.id">
+          <label for="login-email" data-en="Work email" data-id="Email kerja">Email kerja</label>
+          <input type="email" id="login-email" autocomplete="email" placeholder="anda@perusahaan.com">
         </div>
 
         <div class="ss-form-group">
-          <label for="login-password"
-                 data-en="Password" data-id="Kata sandi">Kata sandi</label>
-          <input type="password" id="login-password" autocomplete="current-password"
-                 placeholder="••••••••">
+          <label for="login-password" data-en="Password" data-id="Kata sandi">Kata sandi</label>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••">
           <a href="#" class="ss-form-forgot"
              data-en="Forgot password?" data-id="Lupa kata sandi?">Lupa kata sandi?</a>
         </div>
@@ -101,12 +173,64 @@
             Demo: masukkan email + kata sandi apa pun untuk masuk.
           </span>
         </p>
+
+        <div class="ss-login-divider">
+          <span data-en="or start free with:" data-id="atau mulai gratis dengan:">atau mulai gratis dengan:</span>
+        </div>
+
+        <div class="ss-funnel-cards">
+
+          <a href="/agentic-soc/signup/?funnel=xray" class="ss-funnel-card ss-funnel-card--primary">
+            <div class="ss-funnel-card__icon">🔍</div>
+            <div>
+              <p class="ss-funnel-card__title" data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</p>
+              <p class="ss-funnel-card__desc"
+                 data-en="Check your domain, email security, exposed systems &amp; endpoints. ~2 minutes."
+                 data-id="Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.">
+                Periksa domain, keamanan email, sistem terekspos &amp; endpoint. ~2 menit.
+              </p>
+            </div>
+            <span class="ss-funnel-card__badge"
+                  data-en="Most popular" data-id="Paling populer">Paling populer</span>
+          </a>
+
+          <a href="/agentic-soc/signup/?funnel=inbox" class="ss-funnel-card">
+            <div class="ss-funnel-card__icon">📧</div>
+            <div>
+              <p class="ss-funnel-card__title"
+                 data-en="Inbox &amp; Identity Guard"
+                 data-id="Inbox &amp; Identity Guard">Inbox &amp; Identity Guard</p>
+              <p class="ss-funnel-card__desc"
+                 data-en="Detect phishing, invoice fraud, BEC and suspicious logins. For finance &amp; ops teams."
+                 data-id="Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Untuk tim keuangan &amp; operasional.">
+                Deteksi phishing, fraud faktur, BEC, dan login mencurigakan. Untuk tim keuangan &amp; operasional.
+              </p>
+            </div>
+          </a>
+
+          <a href="/agentic-soc/signup/?funnel=postincident" class="ss-funnel-card">
+            <div class="ss-funnel-card__icon">🚨</div>
+            <div>
+              <p class="ss-funnel-card__title"
+                 data-en="Post-Incident Triage"
+                 data-id="Triase Pasca-Insiden">Triase Pasca-Insiden</p>
+              <p class="ss-funnel-card__desc"
+                 data-en="Already hacked or suspect a breach? Upload logs and get an AI-assisted triage now."
+                 data-id="Sudah diretas atau curiga ada insiden? Upload log dan dapatkan triase AI sekarang.">
+                Sudah diretas atau curiga ada insiden? Upload log dan dapatkan triase AI sekarang.
+              </p>
+            </div>
+          </a>
+
+        </div>
+
       </div>
 
       <div class="ss-login-lang">
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()">EN</button>
       </div>
     </div>
+
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
@@ -116,10 +240,7 @@
       const password = document.getElementById('login-password').value;
       const errEl    = document.getElementById('login-error');
 
-      if (!email || !password) {
-        errEl.hidden = false;
-        return;
-      }
+      if (!email || !password) { errEl.hidden = false; return; }
       errEl.hidden = true;
 
       const name    = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -127,18 +248,15 @@
       const company = domain.split('.')[0];
       const slug    = company.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
-      const session = {
+      sessionStorage.setItem('ss-session', JSON.stringify({
         email, name,
         company: company.charAt(0).toUpperCase() + company.slice(1),
-        slug, tier: 'free', state: 'free_active', setupComplete: false
-      };
-      sessionStorage.setItem('ss-session', JSON.stringify(session));
+        slug, tier: 'free', state: 'free_active', funnel: 'xray', setupComplete: false
+      }));
       window.location.href = '/agentic-soc/onboarding/';
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   </script>
 </body>
 </html>

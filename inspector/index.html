@@ -30,6 +30,7 @@
     .ss-guardrail-table th { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--ss-border-md); }
     .ss-guardrail-table td { padding: 8px 8px; border-bottom: 0.5px solid var(--ss-border); vertical-align: top; }
     .ss-guardrail-table tr:last-child td { border-bottom: none; }
+    .ss-inspector-platform-note { font-size: 12px; color: var(--ss-neutral-500); line-height: 1.5; margin-top: var(--ss-gap-sm); }
     .ss-status-pass { color: var(--ss-success); font-weight: 500; }
     .ss-status-flag { color: var(--ss-warning); font-weight: 500; }
     .ss-kg-nodes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -56,36 +57,34 @@
     <!-- Header -->
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
-        <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
-        </svg>
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
         <span class="ss-nav__brand-name">Shannon Sentinel</span>
       </a>
       <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
       </button>
     </div>
 
     <!-- Menu -->
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
       </a>
       <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <i class="ti ti-search ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
       </a>
       <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12l2 2 4-4"/></svg>
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
       </a>
       <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
       <a href="/agentic-soc/inspector/" class="ss-nav__item active" title="Inspector">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
     </div>
@@ -97,22 +96,29 @@
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
       </div>
       <div class="ss-nav__footer-divider"></div>
-      <div class="ss-nav__user-row">
-        <div class="ss-avatar" id="nav-avatar">TA</div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
         <div class="ss-nav__user-info">
-          <span id="nav-name" class="ss-nav__name">Tamaria</span>
-          <span id="nav-company" class="ss-nav__company">Gmail</span>
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
         </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
       </div>
-
-      <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
-        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
-      </button>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
     </div>
   </nav>
 
   <div class="ss-page">
+    <!-- Free tier inference notice -->
+    <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
+      <span>ℹ</span>
+      <span data-en="Free tier uses shared inference pool (rate-limited). Upgrade to MDR for dedicated capacity and tenant-private GraphRAG context."
+            data-id="Tier gratis menggunakan pool inferensi bersama (dibatasi). Upgrade ke MDR untuk kapasitas dedicated dan konteks GraphRAG privat per tenant.">
+        Tier gratis menggunakan pool inferensi bersama (dibatasi). Upgrade ke MDR untuk kapasitas dedicated dan konteks GraphRAG privat per tenant.
+      </span>
+      <a href="/agentic-soc/pricing/" data-en="Learn more →" data-id="Pelajari lebih →" style="margin-left:8px; color:var(--ss-brand); font-weight:500; white-space:nowrap;">Pelajari lebih →</a>
+    </div>
+
     <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
       <div>
         <h1 class="ss-page-title" data-en="AI Inspector" data-id="Inspektor AI">Inspektor AI</h1>
@@ -207,6 +213,11 @@
             </tr>
           </tbody>
         </table>
+        <p class="ss-inspector-platform-note"
+           data-en="These 4 layers inspect model responses. The platform direction extends the same discipline to every agent tool call — a per-action policy engine, not just response guardrails."
+           data-id="Keempat lapisan ini memeriksa respons model. Arah platform memperluas disiplin yang sama ke setiap panggilan tool agen — mesin kebijakan per tindakan, bukan hanya guardrail respons.">
+          Keempat lapisan ini memeriksa respons model. Arah platform memperluas disiplin yang sama ke setiap panggilan tool agen — mesin kebijakan per tindakan, bukan hanya guardrail respons.
+        </p>
       </div>
 
     </div>
@@ -272,6 +283,13 @@
         document.getElementById('log-tenant-pre').textContent = slug;
       }
     })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.SS) {
+        const tenantEl = document.getElementById('log-tenant');
+        if (tenantEl) tenantEl.textContent = 'tenant-' + (window.SS.slug || 'unknown');
+      }
+    });
 
     const responses = {
       '1': {

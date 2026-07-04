@@ -62,6 +62,19 @@
     .ss-scan-item--done::before { content: '✓'; color: var(--ss-brand); font-weight: 500; }
     .ss-scan-done { text-align: center; padding: var(--ss-gap-lg) 0; }
     .ss-scan-done__icon { font-size: 36px; margin-bottom: 12px; }
+    .ss-whats-next { margin-top: var(--ss-gap-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); background: var(--ss-surface-container-low); border-radius: var(--ss-radius-md); }
+    .ss-whats-next__label { font-size: 13px; color: var(--ss-neutral-500); margin-bottom: var(--ss-gap-md); }
+    .ss-whats-next__steps { display: flex; flex-direction: column; gap: 12px; }
+    .ss-whats-next__step { display: flex; align-items: flex-start; gap: 12px; opacity: 0.5; }
+    .ss-whats-next__step--active { opacity: 1; }
+    .ss-whats-next__num { width: 22px; height: 22px; border-radius: 50%; background: var(--ss-brand-light); color: var(--ss-brand-dark); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ss-whats-next__step--active .ss-whats-next__num { background: var(--ss-brand); color: #fff; }
+    .ss-whats-next__title { font-size: 13px; font-weight: 600; }
+    .ss-whats-next__sub { font-size: 12px; color: var(--ss-neutral-500); margin-top: 2px; }
+    .ss-whats-next__platform-link { display: block; margin-top: var(--ss-gap-md); font-size: 12px; color: var(--ss-neutral-500); padding-top: var(--ss-gap-md); border-top: 0.5px solid var(--ss-border); }
+    .ss-log-upload-area { border: 1.5px dashed var(--ss-border-md); border-radius: var(--ss-radius-md); padding: var(--ss-gap-lg); text-align: center; cursor: pointer; color: var(--ss-neutral-500); font-size: 13px; display: flex; flex-direction: column; gap: 6px; align-items: center; transition: border-color 0.15s; }
+    .ss-log-upload-area:hover { border-color: var(--ss-brand); color: var(--ss-brand); }
+    .ss-log-upload-area__icon { font-size: 28px; }
   </style>
 </head>
 <body>
@@ -71,12 +84,12 @@
     <div class="ss-wizard-steps">
       <div class="ss-wizard-step ss-wizard-step--active" id="step-dot-1">
         <div class="ss-wizard-step__circle">1</div>
-        <span class="ss-wizard-step__label" data-en="Domain" data-id="Domain">Domain</span>
+        <span class="ss-wizard-step__label" data-en="Setup" data-id="Pengaturan">Pengaturan</span>
       </div>
       <div class="ss-wizard-connector"></div>
       <div class="ss-wizard-step" id="step-dot-2">
         <div class="ss-wizard-step__circle">2</div>
-        <span class="ss-wizard-step__label" data-en="Endpoints" data-id="Endpoint">Endpoint</span>
+        <span class="ss-wizard-step__label" data-en="Connect" data-id="Sambungkan">Sambungkan</span>
       </div>
       <div class="ss-wizard-connector"></div>
       <div class="ss-wizard-step" id="step-dot-3">
@@ -87,8 +100,8 @@
 
     <!-- Step 1: Domain -->
     <div id="wizard-step-1" class="ss-wizard-card">
-      <h2 data-en="Connect your domain" data-id="Hubungkan domain Anda">Hubungkan domain Anda</h2>
-      <p class="ss-wizard-card__sub"
+      <h2 id="ob-step1-h2" data-en="Connect your domain" data-id="Hubungkan domain Anda">Hubungkan domain Anda</h2>
+      <p id="ob-step1-sub" class="ss-wizard-card__sub"
          data-en="We'll run a passive scan on your public domain."
          data-id="Kami akan menjalankan pemindaian pasif pada domain publik Anda.">
         Kami akan menjalankan pemindaian pasif pada domain publik Anda.
@@ -96,7 +109,7 @@
 
       <div class="ss-form-group">
         <label data-en="Company domain" data-id="Domain perusahaan">Domain perusahaan</label>
-        <input type="text" id="ob-domain" placeholder="bankcontoh.co.id">
+        <input type="text" id="ob-domain" placeholder="perusahaan.com">
       </div>
 
       <div id="domain-verified-notice" class="ss-notice ss-notice--success" hidden>
@@ -111,9 +124,9 @@
         </span>
       </div>
 
-      <div class="ss-checks-list">
+      <div class="ss-checks-list" id="ob-checks-list">
         <p class="ss-checks-list__label" data-en="We will check:" data-id="Kami akan memeriksa:">Kami akan memeriksa:</p>
-        <ul>
+        <ul id="ob-checks-ul">
           <li>SPF record</li>
           <li>DKIM configuration</li>
           <li>DMARC policy</li>
@@ -144,7 +157,7 @@
         Pilih cara menghubungkan perangkat Anda. Anda dapat menambah lebih banyak nanti.
       </p>
 
-      <div class="ss-endpoint-options">
+      <div class="ss-endpoint-options" id="ob-wazuh-panel">
         <!-- Wazuh — Active -->
         <div class="ss-endpoint-option ss-endpoint-option--active selected" id="opt-wazuh">
           <div class="ss-endpoint-option__header">
@@ -202,6 +215,17 @@
             Upload file log CSV, JSON, atau teks. Tersedia di v2.
           </p>
         </div>
+      </div>
+
+      <!-- Log upload panel for postincident funnel -->
+      <div id="ob-postincident-upload" hidden>
+        <p class="ss-wizard-card__sub" data-en="Upload your log files for AI-assisted incident triage." data-id="Upload file log Anda untuk triase insiden berbantuan AI.">Upload file log Anda untuk triase insiden berbantuan AI.</p>
+        <div class="ss-log-upload-area" onclick="document.getElementById('log-file-input').click()">
+          <span class="ss-log-upload-area__icon">📂</span>
+          <span data-en="Click to upload logs (CSV, JSON, TXT, EVTX)" data-id="Klik untuk upload log (CSV, JSON, TXT, EVTX)">Klik untuk upload log (CSV, JSON, TXT, EVTX)</span>
+          <span style="font-size:11px;" data-en="or drag and drop" data-id="atau seret dan lepas">atau seret dan lepas</span>
+        </div>
+        <input type="file" id="log-file-input" accept=".csv,.json,.txt,.evtx,.log" style="display:none" multiple>
       </div>
 
       <div class="ss-endpoint-counter">
@@ -265,12 +289,98 @@
            style="display:inline-block; margin-top:16px;"
            data-en="View report →" data-id="Lihat laporan →">Lihat laporan →</a>
       </div>
+
+      <div class="ss-whats-next" id="whats-next" hidden>
+        <p class="ss-whats-next__label" data-en="Your free report is ready. Here's what you can do next:" data-id="Laporan gratis Anda siap. Ini yang bisa Anda lakukan selanjutnya:">Laporan gratis Anda siap. Ini yang bisa Anda lakukan selanjutnya:</p>
+        <div class="ss-whats-next__steps">
+          <div class="ss-whats-next__step ss-whats-next__step--active">
+            <span class="ss-whats-next__num">1</span>
+            <div>
+              <p class="ss-whats-next__title" data-en="Review your X-Ray report" data-id="Tinjau laporan X-Ray Anda">Tinjau laporan X-Ray Anda</p>
+              <p class="ss-whats-next__sub" data-en="See exactly what's exposed and what's missing." data-id="Lihat persis apa yang terekspos dan apa yang hilang.">Lihat persis apa yang terekspos dan apa yang hilang.</p>
+            </div>
+          </div>
+          <div class="ss-whats-next__step">
+            <span class="ss-whats-next__num">2</span>
+            <div>
+              <p class="ss-whats-next__title" data-en="Fix the red findings — 30-Day Sprint" data-id="Perbaiki temuan merah — Sprint 30 Hari">Perbaiki temuan merah — Sprint 30 Hari</p>
+              <p class="ss-whats-next__sub" data-en="Our team helps you close the most critical gaps. From Rp 35 jt." data-id="Tim kami membantu menutup celah paling kritis. Mulai Rp 35 jt.">Tim kami membantu menutup celah paling kritis. Mulai Rp 35 jt.</p>
+            </div>
+          </div>
+          <div class="ss-whats-next__step">
+            <span class="ss-whats-next__num">3</span>
+            <div>
+              <p class="ss-whats-next__title" data-en="Stay monitored — MDR" data-id="Tetap dimonitor — MDR">Tetap dimonitor — MDR</p>
+              <p class="ss-whats-next__sub" data-en="24/7 detection, AI-assisted triage, human escalation." data-id="Deteksi 24/7, triase berbantuan AI, eskalasi manusia.">Deteksi 24/7, triase berbantuan AI, eskalasi manusia.</p>
+            </div>
+          </div>
+        </div>
+        <a href="/agentic-soc/pricing/#platform" class="ss-whats-next__platform-link"
+           data-en="Curious where this goes long-term? See the full platform direction →"
+           data-id="Penasaran arah jangka panjangnya? Lihat arah platform lengkap →">
+          Penasaran arah jangka panjangnya? Lihat arah platform lengkap →
+        </a>
+      </div>
     </div>
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
   <script>
     let epCount = 0;
+
+    const FUNNEL_STEP1 = {
+      xray: {
+        h2: { en: 'Connect your domain', id: 'Hubungkan domain Anda' },
+        sub: { en: "We'll run a passive scan on your public domain.", id: 'Kami akan menjalankan pemindaian pasif pada domain publik Anda.' },
+        checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Subdomain yang terekspos', 'Port terbuka pada layanan publik']
+      },
+      inbox: {
+        h2: { en: 'Set up email security scanning', id: 'Siapkan pemindaian keamanan email' },
+        sub: { en: "We'll check your email domain for phishing and fraud exposure.", id: 'Kami akan memeriksa domain email Anda untuk paparan phishing dan penipuan.' },
+        checks: ['SPF record', 'DKIM configuration', 'DMARC policy', 'Email spoofing risk', 'BEC / phishing indicators']
+      },
+      postincident: {
+        h2: { en: 'Upload your incident logs', id: 'Upload log insiden Anda' },
+        sub: { en: 'Upload log files and we will build an AI-assisted incident timeline.', id: 'Upload file log dan kami akan membuat timeline insiden berbantuan AI.' },
+        checks: ['Log parsing & normalization', 'Timeline construction', 'IOC extraction', 'MITRE ATT&CK mapping', 'Initial triage summary']
+      }
+    };
+
+    const SCAN_ITEMS = {
+      xray: [
+        { en: 'Starting domain scan…', id: 'Memulai pemindaian domain…' },
+        { en: 'SPF record found', id: 'SPF record ditemukan' },
+        { en: 'DKIM checked', id: 'DKIM diperiksa' },
+        { en: 'Checking subdomain exposure…', id: 'Memeriksa paparan subdomain…' },
+        { en: 'Subdomain scan complete', id: 'Subdomain scan selesai' },
+        { en: 'Calculating evidence readiness score…', id: 'Menghitung skor kesiapan bukti…' },
+        { en: 'Score calculated', id: 'Skor dihitung' },
+        { en: 'Generating AI summary…', id: 'Membuat ringkasan AI…' },
+        { en: 'Report ready', id: 'Laporan siap' }
+      ],
+      inbox: [
+        { en: 'Checking email domain…', id: 'Memeriksa domain email…' },
+        { en: 'SPF record found', id: 'SPF record ditemukan' },
+        { en: 'DKIM checked', id: 'DKIM diperiksa' },
+        { en: 'Analyzing DMARC policy…', id: 'Menganalisis kebijakan DMARC…' },
+        { en: 'Phishing indicator scan complete', id: 'Pemindaian indikator phishing selesai' },
+        { en: 'Checking BEC exposure…', id: 'Memeriksa paparan BEC…' },
+        { en: 'Risk score calculated', id: 'Skor risiko dihitung' },
+        { en: 'Generating AI summary…', id: 'Membuat ringkasan AI…' },
+        { en: 'Report ready', id: 'Laporan siap' }
+      ],
+      postincident: [
+        { en: 'Parsing uploaded logs…', id: 'Memproses log yang diupload…' },
+        { en: 'Normalizing log format…', id: 'Menormalkan format log…' },
+        { en: 'Building event timeline…', id: 'Membuat timeline kejadian…' },
+        { en: 'Extracting IOCs…', id: 'Mengekstrak IOC…' },
+        { en: 'Mapping to MITRE ATT&CK…', id: 'Memetakan ke MITRE ATT&CK…' },
+        { en: 'Correlating events…', id: 'Mengkorelasikan kejadian…' },
+        { en: 'AI triage analysis complete', id: 'Analisis triase AI selesai' },
+        { en: 'Generating incident summary…', id: 'Membuat ringkasan insiden…' },
+        { en: 'Triage report ready', id: 'Laporan triase siap' }
+      ]
+    };
 
     // Hydrate domain from session
     (function() {
@@ -287,6 +397,36 @@
         if (avatarEl && window.SS.name) {
           avatarEl.textContent = window.SS.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
         }
+      }
+
+      // Funnel-aware step 1
+      const funnel = (window.SS && window.SS.funnel) || 'xray';
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const fs = FUNNEL_STEP1[funnel] || FUNNEL_STEP1.xray;
+      const h2El = document.getElementById('ob-step1-h2');
+      const subEl = document.getElementById('ob-step1-sub');
+      if (h2El) h2El.textContent = fs.h2[lang] || fs.h2.id;
+      if (subEl) subEl.textContent = fs.sub[lang] || fs.sub.id;
+      const checksUl = document.getElementById('ob-checks-ul');
+      if (checksUl) {
+        checksUl.innerHTML = fs.checks.map(c => `<li>${c}</li>`).join('');
+      }
+
+      // Show log upload for postincident
+      if (funnel === 'postincident') {
+        const uploadPanel = document.getElementById('ob-postincident-upload');
+        const wazuhPanel  = document.getElementById('ob-wazuh-panel');
+        if (uploadPanel) uploadPanel.hidden = false;
+        if (wazuhPanel)  wazuhPanel.hidden  = true;
+      }
+
+      // Populate scan items based on funnel
+      const scanItems = SCAN_ITEMS[funnel] || SCAN_ITEMS.xray;
+      const scanList = document.getElementById('scan-checklist');
+      if (scanList) {
+        scanList.innerHTML = scanItems.map(item =>
+          `<li class="ss-scan-item">${item[lang] || item.id}</li>`
+        ).join('');
       }
     })();
 
@@ -325,6 +465,7 @@
           setTimeout(() => {
             document.getElementById('scan-ring').style.display = 'none';
             document.getElementById('scan-done').hidden = false;
+            document.getElementById('whats-next').hidden = false;
             const sess = JSON.parse(sessionStorage.getItem('ss-session') || '{}');
             sess.setupComplete = true;
             sessionStorage.setItem('ss-session', JSON.stringify(sess));

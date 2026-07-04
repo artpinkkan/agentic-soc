@@ -178,40 +178,51 @@
       transition: opacity 0.15s; color: #fff;
     }
     .ss-send-btn:hover { opacity: 0.85; }
+    /* Cap bar */
+    .ss-cap-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--ss-surface-container-low); border-radius: var(--ss-radius-sm); padding: 8px 12px; font-size: 12px; border-left: 3px solid var(--ss-warning); }
+    .ss-cap-bar__label { color: var(--ss-neutral-500); }
+    .ss-cap-bar__used { font-weight: 600; color: var(--ss-on-surface); }
+    .ss-cap-bar__track { flex: 1; min-width: 80px; height: 5px; background: var(--ss-neutral-200); border-radius: 100px; }
+    .ss-cap-bar__fill { height: 100%; background: var(--ss-warning); border-radius: 100px; }
+    .ss-cap-bar__upgrade { color: var(--ss-brand); font-weight: 500; margin-left: auto; }
+    /* Lock gate */
+    .ss-lock-gate { position: absolute; inset: 0; background: rgba(247,249,251,0.92); border-radius: var(--ss-radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; }
+    .ss-lock-gate__icon { font-size: 22px; }
+    .ss-lock-gate__label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface); }
+    .ss-lock-gate__cta { font-size: 12px; color: var(--ss-brand); font-weight: 500; }
+    .ss-locked { border: 0.5px solid var(--ss-border-md) !important; }
   </style>
 </head>
 <body>
   <nav class="ss-nav" id="ss-nav">
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
-        <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
-        </svg>
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
         <span class="ss-nav__brand-name">Shannon Sentinel</span>
       </a>
       <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
       </button>
     </div>
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
       </a>
       <a href="/agentic-soc/investigate/" class="ss-nav__item active" title="Investigate">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <i class="ti ti-search ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
       </a>
       <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12l2 2 4-4"/></svg>
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
       </a>
       <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
       <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
     </div>
@@ -221,17 +232,15 @@
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
       </div>
       <div class="ss-nav__footer-divider"></div>
-      <div class="ss-nav__user-row">
-        <div class="ss-avatar" id="nav-avatar">TA</div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
         <div class="ss-nav__user-info">
-          <span id="nav-name" class="ss-nav__name">Tamaria</span>
-          <span id="nav-company" class="ss-nav__company">Gmail</span>
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
         </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
       </div>
-      <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
-        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
-      </button>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
     </div>
   </nav>
 
@@ -255,9 +264,9 @@
       <!-- User message 1 -->
       <div class="ss-msg-row ss-msg-row--user">
         <div class="ss-msg-bubble">
-          <span data-en="We got an alert about 847 failed SSH logins in the last hour on ssh.bankcontoh.co.id. Is this an active attack?"
-                data-id="Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?">
-            Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.bankcontoh.co.id. Apakah ini serangan aktif?
+          <span data-en="We got an alert about 847 failed SSH logins in the last hour on ssh.domain.com. Is this an active attack?"
+                data-id="Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.domain.com. Apakah ini serangan aktif?">
+            Kami mendapat alert tentang 847 kegagalan login SSH dalam satu jam terakhir di ssh.domain.com. Apakah ini serangan aktif?
           </span>
         </div>
       </div>
@@ -265,7 +274,7 @@
       <!-- AI response 1 -->
       <div class="ss-msg-row ss-msg-row--ai">
         <div class="ss-msg-avatar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+          <i class="ti ti-shield" style="font-size:16px; color:#fff;"></i>
         </div>
         <div>
           <div class="ss-msg-bubble">
@@ -298,6 +307,27 @@
         </div>
       </div>
 
+      <!-- Platform-direction note — shown once after the first AI message only -->
+      <div class="ss-notice ss-notice--info" style="margin-top: 6px; font-size: 11px; padding: 6px 10px;">
+        <span>ℹ</span>
+        <span data-en="Human Review Required reflects message-level approval today. Per-action policy for every tool call is on our platform roadmap."
+              data-id="Human Review Required saat ini mencerminkan persetujuan tingkat pesan. Kebijakan per tindakan untuk setiap panggilan tool ada di roadmap platform kami.">
+          Human Review Required saat ini mencerminkan persetujuan tingkat pesan. Kebijakan per tindakan untuk setiap panggilan tool ada di roadmap platform kami.
+        </span>
+      </div>
+
+      <!-- Containment lock gate (shown inline as a locked card) -->
+      <div style="position:relative; min-height:80px; margin: 0 0 4px;" class="ss-card ss-locked">
+        <div style="opacity:0.3; padding:4px 0; font-size:13px;">
+          <span>🔒 Isolasi Host · Karantina · Blokir Firewall</span>
+        </div>
+        <div class="ss-lock-gate">
+          <span class="ss-lock-gate__icon">🔒</span>
+          <span class="ss-lock-gate__label" data-en="Containment actions require Sprint or MDR plan" data-id="Tindakan penahanan memerlukan paket Sprint atau MDR">Tindakan penahanan memerlukan paket Sprint atau MDR</span>
+          <a href="/agentic-soc/pricing/" class="ss-lock-gate__cta" data-en="See what's included →" data-id="Lihat apa yang termasuk →">Lihat apa yang termasuk →</a>
+        </div>
+      </div>
+
       <!-- User message 2 -->
       <div class="ss-msg-row ss-msg-row--user">
         <div class="ss-msg-bubble">
@@ -311,7 +341,7 @@
       <!-- AI response 2 -->
       <div class="ss-msg-row ss-msg-row--ai">
         <div class="ss-msg-avatar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+          <i class="ti ti-shield" style="font-size:16px; color:#fff;"></i>
         </div>
         <div>
           <div class="ss-msg-bubble">
@@ -336,13 +366,30 @@
 
     </div>
 
+    <!-- Retention notice -->
+    <div class="ss-notice ss-notice--warning" style="margin: 0 24px var(--ss-gap-sm);">
+      <span>⚠</span>
+      <span data-en="Free tier: chat history and investigation context kept for 3 days only. Upgrade for 30–90 day retention."
+            data-id="Tier gratis: riwayat chat dan konteks investigasi disimpan hanya 3 hari. Upgrade untuk retensi 30–90 hari.">
+        Tier gratis: riwayat chat dan konteks investigasi disimpan hanya 3 hari. Upgrade untuk retensi 30–90 hari.
+      </span>
+    </div>
+
+    <!-- Cap bar -->
+    <div class="ss-cap-bar" style="margin: 0 24px var(--ss-gap-md);">
+      <span class="ss-cap-bar__label" data-en="AI analyses this month:" data-id="Analisis AI bulan ini:">Analisis AI bulan ini:</span>
+      <span class="ss-cap-bar__used">42 / 50</span>
+      <div class="ss-cap-bar__track"><div class="ss-cap-bar__fill" style="width:84%"></div></div>
+      <a href="/agentic-soc/pricing/" class="ss-cap-bar__upgrade" data-en="Upgrade for unlimited →" data-id="Upgrade untuk tak terbatas →">Upgrade untuk tak terbatas →</a>
+    </div>
+
     <!-- Input bar -->
     <div class="ss-chat-input-bar">
       <div class="ss-quick-chips" id="quick-chips">
         <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="Analyze latest alert" data-id="Analisis alert terbaru">Analisis alert terbaru</button>
         <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="Check email security" data-id="Periksa keamanan email">Periksa keamanan email</button>
         <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="SSH brute force risk" data-id="Risiko SSH brute force">Risiko SSH brute force</button>
-        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="OJK compliance status" data-id="Status kepatuhan OJK">Status kepatuhan OJK</button>
+        <button class="ss-quick-chip" onclick="sendQuick(this)" data-en="Compliance audit status" data-id="Status audit kepatuhan">Status audit kepatuhan</button>
       </div>
       <div class="ss-input-box">
         <textarea id="chat-input" rows="1"
@@ -351,7 +398,7 @@
           placeholder="Tanyakan tentang alert, ancaman, atau insiden…"
           onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
         <button class="ss-send-btn" onclick="sendMessage()" aria-label="Send">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <i class="ti ti-send" style="font-size:16px;"></i>
         </button>
       </div>
     </div>
@@ -397,7 +444,7 @@
       typingRow.className = 'ss-msg-row ss-msg-row--ai';
       typingRow.innerHTML = `
         <div class="ss-msg-avatar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+          <i class="ti ti-shield" style="font-size:16px; color:#fff;"></i>
         </div>
         <div class="ss-msg-bubble"><div class="ss-typing"><span></span><span></span><span></span></div></div>`;
       messages.appendChild(typingRow);
@@ -409,7 +456,7 @@
         aiRow.className = 'ss-msg-row ss-msg-row--ai';
         aiRow.innerHTML = `
           <div class="ss-msg-avatar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+            <i class="ti ti-shield" style="font-size:16px; color:#fff;"></i>
           </div>
           <div>
             <div class="ss-msg-bubble">

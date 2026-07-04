@@ -28,7 +28,7 @@
     }
     .ss-command-center__bg {
       position: absolute; right: -20px; top: -20px;
-      opacity: 0.06; pointer-events: none;
+      opacity: 0.06; pointer-events: none; line-height: 1;
     }
     .ss-command-center__header {
       display: flex; justify-content: space-between; align-items: flex-start;
@@ -129,42 +129,78 @@
       display: flex; justify-content: space-between; align-items: center;
       gap: var(--ss-gap-md); flex-wrap: wrap;
     }
+    /* ── Nav upgrade nudge ── */
+    .ss-nav__upgrade-nudge { margin: 0 var(--ss-gap-sm) var(--ss-gap-md); padding: 10px 12px; background: #EEEDFE; border-radius: var(--ss-radius-md); font-size: 12px; color: #3C3489; display: flex; flex-direction: column; gap: 8px; }
+    .ss-nav--collapsed .ss-nav__upgrade-nudge { display: none; }
+    /* ── Cap bar ── */
+    .ss-cap-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--ss-surface-container-low); border-radius: var(--ss-radius-sm); padding: 8px 12px; font-size: 12px; border-left: 3px solid var(--ss-warning); margin-bottom: var(--ss-gap-md); }
+    .ss-cap-bar__label { color: var(--ss-neutral-500); }
+    .ss-cap-bar__used { font-weight: 600; color: var(--ss-on-surface); }
+    .ss-cap-bar__track { flex: 1; min-width: 80px; height: 5px; background: var(--ss-neutral-200); border-radius: 100px; }
+    .ss-cap-bar__fill { height: 100%; background: var(--ss-warning); border-radius: 100px; }
+    .ss-cap-bar__upgrade { color: var(--ss-brand); font-weight: 500; margin-left: auto; }
+    /* ── Upgrade ladder ── */
+    .ss-upgrade-ladder { background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-md) var(--ss-gap-lg); margin-bottom: var(--ss-gap-lg); box-shadow: var(--ss-shadow-card); }
+    .ss-upgrade-ladder__title { font-size: 15px; font-weight: 600; margin-bottom: var(--ss-gap-md); }
+    .ss-upgrade-ladder__steps { display: flex; flex-direction: column; gap: 0; }
+    .ss-upgrade-ladder__step { display: flex; align-items: flex-start; gap: 14px; padding: var(--ss-gap-md) 0; border-bottom: 0.5px solid var(--ss-border); }
+    .ss-upgrade-ladder__step:last-child { border-bottom: none; }
+    .ss-upgrade-ladder__step--current { background: var(--ss-brand-light); margin: 0 calc(-1*var(--ss-gap-lg)); padding: var(--ss-gap-md) var(--ss-gap-lg); border-radius: var(--ss-radius-md); }
+    .ss-upgrade-ladder__step-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .ss-upgrade-ladder__step-body { flex: 1; }
+    .ss-upgrade-ladder__step-name { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+    .ss-upgrade-ladder__step-desc { font-size: 13px; color: var(--ss-neutral-500); line-height: 1.4; margin-bottom: 4px; }
+    .ss-upgrade-ladder__step-price { font-size: 12px; font-weight: 600; color: var(--ss-on-surface); }
+    .ss-upgrade-ladder__step-status { font-size: 12px; color: var(--ss-success); font-weight: 600; white-space: nowrap; }
+    /* ── Upgrade buttons ── */
+    .ss-btn-upgrade { background: var(--ss-brand-gradient); color: #fff; border: none; padding: 9px 20px; border-radius: var(--ss-radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .ss-btn-upgrade:hover { opacity: 0.88; text-decoration: none; }
+    .badge-mdr { background: #EDE9FF; color: #4C1D95; border-color: rgba(76,29,149,0.25); }
+    /* ── Sales CTA ── */
+    .ss-sales-cta { background: var(--ss-brand-gradient); border-radius: var(--ss-radius-lg); padding: var(--ss-gap-lg) var(--ss-gap-xl); margin-bottom: var(--ss-gap-xl); color: #fff; }
+    .ss-sales-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: var(--ss-gap-lg); flex-wrap: wrap; }
+    .ss-sales-cta__headline { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .ss-sales-cta__body { font-size: 13px; opacity: 0.88; max-width: 520px; line-height: 1.5; }
+    .ss-sales-cta a.ss-btn-upgrade { background: #fff; color: var(--ss-brand-dark); font-size: 13px; padding: 10px 20px; flex-shrink: 0; }
+    .ss-sales-cta a.ss-btn-upgrade:hover { background: #f0faf6; text-decoration: none; }
   </style>
 </head>
 <body>
   <nav class="ss-nav" id="ss-nav">
     <div class="ss-nav__header">
       <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
-        <svg class="ss-nav__brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
-        </svg>
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
         <span class="ss-nav__brand-name">Shannon Sentinel</span>
       </a>
       <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
       </button>
     </div>
     <div class="ss-nav__menu">
       <a href="/agentic-soc/dashboard/" class="ss-nav__item active" title="Dashboard">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
       </a>
       <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <i class="ti ti-search ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
       </a>
       <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12l2 2 4-4"/></svg>
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
       </a>
       <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
       <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <svg class="ss-nav__item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
+    </div>
+    <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
+      <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
+      <a href="/agentic-soc/pricing/" class="ss-btn-upgrade" style="font-size:12px; padding:6px 12px;" data-en="See paid plans →" data-id="Lihat paket berbayar →">Lihat paket berbayar →</a>
     </div>
     <div class="ss-nav__footer">
       <div class="ss-nav__footer-top">
@@ -172,17 +208,15 @@
         <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
       </div>
       <div class="ss-nav__footer-divider"></div>
-      <div class="ss-nav__user-row">
-        <div class="ss-avatar" id="nav-avatar">TA</div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
         <div class="ss-nav__user-info">
-          <span id="nav-name" class="ss-nav__name">Tamaria</span>
-          <span id="nav-company" class="ss-nav__company">Gmail</span>
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
         </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
       </div>
-      <button onclick="logout()" class="ss-nav__footer-action" title="Sign out">
-        <svg class="ss-nav__footer-action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span class="ss-nav__footer-action-label" data-en="Sign out" data-id="Keluar">Keluar</span>
-      </button>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
     </div>
   </nav>
 
@@ -192,7 +226,7 @@
       <div>
         <p style="font-size:13px;color:var(--ss-on-surface-variant);">
           <span data-en="Scan completed" data-id="Pemindaian selesai">Pemindaian selesai</span>
-          25 Apr 2026 · 14:32 WIB &nbsp;·&nbsp; <span id="hdr-company">PT Bank Contoh Tbk</span>
+          25 Apr 2026 · 14:32 WIB &nbsp;·&nbsp; <span id="hdr-company">Perusahaan Anda</span>
         </p>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -203,19 +237,25 @@
           <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
         </select>
         <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:5px 12px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.42 1.42M4.93 4.93L6.35 6.35M19.07 19.07l-1.42-1.42M4.93 19.07l1.42-1.42M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
+          <i class="ti ti-settings" style="font-size:14px;"></i>
           Pengaturan domain
         </a>
         <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
       </div>
     </div>
 
+    <!-- Freemium cap bar -->
+    <div class="ss-cap-bar">
+      <span class="ss-cap-bar__label" data-en="AI analyses this month:" data-id="Analisis AI bulan ini:">Analisis AI bulan ini:</span>
+      <span class="ss-cap-bar__used">42 / 50</span>
+      <div class="ss-cap-bar__track"><div class="ss-cap-bar__fill" style="width:84%"></div></div>
+      <a href="/agentic-soc/pricing/" class="ss-cap-bar__upgrade" data-en="Upgrade for unlimited →" data-id="Upgrade untuk tak terbatas →">Upgrade untuk tak terbatas →</a>
+    </div>
+
     <!-- Command Center hero -->
     <div class="ss-command-center">
       <!-- Decorative background shield -->
-      <svg class="ss-command-center__bg" width="220" height="220" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
-      </svg>
+      <i class="ti ti-shield ss-command-center__bg" style="font-size:220px; opacity:0.06; color:#fff; position:absolute; right:-20px; top:-20px; pointer-events:none; line-height:1;"></i>
       <div class="ss-command-center__header">
         <div>
           <h2 class="ss-command-center__title" data-en="Command Center" data-id="Pusat Komando">Pusat Komando</h2>
@@ -244,14 +284,95 @@
       <!-- Rendered by JS -->
     </div>
 
-    <!-- Upgrade CTA -->
-    <div class="ss-upgrade-banner">
-      <div>
-        <p style="font-weight:500;" data-en="Found your gaps. Now close them." data-id="Temukan celah Anda. Sekarang tutup celahnya.">Temukan celah Anda. Sekarang tutup celahnya.</p>
-        <p style="font-size:13px;color:var(--ss-neutral-700);" data-en="30-Day Sprint: Rp 35–75M — our team fixes all red findings." data-id="Sprint 30-Hari: Rp 35–75jt — tim kami membantu memperbaiki semua temuan merah.">Sprint 30-Hari: Rp 35–75jt — tim kami membantu memperbaiki semua temuan merah.</p>
+    <!-- Upgrade Ladder -->
+    <div class="ss-upgrade-ladder">
+      <h3 class="ss-upgrade-ladder__title" data-en="Your security journey" data-id="Perjalanan keamanan Anda">Perjalanan keamanan Anda</h3>
+      <div class="ss-upgrade-ladder__steps">
+        <div class="ss-upgrade-ladder__step ss-upgrade-ladder__step--current">
+          <div class="ss-upgrade-ladder__step-icon">🔍</div>
+          <div class="ss-upgrade-ladder__step-body">
+            <p class="ss-upgrade-ladder__step-name"><span class="badge badge-free" data-en="Free" data-id="Gratis">Gratis</span> <span data-en="Cyber X-Ray" data-id="Cyber X-Ray">Cyber X-Ray</span></p>
+            <p class="ss-upgrade-ladder__step-desc" data-en="You are here. View your risk report and top 3 actions." data-id="Anda di sini. Lihat laporan risiko dan 3 tindakan prioritas.">Anda di sini. Lihat laporan risiko dan 3 tindakan prioritas.</p>
+          </div>
+          <span class="ss-upgrade-ladder__step-status" data-en="Active" data-id="Aktif">✓ Aktif</span>
+        </div>
+        <div class="ss-upgrade-ladder__step">
+          <div class="ss-upgrade-ladder__step-icon">🛠️</div>
+          <div class="ss-upgrade-ladder__step-body">
+            <p class="ss-upgrade-ladder__step-name"><span class="badge badge-sprint">Sprint</span> <span data-en="30-Day Fix" data-id="Perbaikan 30 Hari">Perbaikan 30 Hari</span></p>
+            <p class="ss-upgrade-ladder__step-desc" data-en="Our team fixes your red findings. Email security, MFA, exposed services, endpoint baseline." data-id="Tim kami memperbaiki temuan merah Anda. Keamanan email, MFA, layanan terekspos, baseline endpoint.">Tim kami memperbaiki temuan merah Anda. Keamanan email, MFA, layanan terekspos, baseline endpoint.</p>
+            <p class="ss-upgrade-ladder__step-price" data-en="From Rp 35–75 jt · One-time" data-id="Mulai Rp 35–75 jt · Satu kali">Mulai Rp 35–75 jt · Satu kali</p>
+          </div>
+          <a href="mailto:sales@shannondynamics.id" class="ss-btn-upgrade" style="font-size:12px; padding:6px 14px; white-space:nowrap;" data-en="Start Sprint" data-id="Mulai Sprint">Mulai Sprint</a>
+        </div>
+        <div class="ss-upgrade-ladder__step">
+          <div class="ss-upgrade-ladder__step-icon">🛡️</div>
+          <div class="ss-upgrade-ladder__step-body">
+            <p class="ss-upgrade-ladder__step-name"><span class="badge badge-mdr">MDR</span> <span data-en="Core Monitoring" data-id="Pemantauan Inti">Pemantauan Inti</span></p>
+            <p class="ss-upgrade-ladder__step-desc" data-en="24/7 monitoring, 30-day retention, alert triage, basic response workflow." data-id="Pemantauan 24/7, retensi 30 hari, triase alert, alur respons dasar.">Pemantauan 24/7, retensi 30 hari, triase alert, alur respons dasar.</p>
+            <p class="ss-upgrade-ladder__step-price" data-en="From Rp 25–60 jt / month" data-id="Mulai Rp 25–60 jt / bulan">Mulai Rp 25–60 jt / bulan</p>
+          </div>
+          <a href="/agentic-soc/pricing/" class="ss-btn-secondary" style="font-size:12px; padding:6px 14px; white-space:nowrap;" data-en="See details" data-id="Lihat detail">Lihat detail</a>
+        </div>
+        <div class="ss-upgrade-ladder__step">
+          <div class="ss-upgrade-ladder__step-icon">🤖</div>
+          <div class="ss-upgrade-ladder__step-body">
+            <p class="ss-upgrade-ladder__step-name"><span class="badge badge-mdr">MDR AI</span> <span data-en="AI-Aware MDR" data-id="MDR Berbasis AI">MDR Berbasis AI</span></p>
+            <p class="ss-upgrade-ladder__step-desc" data-en="All Core MDR + AI phishing defense, deepfake/vishing playbooks, shared AI inference." data-id="Semua Core MDR + pertahanan phishing AI, playbook deepfake/vishing, inferensi AI bersama.">Semua Core MDR + pertahanan phishing AI, playbook deepfake/vishing, inferensi AI bersama.</p>
+            <p class="ss-upgrade-ladder__step-price" data-en="From Rp 60–150 jt / month" data-id="Mulai Rp 60–150 jt / bulan">Mulai Rp 60–150 jt / bulan</p>
+          </div>
+          <a href="/agentic-soc/pricing/" class="ss-btn-secondary" style="font-size:12px; padding:6px 14px; white-space:nowrap;" data-en="See details" data-id="Lihat detail">Lihat detail</a>
+        </div>
       </div>
-      <a href="mailto:sales@shannondynamics.id" class="ss-btn-primary" data-en="Contact us →" data-id="Hubungi kami →">Hubungi kami →</a>
     </div>
+
+    <!-- Platform direction teaser -->
+    <div class="ss-platform-teaser">
+      <span class="ss-platform-teaser__eyebrow"
+            data-en="PLATFORM DIRECTION — NOT YET LIVE"
+            data-id="ARAH PLATFORM — BELUM TERSEDIA">
+        ARAH PLATFORM — BELUM TERSEDIA
+      </span>
+      <p class="ss-platform-teaser__title"
+         data-en="This report is the detect side. Here's where the platform is headed."
+         data-id="Laporan ini adalah sisi deteksi. Ini arah platform ke depan.">
+        Laporan ini adalah sisi deteksi. Ini arah platform ke depan.
+      </p>
+      <div class="ss-platform-teaser__items">
+        <div class="ss-platform-teaser__item">
+          <span class="ss-platform-teaser__icon">🛡️</span>
+          <div>
+            <p class="ss-platform-teaser__item-title"
+               data-en="Prevention edge" data-id="Edge pencegahan">Edge pencegahan</p>
+            <p class="ss-platform-teaser__item-desc"
+               data-en="Identity-based access to private apps, inline traffic inspection, and data-loss prevention."
+               data-id="Akses berbasis identitas ke aplikasi privat, inspeksi lalu lintas inline, dan pencegahan kebocoran data.">
+              Akses berbasis identitas ke aplikasi privat, inspeksi lalu lintas inline, dan pencegahan kebocoran data.
+            </p>
+          </div>
+        </div>
+        <div class="ss-platform-teaser__item">
+          <span class="ss-platform-teaser__icon">🤖</span>
+          <div>
+            <p class="ss-platform-teaser__item-title"
+               data-en="Per-action AI governance" data-id="Tata kelola AI per tindakan">Tata kelola AI per tindakan</p>
+            <p class="ss-platform-teaser__item-desc"
+               data-en="Every AI agent tool call checked against policy before it runs, audited the same way as this report's findings."
+               data-id="Setiap panggilan tool agen AI diperiksa terhadap kebijakan sebelum dijalankan, diaudit dengan cara yang sama seperti temuan laporan ini.">
+              Setiap panggilan tool agen AI diperiksa terhadap kebijakan sebelum dijalankan, diaudit dengan cara yang sama seperti temuan laporan ini.
+            </p>
+          </div>
+        </div>
+      </div>
+      <a href="/agentic-soc/pricing/#platform" class="ss-platform-teaser__link"
+         data-en="Read where the platform is headed →"
+         data-id="Baca arah platform ke depan →">
+        Baca arah platform ke depan →
+      </a>
+    </div>
+
+    <!-- Sales CTA (funnel-aware) -->
+    <div class="ss-sales-cta" id="sales-cta"></div>
   </div>
 
   <script src="/agentic-soc/shared.js"></script>
@@ -264,52 +385,52 @@
       direktur: [
         { urgency: 'urgent', title: 'Setujui Deployment DMARC', desc: 'Otorisasi IT untuk menutup risiko pemalsuan email perusahaan hari ini.', btn: 'Otorisasi Sekarang' },
         { urgency: 'high',   title: 'Wajibkan MFA untuk Admin', desc: '4 akun admin tanpa MFA membuka risiko pengambilalihan akun.', btn: 'Setujui Kebijakan' },
-        { urgency: 'high',   title: 'Tinjau Risiko Retensi Log', desc: 'Retensi 7 hari membuka eksposur audit OJK. Butuh keputusan segera.', btn: 'Tinjau Risiko' },
+        { urgency: 'high',   title: 'Tinjau Risiko Retensi Log', desc: 'Retensi 7 hari membuka eksposur audit standar. Butuh keputusan segera.', btn: 'Tinjau Risiko' },
       ],
       it: [
-        { urgency: 'urgent', title: 'Deploy DMARC p=quarantine', desc: 'Tambahkan record TXT ke _dmarc.bankcontoh.co.id · ~1 jam.', btn: 'Eksekusi Sekarang' },
-        { urgency: 'high',   title: 'Aktifkan MFA — 4 Akun Admin', desc: 'domain.admin.01, .03, cloud.admin.01, .04 — gunakan SSO yang ada.', btn: 'Konfigurasi MFA' },
-        { urgency: 'high',   title: 'Patch OpenSSH di ssh.bankcontoh.co.id', desc: 'OpenSSH 7.4 (EOL) — CVE-2023-38408 aktif dieksploitasi.', btn: 'Jadwalkan Patch' },
+        { urgency: 'urgent', title: 'Deploy DMARC p=quarantine', desc: 'Tambahkan record TXT ke _dmarc.domain.perusahaan.com · ~1 jam.', btn: 'Eksekusi Sekarang' },
+        { urgency: 'high',   title: 'Aktifkan MFA — 4 Akun Admin', desc: '4 akun admin — gunakan SSO yang ada.', btn: 'Konfigurasi MFA' },
+        { urgency: 'high',   title: 'Patch OpenSSH di ssh.domain.com', desc: 'OpenSSH 7.4 (EOL) — CVE-2023-38408 aktif dieksploitasi.', btn: 'Jadwalkan Patch' },
       ],
       finance: [
         { urgency: 'urgent', title: 'Risiko Penipuan Invoice — DMARC Hilang', desc: 'Email tagihan dapat dipalsukan. Eksposur penipuan pembayaran tinggi.', btn: 'Eskalasi ke IT' },
         { urgency: 'high',   title: 'Akun Finance Admin Tidak Terlindungi', desc: '2 akun dengan akses sistem keuangan tidak memiliki MFA.', btn: 'Minta Tindakan' },
-        { urgency: 'high',   title: 'Eksposur Audit OJK — Gap Log 83 Hari', desc: 'Potensi denda OJK jika diaudit dalam kondisi saat ini.', btn: 'Tinjau Eksposur' },
+        { urgency: 'high',   title: 'Eksposur Audit — Gap Log 83 Hari', desc: 'Audit standar mensyaratkan minimal 90 hari. Potensi temuan audit.', btn: 'Tinjau Eksposur' },
       ],
       auditor: [
-        { urgency: 'urgent', title: 'DMARC — Tidak Sesuai POJK 11/2022', desc: 'Kontrol autentikasi email §4.2 tidak terpenuhi. Dokumentasikan segera.', btn: 'Catat Temuan' },
-        { urgency: 'high',   title: 'Retensi Log 7 Hari vs 90 Hari', desc: 'POJK 11/2022 §7.1 — gap 83 hari. Butuh rencana remediasi.', btn: 'Buat Catatan Audit' },
-        { urgency: 'high',   title: '4 Akun Istimewa Tanpa MFA', desc: 'Tidak sesuai §5.3 persyaratan kontrol akses. Jadwalkan tinjauan.', btn: 'Jadwalkan Tinjauan' },
+        { urgency: 'urgent', title: 'DMARC — Tidak Sesuai Kebijakan Keamanan Standar', desc: 'Kontrol autentikasi email tidak terpenuhi. Dokumentasikan segera.', btn: 'Catat Temuan' },
+        { urgency: 'high',   title: 'Retensi Log 7 Hari vs 90 Hari', desc: 'Kebijakan keamanan standar — gap 83 hari. Butuh rencana remediasi.', btn: 'Buat Catatan Audit' },
+        { urgency: 'high',   title: '4 Akun Istimewa Tanpa MFA', desc: 'Tidak sesuai persyaratan kontrol akses standar. Jadwalkan tinjauan.', btn: 'Jadwalkan Tinjauan' },
       ],
     };
 
     const FINDINGS = [
       {
         dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
-        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
-        title: { direktur: 'Domain Email Tidak Terlindungi', it: 'DMARC Hilang — bankcontoh.co.id', finance: 'Risiko Penipuan Invoice', auditor: 'Ketidakpatuhan DMARC' },
-        desc:  { direktur: 'Penyerang dapat memalsukan email perusahaan Anda ke klien dan mitra.', it: 'SPF: ✓  DKIM: ✗  DMARC: ✗ — Terapkan p=quarantine segera.', finance: 'Tanpa DMARC, email tagihan dapat dipalsukan. Risiko transfer tidak sah.', auditor: 'Kontrol §4.2 tidak dipenuhi. Tidak ada kebijakan DMARC terdokumentasi.' },
+        icon: '<i class="ti ti-mail" style="font-size:16px;"></i>',
+        title: { direktur: 'Domain Email Tidak Terlindungi', it: 'DMARC Hilang — domain perusahaan', finance: 'Risiko Penipuan Invoice', auditor: 'Ketidakpatuhan DMARC' },
+        desc:  { direktur: 'Penyerang dapat memalsukan email perusahaan Anda ke klien dan mitra.', it: 'SPF: ✓  DKIM: ✗  DMARC: ✗ — Terapkan p=quarantine segera.', finance: 'Tanpa DMARC, email tagihan dapat dipalsukan. Risiko transfer tidak sah.', auditor: 'Kontrol autentikasi email tidak dipenuhi. Tidak ada kebijakan DMARC terdokumentasi.' },
         action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Lihat Kepatuhan →' },
       },
       {
         dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
-        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
-        title: { direktur: 'Retensi Log Tidak Memenuhi OJK', it: 'Log Retention 7 Hari — SIEM Tidak Terdeteksi', finance: 'Investigasi Penipuan Terbatas', auditor: 'Retensi Log Tidak Memenuhi POJK 11/2022' },
-        desc:  { direktur: 'OJK mensyaratkan 90 hari minimum. Saat ini hanya 7 hari. Risiko audit tinggi.', it: 'Log server 7 hari, tanpa SIEM terpusat, endpoint log tidak diteruskan.', finance: 'Log 7 hari tidak cukup untuk investigasi forensik jika terjadi penipuan.', auditor: 'POJK 11/2022 §7.1 — gap 83 hari. Remediasi wajib sebelum audit berikutnya.' },
+        icon: '<i class="ti ti-file-text" style="font-size:16px;"></i>',
+        title: { direktur: 'Retensi Log Tidak Memenuhi Standar Audit', it: 'Log Retention 7 Hari — SIEM Tidak Terdeteksi', finance: 'Investigasi Penipuan Terbatas', auditor: 'Retensi Log Tidak Memenuhi Standar Minimum' },
+        desc:  { direktur: 'Audit standar mensyaratkan 90 hari minimum. Saat ini hanya 7 hari. Risiko audit tinggi.', it: 'Log server 7 hari, tanpa SIEM terpusat, endpoint log tidak diteruskan.', finance: 'Log 7 hari tidak cukup untuk investigasi forensik jika terjadi penipuan.', auditor: 'Kebijakan keamanan standar — gap 83 hari. Remediasi wajib sebelum audit berikutnya.' },
         action:{ direktur: 'Tinjau Risiko', it: 'Lihat Konfigurasi →', finance: 'Lihat Dampak →', auditor: 'Buat Catatan Audit' },
       },
       {
         dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
-        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+        icon: '<i class="ti ti-device-desktop" style="font-size:16px;"></i>',
         title: { direktur: '3 Subdomain Terekspos ke Internet', it: 'SSH EOL + Port Terbuka di Subdomain', finance: 'Subdomain Terekspos — Risiko Akses Sistem', auditor: 'Permukaan Serangan Tidak Terdokumentasi' },
-        desc:  { direktur: 'Salah satu subdomain menjalankan SSH versi rentan yang sedang aktif diserang.', it: 'ssh.bankcontoh.co.id — OpenSSH 7.4 (CVE-2023-38408), port 8080 terbuka.', finance: 'Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan.', auditor: '3 subdomain tidak terlindungi belum terdokumentasi dalam register risiko.' },
+        desc:  { direktur: 'Salah satu subdomain menjalankan SSH versi rentan yang sedang aktif diserang.', it: 'ssh.domain.com — OpenSSH 7.4 (CVE-2023-38408), port 8080 terbuka.', finance: 'Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan.', auditor: '3 subdomain tidak terlindungi belum terdokumentasi dalam register risiko.' },
         action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Perbarui Register' },
       },
       {
         dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
-        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-        title: { direktur: '4 Akun Admin Tanpa MFA', it: '4 Akun Admin Tanpa MFA Terdeteksi', finance: 'Akun Finance Admin Rentan', auditor: '4 Akun Istimewa Tidak Memenuhi §5.3' },
-        desc:  { direktur: '4 dari 12 admin belum MFA. Risiko pengambilalihan akun signifikan.', it: 'domain.admin.01, .03, cloud.admin.01, .04 — fix via SSO provider yang ada.', finance: '2 akun dengan akses sistem keuangan dan payroll tidak menggunakan MFA.', auditor: 'MFA wajib untuk akun istimewa per POJK 11/2022 §5.3 — 4 akun tidak patuh.' },
+        icon: '<i class="ti ti-user" style="font-size:16px;"></i>',
+        title: { direktur: '4 Akun Admin Tanpa MFA', it: '4 Akun Admin Tanpa MFA Terdeteksi', finance: 'Akun Finance Admin Rentan', auditor: '4 Akun Istimewa Tidak Memenuhi Kebijakan MFA' },
+        desc:  { direktur: '4 dari 12 admin belum MFA. Risiko pengambilalihan akun signifikan.', it: '4 akun admin — fix via SSO provider yang ada.', finance: '2 akun dengan akses sistem keuangan dan payroll tidak menggunakan MFA.', auditor: 'MFA wajib untuk akun istimewa per kebijakan keamanan standar — 4 akun tidak patuh.' },
         action:{ direktur: 'Tinjau Akun', it: 'Konfigurasi MFA →', finance: 'Minta Tindakan', auditor: 'Dokumentasikan Gap' },
       },
     ];
@@ -351,8 +472,41 @@
       renderDashboard(aud);
     };
 
+    const SALES_CTA = {
+      xray: {
+        en: { headline: "Found red findings. Ready to close them?", body: "The 30-Day Sprint fixes your most critical gaps — DMARC, MFA, exposed services, endpoint hardening. Then MDR keeps you from going blind again.", cta: "Talk to us about Sprint →" },
+        id: { headline: "Temukan temuan merah. Siap untuk menutupnya?", body: "Sprint 30 Hari memperbaiki celah paling kritis — DMARC, MFA, layanan terekspos, penguatan endpoint. Lalu MDR menjaga Anda agar tidak buta lagi.", cta: "Hubungi kami tentang Sprint →" }
+      },
+      inbox: {
+        en: { headline: "Phishing risk detected. Ready for managed protection?", body: "Managed Phishing & Identity MDR handles mailbox ingestion, quarantine, identity correlation, and finance fraud playbooks — not just detection.", cta: "Talk to us about Phishing MDR →" },
+        id: { headline: "Risiko phishing terdeteksi. Siap untuk proteksi terkelola?", body: "MDR Phishing & Identitas mengelola ingesti mailbox, karantina, korelasi identitas, dan playbook fraud keuangan — bukan hanya deteksi.", cta: "Hubungi kami tentang Phishing MDR →" }
+      },
+      postincident: {
+        en: { headline: "Incident detected. Need hands-on help now?", body: "Emergency Stabilization gets our team on the incident within 24h — triage, containment, evidence preservation, executive brief. Then MDR to prevent recurrence.", cta: "Request Emergency Stabilization →" },
+        id: { headline: "Insiden terdeteksi. Butuh bantuan langsung sekarang?", body: "Stabilisasi Darurat membawa tim kami ke insiden dalam 24 jam — triase, penahanan, pelestarian bukti, ringkasan eksekutif. Lalu MDR untuk mencegah pengulangan.", cta: "Minta Stabilisasi Darurat →" }
+      }
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       setAudience(localStorage.getItem('ss-audience') || 'direktur');
+
+      const lang   = localStorage.getItem('ss-lang') || 'id';
+      const funnel = (window.SS && window.SS.funnel) || 'xray';
+      const copy   = (SALES_CTA[funnel] || SALES_CTA.xray)[lang] || SALES_CTA.xray.id;
+      const ctaEl  = document.getElementById('sales-cta');
+      if (ctaEl) {
+        ctaEl.innerHTML = `
+          <div class="ss-sales-cta__inner">
+            <div>
+              <p class="ss-sales-cta__headline">${copy.headline}</p>
+              <p class="ss-sales-cta__body">${copy.body}</p>
+            </div>
+            <a href="mailto:sales@shannondynamics.id" class="ss-btn-upgrade">${copy.cta}</a>
+          </div>`;
+      }
+
+      const nudge = document.getElementById('nav-upgrade-nudge');
+      if (nudge && window.SS && window.SS.tier !== 'free') nudge.hidden = true;
     });
   </script>
 </body>
