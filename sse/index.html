@@ -1,0 +1,583 @@
+<script>
+(function() {
+  const sess = sessionStorage.getItem('ss-session');
+  if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+  window.SS = JSON.parse(sess);
+  if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+})();
+</script>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prevention Edge — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="/agentic-soc/sse/sse.css">
+  <script>
+    document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+  </script>
+</head>
+<body>
+
+  <!-- ── Sidebar nav ───────────────────────────────────────────────────────── -->
+  <nav class="ss-nav" id="ss-nav">
+    <div class="ss-nav__header">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
+        <span class="ss-nav__brand-name">Shannon Sentinel</span>
+      </a>
+      <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
+      </button>
+    </div>
+
+    <div class="ss-nav__menu">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
+      </a>
+      <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
+        <i class="ti ti-search ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
+      </a>
+      <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
+      </a>
+      <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
+      </a>
+      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
+        <i class="ti ti-eye ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+      </a>
+      <a href="/agentic-soc/sse/" class="ss-nav__item active" title="Prevention Edge">
+        <i class="ti ti-shield-lock ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
+      </a>
+      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
+        <i class="ti ti-robot ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+      </a>
+    </div>
+
+    <!-- Upgrade nudge (free tier only) -->
+    <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
+      <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
+      <a href="/agentic-soc/pricing/" class="ss-btn-upgrade" style="font-size:12px; padding:6px 12px;" data-en="See paid plans →" data-id="Lihat paket berbayar →">Lihat paket berbayar →</a>
+    </div>
+
+    <div class="ss-nav__footer">
+      <div class="ss-nav__footer-top">
+        <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
+      </div>
+      <div class="ss-nav__footer-divider"></div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
+        </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
+      </div>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
+    </div>
+  </nav>
+
+  <!-- ── Main content ───────────────────────────────────────────────────────── -->
+  <div class="ss-page">
+
+    <!-- Page header -->
+    <div class="ss-page-header">
+      <div class="sse-module-badge">
+        <i class="ti ti-shield-lock" style="font-size:11px;"></i>
+        <span data-en="SSE · Secure Service Edge" data-id="SSE · Secure Service Edge">SSE · Secure Service Edge</span>
+      </div>
+      <h1 class="ss-page-title" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</h1>
+      <p class="ss-page-sub"
+         data-en="Zero Trust access control, real-time traffic inspection and data loss prevention — all enforced at the network edge."
+         data-id="Kontrol akses Zero Trust, inspeksi lalu lintas real-time dan pencegahan kebocoran data — semua ditegakkan di edge jaringan.">
+        Kontrol akses Zero Trust, inspeksi lalu lintas real-time dan pencegahan kebocoran data — semua ditegakkan di edge jaringan.
+      </p>
+    </div>
+
+    <!-- Stats summary -->
+    <div class="sse-stats-bar">
+      <div class="sse-stat-card">
+        <div class="sse-stat-card__value">4</div>
+        <div class="sse-stat-card__label" data-en="Private apps connected" data-id="Aplikasi privat terhubung">Aplikasi privat terhubung</div>
+      </div>
+      <div class="sse-stat-card">
+        <div class="sse-stat-card__value">90</div>
+        <div class="sse-stat-card__label" data-en="Active users" data-id="Pengguna aktif">Pengguna aktif</div>
+      </div>
+      <div class="sse-stat-card">
+        <div class="sse-stat-card__value" style="color:var(--ss-danger);">3</div>
+        <div class="sse-stat-card__label" data-en="Blocked threats today" data-id="Ancaman diblokir hari ini">Ancaman diblokir hari ini</div>
+      </div>
+      <div class="sse-stat-card">
+        <div class="sse-stat-card__value" style="color:var(--ss-warning);">2</div>
+        <div class="sse-stat-card__label" data-en="DLP violations today" data-id="Pelanggaran DLP hari ini">Pelanggaran DLP hari ini</div>
+      </div>
+      <div class="sse-stat-card">
+        <div class="sse-stat-card__value">5</div>
+        <div class="sse-stat-card__label" data-en="DLP rules active" data-id="Aturan DLP aktif">Aturan DLP aktif</div>
+      </div>
+    </div>
+
+    <!-- ── Lock wrap: entire content area locked for non-mdr_ai ───────────── -->
+    <div class="sse-lock-wrap" id="sse-content-wrap">
+
+      <!-- Lock gate overlay (shown for non-mdr_ai, hidden via JS for mdr_ai) -->
+      <div class="sse-lock-gate-full" id="sse-lock-gate">
+        <div class="sse-lock-gate-full__icon">
+          <i class="ti ti-lock"></i>
+        </div>
+        <p class="sse-lock-gate-full__label"
+           data-en="Available on MDR AI plan"
+           data-id="Tersedia di paket MDR AI">Tersedia di paket MDR AI</p>
+        <p class="sse-lock-gate-full__sub"
+           data-en="Prevention Edge requires MDR AI — full ZTNA, inline DPI and data loss prevention with AI-assisted policy enforcement."
+           data-id="Prevention Edge memerlukan MDR AI — ZTNA penuh, DPI inline, dan pencegahan kebocoran data dengan penegakan kebijakan berbantuan AI.">
+          Prevention Edge memerlukan MDR AI — ZTNA penuh, DPI inline, dan pencegahan kebocoran data dengan penegakan kebijakan berbantuan AI.
+        </p>
+        <a href="/agentic-soc/pricing/" class="ss-btn-primary" style="margin-top:6px; font-size:13px; padding:9px 20px;"
+           data-en="Upgrade to MDR AI →" data-id="Upgrade ke MDR AI →">Upgrade ke MDR AI →</a>
+      </div>
+
+      <!-- ── Section 1: Private App Access ──────────────────────────────────── -->
+      <div class="sse-section">
+        <div class="sse-section-header">
+          <div class="sse-section-title">
+            <div class="sse-section-icon"><i class="ti ti-building-community"></i></div>
+            <div>
+              <h2 data-en="Private App Access" data-id="Akses Aplikasi Privat">Akses Aplikasi Privat</h2>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="ss-btn-secondary" id="add-app-btn" disabled
+              title="Upgrade to MDR AI to add private apps"
+              data-en="+ Add app" data-id="+ Tambah aplikasi">+ Tambah aplikasi</button>
+          </div>
+        </div>
+        <p class="sse-section-desc"
+           data-en="Identity-based Zero Trust Network Access (ZTNA) — users connect to private applications without exposing them to the public internet."
+           data-id="Akses jaringan Zero Trust (ZTNA) berbasis identitas — pengguna terhubung ke aplikasi privat tanpa mengeksposnya ke internet publik.">
+          Akses jaringan Zero Trust (ZTNA) berbasis identitas — pengguna terhubung ke aplikasi privat tanpa mengeksposnya ke internet publik.
+        </p>
+
+        <div class="ss-card" style="padding:0; overflow:hidden;">
+          <div class="sse-table-wrap">
+            <table class="sse-table">
+              <thead>
+                <tr>
+                  <th data-en="Application" data-id="Aplikasi">Aplikasi</th>
+                  <th data-en="Users Connected" data-id="Pengguna Terhubung">Pengguna Terhubung</th>
+                  <th data-en="Last Access" data-id="Akses Terakhir">Akses Terakhir</th>
+                  <th data-en="Status" data-id="Status">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="sse-app-name">Jira Internal</div>
+                    <div class="sse-app-domain">jira.internal.corp</div>
+                  </td>
+                  <td>
+                    <span style="font-weight:500;">47</span>
+                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
+                  </td>
+                  <td>
+                    <span class="sse-log-time" data-en="2 min ago" data-id="2 menit lalu">2 menit lalu</span>
+                  </td>
+                  <td><span class="badge badge-active" data-en="Active" data-id="Aktif">Aktif</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="sse-app-name">HR Portal</div>
+                    <div class="sse-app-domain">hr.internal.corp</div>
+                  </td>
+                  <td>
+                    <span style="font-weight:500;">12</span>
+                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
+                  </td>
+                  <td>
+                    <span class="sse-log-time" data-en="15 min ago" data-id="15 menit lalu">15 menit lalu</span>
+                  </td>
+                  <td><span class="badge badge-active" data-en="Active" data-id="Aktif">Aktif</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="sse-app-name">Finance Dashboard</div>
+                    <div class="sse-app-domain">finance.internal.corp</div>
+                  </td>
+                  <td>
+                    <span style="font-weight:500;">8</span>
+                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
+                  </td>
+                  <td>
+                    <span class="sse-log-time" data-en="1 hour ago" data-id="1 jam lalu">1 jam lalu</span>
+                  </td>
+                  <td><span class="badge badge-protected" data-en="Protected" data-id="Dilindungi">Dilindungi</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="sse-app-name">Legacy ERP</div>
+                    <div class="sse-app-domain">erp.internal.corp</div>
+                  </td>
+                  <td>
+                    <span style="font-weight:500;">23</span>
+                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
+                  </td>
+                  <td>
+                    <span class="sse-log-time" data-en="3 hours ago" data-id="3 jam lalu">3 jam lalu</span>
+                  </td>
+                  <td><span class="badge badge-reviewing" data-en="Reviewing" data-id="Ditinjau">Ditinjau</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 2: Inline Traffic Inspection ───────────────────────────── -->
+      <div class="sse-section">
+        <div class="sse-section-header">
+          <div class="sse-section-title">
+            <div class="sse-section-icon" style="background:rgba(55,138,221,0.10);color:var(--ss-info);">
+              <i class="ti ti-network"></i>
+            </div>
+            <div>
+              <h2 data-en="Inline Traffic Inspection" data-id="Inspeksi Lalu Lintas Inline">Inspeksi Lalu Lintas Inline</h2>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ss-success);">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--ss-success);display:inline-block;"></span>
+              <span data-en="Live" data-id="Langsung">Langsung</span>
+            </span>
+            <button class="ss-btn-ghost" style="font-size:12px;padding:4px 10px;" onclick="refreshLog()">
+              <i class="ti ti-refresh" style="font-size:13px;margin-right:4px;"></i>
+              <span data-en="Refresh" data-id="Segarkan">Segarkan</span>
+            </button>
+          </div>
+        </div>
+        <p class="sse-section-desc"
+           data-en="Real-time log of all proxied sessions — every connection is inspected for threats, DLP violations and anomalous behaviour."
+           data-id="Log real-time semua sesi yang diproxy — setiap koneksi diperiksa untuk ancaman, pelanggaran DLP, dan perilaku anomali.">
+          Log real-time semua sesi yang diproxy — setiap koneksi diperiksa untuk ancaman, pelanggaran DLP, dan perilaku anomali.
+        </p>
+
+        <div class="ss-card" style="padding:0; overflow:hidden;">
+          <div class="sse-table-wrap">
+            <table class="sse-table">
+              <thead>
+                <tr>
+                  <th data-en="Time" data-id="Waktu">Waktu</th>
+                  <th data-en="User" data-id="Pengguna">Pengguna</th>
+                  <th data-en="Destination" data-id="Tujuan">Tujuan</th>
+                  <th data-en="Action" data-id="Tindakan">Tindakan</th>
+                  <th data-en="Reason" data-id="Alasan">Alasan</th>
+                </tr>
+              </thead>
+              <tbody id="traffic-log-body">
+                <tr>
+                  <td class="sse-log-time">14:32</td>
+                  <td class="sse-log-user">rudi@contoh.co.id</td>
+                  <td class="sse-log-dest">jira.internal.corp</td>
+                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
+                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:31</td>
+                  <td class="sse-log-user">sari@contoh.co.id</td>
+                  <td class="sse-log-dest">suspicious-site.com</td>
+                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
+                  <td class="sse-log-reason" data-en="DLP policy: external upload blocked" data-id="Kebijakan DLP: unggahan eksternal diblokir">Kebijakan DLP: unggahan eksternal diblokir</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:30</td>
+                  <td class="sse-log-user">budi@contoh.co.id</td>
+                  <td class="sse-log-dest">finance.internal.corp</td>
+                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
+                  <td class="sse-log-reason" data-en="Identity verified + MFA" data-id="Identitas terverifikasi + MFA">Identitas terverifikasi + MFA</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:29</td>
+                  <td class="sse-log-user">unknown@contoh.co.id</td>
+                  <td class="sse-log-dest">api.external-service.com</td>
+                  <td><span class="badge badge-inspect" data-en="Inspect" data-id="Periksa">Periksa</span></td>
+                  <td class="sse-log-reason" data-en="Anomalous data volume" data-id="Volume data anomali">Volume data anomali</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:28</td>
+                  <td class="sse-log-user">rudi@contoh.co.id</td>
+                  <td class="sse-log-dest">hr.internal.corp</td>
+                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
+                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:27</td>
+                  <td class="sse-log-user">sari@contoh.co.id</td>
+                  <td class="sse-log-dest">dropbox.com</td>
+                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
+                  <td class="sse-log-reason" data-en="DLP: unauthorized cloud storage" data-id="DLP: penyimpanan cloud tidak diizinkan">DLP: penyimpanan cloud tidak diizinkan</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:26</td>
+                  <td class="sse-log-user">admin@contoh.co.id</td>
+                  <td class="sse-log-dest">erp.internal.corp</td>
+                  <td><span class="badge badge-inspect" data-en="Inspect" data-id="Periksa">Periksa</span></td>
+                  <td class="sse-log-reason" data-en="First-time access" data-id="Akses pertama kali">Akses pertama kali</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:25</td>
+                  <td class="sse-log-user">budi@contoh.co.id</td>
+                  <td class="sse-log-dest">suspicious-site.com</td>
+                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
+                  <td class="sse-log-reason" data-en="Malware indicator" data-id="Indikator malware">Indikator malware</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:24</td>
+                  <td class="sse-log-user">rudi@contoh.co.id</td>
+                  <td class="sse-log-dest">api.external-service.com</td>
+                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
+                  <td class="sse-log-reason" data-en="Approved app" data-id="Aplikasi disetujui">Aplikasi disetujui</td>
+                </tr>
+                <tr>
+                  <td class="sse-log-time">14:23</td>
+                  <td class="sse-log-user">sari@contoh.co.id</td>
+                  <td class="sse-log-dest">finance.internal.corp</td>
+                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
+                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 3: Data Loss Prevention ───────────────────────────────── -->
+      <div class="sse-section">
+        <div class="sse-section-header">
+          <div class="sse-section-title">
+            <div class="sse-section-icon" style="background:rgba(239,159,39,0.12);color:var(--ss-warning);">
+              <i class="ti ti-database-lock"></i>
+            </div>
+            <div>
+              <h2 data-en="Data Loss Prevention (DLP)" data-id="Pencegahan Kebocoran Data (DLP)">Pencegahan Kebocoran Data (DLP)</h2>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="ss-btn-secondary" disabled
+              data-en="+ Add rule" data-id="+ Tambah aturan">+ Tambah aturan</button>
+          </div>
+        </div>
+        <p class="sse-section-desc"
+           data-en="Policy rules are enforced inline — violations are blocked or flagged in real time before data leaves the perimeter."
+           data-id="Aturan kebijakan ditegakkan secara inline — pelanggaran diblokir atau ditandai secara real-time sebelum data keluar dari perimeter.">
+          Aturan kebijakan ditegakkan secara inline — pelanggaran diblokir atau ditandai secara real-time sebelum data keluar dari perimeter.
+        </p>
+
+        <div class="ss-card" style="padding:0; overflow:hidden;">
+          <div class="sse-dlp-list">
+
+            <!-- Rule 1 -->
+            <div class="sse-dlp-rule">
+              <div class="sse-dlp-rule__toggle">
+                <input type="checkbox" class="sse-toggle" checked aria-label="Block external cloud upload">
+              </div>
+              <div class="sse-dlp-rule__body">
+                <div class="sse-dlp-rule__name"
+                     data-en="Block external cloud upload"
+                     data-id="Blokir unggahan cloud eksternal">Blokir unggahan cloud eksternal</div>
+                <div class="sse-dlp-rule__desc"
+                     data-en="Prevent uploads to non-approved cloud storage (Dropbox, WeTransfer, etc.)"
+                     data-id="Cegah unggahan ke penyimpanan cloud yang tidak disetujui (Dropbox, WeTransfer, dll.)">
+                  Cegah unggahan ke penyimpanan cloud yang tidak disetujui (Dropbox, WeTransfer, dll.)
+                </div>
+              </div>
+              <div class="sse-dlp-rule__action">
+                <span class="sse-action-tag sse-action-tag--block">
+                  <i class="ti ti-ban" style="font-size:10px;"></i>
+                  <span data-en="Block" data-id="Blokir">Blokir</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Rule 2 -->
+            <div class="sse-dlp-rule">
+              <div class="sse-dlp-rule__toggle">
+                <input type="checkbox" class="sse-toggle" checked aria-label="Flag large data transfers">
+              </div>
+              <div class="sse-dlp-rule__body">
+                <div class="sse-dlp-rule__name"
+                     data-en="Flag large data transfers"
+                     data-id="Tandai transfer data besar">Tandai transfer data besar</div>
+                <div class="sse-dlp-rule__desc"
+                     data-en="Alert when &gt;50 MB transferred to external destinations"
+                     data-id="Beri peringatan jika &gt;50 MB ditransfer ke tujuan eksternal">
+                  Beri peringatan jika &gt;50 MB ditransfer ke tujuan eksternal
+                </div>
+              </div>
+              <div class="sse-dlp-rule__action" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">
+                <span class="sse-action-tag sse-action-tag--inspect">
+                  <i class="ti ti-search" style="font-size:10px;"></i>
+                  <span data-en="Inspect" data-id="Periksa">Periksa</span>
+                </span>
+                <span class="sse-action-tag sse-action-tag--alert">
+                  <i class="ti ti-bell" style="font-size:10px;"></i>
+                  <span data-en="Alert" data-id="Peringatan">Peringatan</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Rule 3 -->
+            <div class="sse-dlp-rule">
+              <div class="sse-dlp-rule__toggle">
+                <input type="checkbox" class="sse-toggle" checked aria-label="Restrict finance data">
+              </div>
+              <div class="sse-dlp-rule__body">
+                <div class="sse-dlp-rule__name"
+                     data-en="Restrict finance data"
+                     data-id="Batasi data keuangan">Batasi data keuangan</div>
+                <div class="sse-dlp-rule__desc"
+                     data-en="Block access to finance.internal.corp from unverified devices"
+                     data-id="Blokir akses ke finance.internal.corp dari perangkat yang tidak terverifikasi">
+                  Blokir akses ke finance.internal.corp dari perangkat yang tidak terverifikasi
+                </div>
+              </div>
+              <div class="sse-dlp-rule__action">
+                <span class="sse-action-tag sse-action-tag--block">
+                  <i class="ti ti-ban" style="font-size:10px;"></i>
+                  <span data-en="Block" data-id="Blokir">Blokir</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Rule 4 -->
+            <div class="sse-dlp-rule">
+              <div class="sse-dlp-rule__toggle">
+                <input type="checkbox" class="sse-toggle" checked aria-label="Credit card number detection">
+              </div>
+              <div class="sse-dlp-rule__body">
+                <div class="sse-dlp-rule__name"
+                     data-en="Credit card number detection"
+                     data-id="Deteksi nomor kartu kredit">Deteksi nomor kartu kredit</div>
+                <div class="sse-dlp-rule__desc"
+                     data-en="Scan outbound traffic for PAN data (Primary Account Number)"
+                     data-id="Pindai lalu lintas keluar untuk data PAN (Primary Account Number)">
+                  Pindai lalu lintas keluar untuk data PAN (Primary Account Number)
+                </div>
+              </div>
+              <div class="sse-dlp-rule__action" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">
+                <span class="sse-action-tag sse-action-tag--block">
+                  <i class="ti ti-ban" style="font-size:10px;"></i>
+                  <span data-en="Block" data-id="Blokir">Blokir</span>
+                </span>
+                <span class="sse-action-tag sse-action-tag--alert">
+                  <i class="ti ti-bell" style="font-size:10px;"></i>
+                  <span data-en="Alert" data-id="Peringatan">Peringatan</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Rule 5 -->
+            <div class="sse-dlp-rule">
+              <div class="sse-dlp-rule__toggle">
+                <input type="checkbox" class="sse-toggle" checked aria-label="Enforce MFA for admin apps">
+              </div>
+              <div class="sse-dlp-rule__body">
+                <div class="sse-dlp-rule__name"
+                     data-en="Enforce MFA for admin apps"
+                     data-id="Wajibkan MFA untuk aplikasi admin">Wajibkan MFA untuk aplikasi admin</div>
+                <div class="sse-dlp-rule__desc"
+                     data-en="Require multi-factor authentication before accessing admin applications"
+                     data-id="Wajibkan autentikasi multi-faktor sebelum mengakses aplikasi admin">
+                  Wajibkan autentikasi multi-faktor sebelum mengakses aplikasi admin
+                </div>
+              </div>
+              <div class="sse-dlp-rule__action">
+                <span class="sse-action-tag sse-action-tag--mfa">
+                  <i class="ti ti-shield-check" style="font-size:10px;"></i>
+                  <span data-en="Require MFA" data-id="Wajib MFA">Wajib MFA</span>
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end sse-lock-wrap -->
+
+  </div><!-- end ss-page -->
+
+  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script>
+    // ── Active nav item ────────────────────────────────────────────────────────
+    document.querySelectorAll('.ss-nav__item').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    var sseLink = document.querySelector('a[href="/agentic-soc/sse/"]');
+    if (sseLink) sseLink.classList.add('active');
+
+    // ── Lock gate logic ────────────────────────────────────────────────────────
+    // Only mdr_ai sees full content; free / sprint / mdr see the lock overlay
+    (function() {
+      var tier = (window.SS && window.SS.tier) ? window.SS.tier : 'free';
+      var gate = document.getElementById('sse-lock-gate');
+      var wrap = document.getElementById('sse-content-wrap');
+
+      if (tier === 'mdr_ai') {
+        // Unlock — hide gate, remove blur / pointer restrictions
+        if (gate) gate.hidden = true;
+        if (wrap) {
+          wrap.style.position = '';
+          wrap.style.minHeight = '';
+        }
+      } else {
+        // Lock — gate is shown (default visible), blur content beneath
+        if (wrap) {
+          wrap.style.position = 'relative';
+          wrap.style.overflow = 'hidden';
+          wrap.style.minHeight = '420px';
+        }
+        // Disable toggles and buttons inside the locked area
+        wrap && wrap.querySelectorAll('input, button').forEach(function(el) {
+          el.disabled = true;
+          el.style.pointerEvents = 'none';
+        });
+      }
+    })();
+
+    // ── Refresh log (no-op stub for locked tiers) ──────────────────────────────
+    function refreshLog() {
+      var tier = (window.SS && window.SS.tier) ? window.SS.tier : 'free';
+      if (tier !== 'mdr_ai') return;
+      // In a real app this would re-fetch; here just flash the indicator
+      var btn = document.querySelector('[onclick="refreshLog()"]');
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.style.opacity = '';
+        }, 800);
+      }
+    }
+
+    // ── Apply language ─────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      applyLang(localStorage.getItem('ss-lang') || 'id');
+    });
+  </script>
+</body>
+</html>

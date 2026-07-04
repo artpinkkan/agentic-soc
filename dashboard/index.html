@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=6">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -18,109 +18,110 @@
     })();
   </script>
   <style>
-    /* ── Command Center hero ── */
-    .ss-command-center {
-      background: var(--ss-brand-gradient);
-      border-radius: var(--ss-radius-lg);
-      padding: var(--ss-gap-lg) var(--ss-gap-xl);
-      position: relative; overflow: hidden;
-      margin-bottom: var(--ss-gap-xl);
-    }
-    .ss-command-center__bg {
-      position: absolute; right: -20px; top: -20px;
-      opacity: 0.06; pointer-events: none; line-height: 1;
-    }
-    .ss-command-center__header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 12px; flex-wrap: wrap; margin-bottom: var(--ss-gap-lg);
-    }
-    .ss-command-center__title {
-      font-size: 26px; font-weight: 700; color: #fff;
-      font-family: var(--ss-font-headline); letter-spacing: -0.02em; margin-bottom: 4px;
-    }
-    .ss-command-center__sub {
-      font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.5;
-    }
-    .ss-command-center__sub strong { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-    .ss-command-center__meta {
-      font-size: 12px; color: rgba(255,255,255,0.65);
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 100px; padding: 4px 12px; white-space: nowrap; flex-shrink: 0;
-    }
+    /* ── Section header pattern ── */
+    .ss-section-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-top: 4px; }
+    .ss-section-hd__title { font-family: var(--ss-font-headline); font-size: 16px; font-weight: 700; color: var(--ss-on-surface); letter-spacing: -0.01em; }
+    .ss-section-hd__meta { font-size: 12px; color: var(--ss-on-surface-variant); }
 
-    /* ── Priority action cards ── */
-    .ss-actions-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
-    }
-    .ss-action-card {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: var(--ss-radius-md);
-      padding: var(--ss-gap-md);
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .ss-action-card__head { display: flex; align-items: center; justify-content: space-between; }
-    .ss-action-card__num {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(255,255,255,0.20); border: 1.5px solid rgba(255,255,255,0.35);
-      color: #fff; font-size: 13px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .ss-action-card__urgency {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px;
-      border-radius: 100px; text-transform: uppercase;
-    }
-    .ss-action-card__urgency--urgent { background: var(--ss-danger); color: #fff; }
-    .ss-action-card__urgency--high   { background: var(--ss-warning); color: #fff; }
-    .ss-action-card__title { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.35; font-family: var(--ss-font-headline); }
-    .ss-action-card__desc  { font-size: 12px; color: rgba(255,255,255,0.68); line-height: 1.5; flex: 1; }
-    .ss-action-card__btn {
-      margin-top: 4px; width: 100%; padding: 8px; border-radius: var(--ss-radius-sm);
-      background: #fff; border: none; cursor: pointer;
-      font-size: 13px; font-weight: 600; color: var(--ss-brand);
-      transition: opacity 0.15s; font-family: var(--ss-font);
-    }
-    .ss-action-card__btn:hover { opacity: 0.88; }
+    /* ── Visual overview panel ── */
+    .ss-visual-panel { background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); box-shadow: var(--ss-shadow-card); margin-bottom: var(--ss-gap-lg); overflow: hidden; }
+    .ss-visual-panel__header { display: flex; border-bottom: 0.5px solid var(--ss-border); }
+    .ss-vph-stat { padding: 18px 22px; border-right: 0.5px solid var(--ss-border); flex: 1; min-width: 0; }
+    .ss-vph-stat:last-child { border-right: none; }
+    .ss-vph-stat__label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ss-on-surface-variant); margin-bottom: 6px; }
+    .ss-vph-stat__val { font-family: var(--ss-font-headline); font-size: 30px; font-weight: 700; line-height: 1; }
+    .ss-vph-stat--critical .ss-vph-stat__val { color: var(--ss-danger); }
+    .ss-vph-stat--high .ss-vph-stat__val { color: var(--ss-warning); }
+    .ss-vph-stat--clear .ss-vph-stat__val { color: var(--ss-success); }
+    .ss-visual-panel__body { display: grid; grid-template-columns: 1fr 260px; min-height: 180px; }
+    @media (max-width: 860px) { .ss-visual-panel__body { grid-template-columns: 1fr; } .ss-vp-section + .ss-vp-section { border-left: none !important; border-top: 0.5px solid var(--ss-border); } }
+    .ss-vp-section { padding: 20px 22px; }
+    .ss-vp-section + .ss-vp-section { border-left: 0.5px solid var(--ss-border); }
+    .ss-vp-label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ss-on-surface-variant); margin-bottom: 14px; }
+    .ss-bar-chart-wrap { display: flex; flex-direction: column; gap: 12px; height: 100%; position: relative; }
+    .ss-bar-chart { width: 100%; overflow: visible; }
+    .ss-bar-chart rect.ss-bar-hit { cursor: pointer; }
+    /* ── Chart hover tooltip ── */
+    .ss-chart-tooltip { position: absolute; pointer-events: none; background: var(--ss-on-surface); color: #fff; font-size: 11px; padding: 8px 10px; border-radius: var(--ss-radius-sm); box-shadow: var(--ss-shadow-float); z-index: 30; opacity: 0; transform: translateY(2px); transition: opacity 0.1s, transform 0.1s; white-space: nowrap; }
+    .ss-chart-tooltip.is-visible { opacity: 1; transform: translateY(0); }
+    .ss-chart-tooltip__date { font-weight: 700; margin-bottom: 6px; font-family: var(--ss-font-headline); }
+    .ss-chart-tooltip__row { display: flex; align-items: center; gap: 6px; padding: 1px 0; }
+    .ss-chart-tooltip__row.is-excluded { opacity: 0.45; }
+    .ss-chart-tooltip__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .ss-chart-tooltip__row-label { flex: 1; }
+    .ss-chart-tooltip__row-val { font-weight: 600; margin-left: 10px; }
+    .ss-chart-tooltip__total { margin-top: 6px; padding-top: 6px; border-top: 0.5px solid rgba(255,255,255,0.2); font-weight: 700; }
+    .ss-bar-chart-legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ss-on-surface-variant); flex-wrap: wrap; }
+    .ss-bar-chart-legend__dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    /* ── Trend header ── */
+    .ss-trend-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .ss-trend-header .ss-vp-label { margin-bottom: 0; }
+    .ss-trend-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    /* ── Advanced filter popover ── */
+    .ss-trend-filter { position: relative; }
+    .ss-filter-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 100px; border: 0.5px solid var(--ss-border); background: var(--ss-surface-container-lowest); color: var(--ss-on-surface-variant); cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .ss-filter-btn:hover { background: var(--ss-surface-container-low); color: var(--ss-on-surface); }
+    .ss-filter-btn.active { color: var(--ss-brand); border-color: var(--ss-brand); background: var(--ss-brand-light); }
+    .ss-filter-badge { background: var(--ss-brand); color: #fff; font-size: 10px; font-weight: 700; border-radius: 100px; min-width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px; line-height: 1; }
+    /* Fixed (not absolute) so it can escape .ss-visual-panel's overflow:hidden without being clipped at the card border */
+    .ss-filter-panel { position: fixed; width: 270px; max-height: 70vh; overflow-y: auto; background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-md); box-shadow: var(--ss-shadow-float); padding: 14px; z-index: 200; }
+    .ss-filter-group { margin-bottom: 14px; }
+    .ss-filter-group:last-of-type { margin-bottom: 0; }
+    .ss-filter-group__title { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ss-on-surface-variant); margin-bottom: 8px; }
+    .ss-filter-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ss-on-surface); padding: 4px 0; cursor: pointer; }
+    .ss-filter-check input { accent-color: var(--ss-brand); width: 14px; height: 14px; flex-shrink: 0; }
+    .ss-date-row { display: flex; gap: 8px; }
+    .ss-date-field { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--ss-on-surface-variant); }
+    .ss-date-field input[type="date"] { border: 0.5px solid var(--ss-outline-variant); border-radius: var(--ss-radius-sm); padding: 6px 8px; font-size: 12px; font-family: var(--ss-font); color: var(--ss-on-surface); background: var(--ss-surface-container-lowest); }
+    .ss-date-field input[type="date"]:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 2px var(--ss-brand-light); }
+    .ss-filter-select { width: 100%; border: 0.5px solid var(--ss-outline-variant); border-radius: var(--ss-radius-sm); padding: 7px 8px; font-size: 12px; font-family: var(--ss-font); color: var(--ss-on-surface); background: var(--ss-surface-container-lowest); }
+    .ss-filter-select:focus { outline: none; border-color: var(--ss-brand); box-shadow: 0 0 0 2px var(--ss-brand-light); }
+    .ss-filter-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--ss-border); }
+    .ss-filter-reset { border: none; background: none; font-size: 12px; color: var(--ss-on-surface-variant); cursor: pointer; padding: 4px 0; }
+    .ss-filter-reset:hover { color: var(--ss-on-surface); text-decoration: underline; }
+    /* ── Findings status list (replaces duplicate severity donut) ── */
+    .ss-status-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--ss-border); }
+    .ss-status-row:last-child { border-bottom: none; }
+    .ss-status-row__icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+    .ss-status-row__icon--open { background: var(--ss-surface-container-low); color: var(--ss-on-surface-variant); }
+    .ss-status-row__icon--monitoring { background: #EEEDFE; color: #3C3489; }
+    .ss-status-row__icon--resolved { background: var(--ss-success-light); color: var(--ss-success); }
+    .ss-status-row__name { flex: 1; font-size: 13px; color: var(--ss-on-surface); }
+    .ss-status-row__val { font-family: var(--ss-font-headline); font-size: 18px; font-weight: 700; color: var(--ss-on-surface); }
 
-    /* ── Findings section ── */
-    .ss-findings-header {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap; margin-bottom: var(--ss-gap-md);
-    }
-    .ss-findings-title {
-      font-size: 18px; font-weight: 700;
-      font-family: var(--ss-font-headline); color: var(--ss-on-surface);
-    }
-    .ss-findings-actions { display: flex; gap: 8px; }
-
-    .ss-findings-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--ss-gap-xl); }
-    .ss-finding-row {
-      background: var(--ss-surface-container-lowest);
-      box-shadow: var(--ss-shadow-card);
-      border-radius: var(--ss-radius-md);
-      padding: 14px 20px;
-      display: flex; align-items: center; gap: 14px;
-      transition: box-shadow 0.15s;
-    }
-    .ss-finding-row:hover { box-shadow: 0px 2px 8px rgba(25,28,30,0.10), 0px 4px 16px rgba(25,28,30,0.06); }
-    .ss-finding-dot {
-      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-    }
-    .ss-finding-dot--critical { background: var(--ss-danger); }
-    .ss-finding-dot--high     { background: var(--ss-warning); }
-    .ss-finding-dot--medium   { background: var(--ss-info); }
-    .ss-finding-badge { flex-shrink: 0; min-width: 80px; }
-    .ss-finding-icon  { flex-shrink: 0; color: var(--ss-on-surface-variant); opacity: 0.5; }
-    .ss-finding-body  { flex: 1; min-width: 0; }
-    .ss-finding-title { font-size: 14px; font-weight: 600; color: var(--ss-on-surface); margin-bottom: 2px; }
-    .ss-finding-desc  { font-size: 13px; color: var(--ss-on-surface-variant); line-height: 1.5; }
-    .ss-finding-action {
-      font-size: 13px; font-weight: 600; color: var(--ss-brand);
-      white-space: nowrap; cursor: pointer; background: none; border: none;
-      font-family: var(--ss-font); transition: opacity 0.15s; flex-shrink: 0;
-    }
-    .ss-finding-action:hover { opacity: 0.7; }
+    /* ── Security domains grid ── */
+    .ss-domain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: var(--ss-gap-xl); }
+    @media (max-width: 860px) { .ss-domain-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .ss-domain-grid { grid-template-columns: 1fr; } }
+    .ss-domain-card { background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-md); padding: 18px; box-shadow: var(--ss-shadow-card); transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; }
+    .ss-domain-card:hover { border-color: var(--ss-border-md); box-shadow: 0 2px 12px rgba(25,28,30,0.08); }
+    .ss-domain-card:focus-visible { outline: 2px solid var(--ss-brand); outline-offset: 2px; }
+    .ss-domain-modal__finding { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--ss-border); }
+    .ss-domain-modal__finding:last-child { border-bottom: none; }
+    .ss-domain-modal__finding-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .ss-domain-modal__finding-icon--critical { background: var(--ss-danger-light); color: var(--ss-danger); }
+    .ss-domain-modal__finding-icon--high { background: var(--ss-warning-light); color: var(--ss-warning); }
+    .ss-domain-modal__finding-title { font-size: 13px; color: var(--ss-on-surface); line-height: 1.4; }
+    .ss-domain-modal__finding-sev { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 2px; }
+    .ss-domain-modal__finding-sev--critical { color: var(--ss-danger); }
+    .ss-domain-modal__finding-sev--high { color: var(--ss-warning); }
+    .ss-domain-modal__empty { text-align: center; padding: 24px 0; color: var(--ss-on-surface-variant); font-size: 13px; }
+    .ss-domain-card__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .ss-domain-card__title { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; color: var(--ss-on-surface); }
+    .ss-domain-card__icon { font-size: 16px; color: var(--ss-on-surface-variant); }
+    .ss-block-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px; }
+    .ss-block { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+    .ss-block--c  { background: var(--ss-danger); }
+    .ss-block--h  { background: var(--ss-warning); }
+    .ss-block--ok { background: var(--ss-success); }
+    .ss-block--na { background: var(--ss-surface-container-low); border: 0.5px solid var(--ss-border); }
+    .ss-domain-card__footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; padding-top: 4px; border-top: 0.5px solid var(--ss-border); }
+    .ss-domain-card__status { font-weight: 600; }
+    .ss-domain-card__status--critical { color: var(--ss-danger); }
+    .ss-domain-card__status--high { color: var(--ss-warning); }
+    .ss-domain-card__status--ok { color: var(--ss-success); }
+    .ss-domain-card__status--na { color: var(--ss-on-surface-variant); font-weight: 400; }
+    .ss-domain-card__checks { color: var(--ss-on-surface-variant); }
 
     /* ── Upgrade banner ── */
     .ss-upgrade-banner {
@@ -197,6 +198,14 @@
         <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
+      <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
+        <i class="ti ti-shield-lock ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
+      </a>
+      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
+        <i class="ti ti-robot ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+      </a>
     </div>
     <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
       <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
@@ -222,26 +231,18 @@
 
   <div class="ss-page">
     <!-- Page header -->
-    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:var(--ss-gap-lg);">
       <div>
-        <p style="font-size:13px;color:var(--ss-on-surface-variant);">
+        <h1 style="font-size:24px;font-weight:700;color:var(--ss-on-surface);line-height:1.2;margin-bottom:5px;" data-en="Security Dashboard" data-id="Dasbor Keamanan">Dasbor Keamanan</h1>
+        <p style="font-size:13px;color:var(--ss-on-surface-variant);line-height:1.5;">
           <span data-en="Scan completed" data-id="Pemindaian selesai">Pemindaian selesai</span>
           25 Apr 2026 · 14:32 WIB &nbsp;·&nbsp; <span id="hdr-company">Perusahaan Anda</span>
         </p>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
-          <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
-          <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
-          <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
-          <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
-        </select>
-        <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:5px 12px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
-          <i class="ti ti-settings" style="font-size:14px;"></i>
-          Pengaturan domain
-        </a>
-        <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
-      </div>
+      <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:7px 14px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;margin-top:2px;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
+        <i class="ti ti-settings" style="font-size:14px;"></i>
+        <span data-en="Domain settings" data-id="Pengaturan domain">Pengaturan domain</span>
+      </a>
     </div>
 
     <!-- Freemium cap bar -->
@@ -252,41 +253,274 @@
       <a href="/agentic-soc/pricing/" class="ss-cap-bar__upgrade" data-en="Upgrade for unlimited →" data-id="Upgrade untuk tak terbatas →">Upgrade untuk tak terbatas →</a>
     </div>
 
-    <!-- Command Center hero -->
-    <div class="ss-command-center">
-      <!-- Decorative background shield -->
-      <i class="ti ti-shield ss-command-center__bg" style="font-size:220px; opacity:0.06; color:#fff; position:absolute; right:-20px; top:-20px; pointer-events:none; line-height:1;"></i>
-      <div class="ss-command-center__header">
-        <div>
-          <h2 class="ss-command-center__title" data-en="Command Center" data-id="Pusat Komando">Pusat Komando</h2>
-          <p class="ss-command-center__sub">
-            <span id="cmd-sub-text" data-en="Strategic risk assessment &amp; prioritized actions for the" data-id="Penilaian risiko strategis &amp; tindakan prioritas untuk">Penilaian risiko strategis &amp; tindakan prioritas untuk</span>
-            <strong id="cmd-aud-label">Direktur</strong>.
-          </p>
+    <!-- Visual overview panel -->
+    <div class="ss-visual-panel">
+      <div class="ss-visual-panel__header">
+        <div class="ss-vph-stat ss-vph-stat--critical">
+          <div class="ss-vph-stat__label" data-en="CRITICAL FINDINGS" data-id="TEMUAN KRITIS">TEMUAN KRITIS</div>
+          <div class="ss-vph-stat__val">2</div>
         </div>
-        <span class="ss-command-center__meta" data-en="System Updated 1h ago" data-id="Sistem Diperbarui 1j lalu">Sistem Diperbarui 1j lalu</span>
+        <div class="ss-vph-stat ss-vph-stat--high">
+          <div class="ss-vph-stat__label" data-en="HIGH FINDINGS" data-id="TEMUAN TINGGI">TEMUAN TINGGI</div>
+          <div class="ss-vph-stat__val">2</div>
+        </div>
+        <div class="ss-vph-stat ss-vph-stat--clear">
+          <div class="ss-vph-stat__label" data-en="MEDIUM" data-id="SEDANG">SEDANG</div>
+          <div class="ss-vph-stat__val">0</div>
+        </div>
       </div>
-      <div class="ss-actions-grid" id="priority-actions">
-        <!-- Rendered by JS -->
+      <div class="ss-visual-panel__body">
+
+        <!-- Left: Alert trend bar chart -->
+        <div class="ss-vp-section">
+          <div class="ss-trend-header">
+            <p class="ss-vp-label" id="trend-title" data-en="Alert Trend — Last 6 Weeks" data-id="Tren Alert — 6 Minggu Terakhir">Tren Alert — 6 Minggu Terakhir</p>
+            <div class="ss-trend-controls">
+              <div class="ss-trend-filter" id="trend-filter-wrap">
+                <button type="button" class="ss-filter-btn" id="trend-filter-btn" aria-haspopup="true" aria-expanded="false">
+                  <i class="ti ti-filter" style="font-size:13px;"></i>
+                  <span data-en="Filters" data-id="Filter">Filter</span>
+                  <span class="ss-filter-badge" id="trend-filter-count" hidden>0</span>
+                </button>
+                <div class="ss-filter-panel" id="trend-filter-panel" hidden>
+                  <div class="ss-filter-group">
+                    <p class="ss-filter-group__title" data-en="Date Range" data-id="Rentang Tanggal">Rentang Tanggal</p>
+                    <div class="ss-date-row">
+                      <label class="ss-date-field">
+                        <span data-en="Start" data-id="Mulai">Mulai</span>
+                        <input type="date" id="trend-start-date">
+                      </label>
+                      <label class="ss-date-field">
+                        <span data-en="End" data-id="Selesai">Selesai</span>
+                        <input type="date" id="trend-end-date">
+                      </label>
+                    </div>
+                  </div>
+                  <div class="ss-filter-group">
+                    <p class="ss-filter-group__title" data-en="Granularity" data-id="Granularitas">Granularitas</p>
+                    <select class="ss-filter-select" id="trend-granularity">
+                      <option value="auto" data-en="Auto" data-id="Otomatis">Otomatis</option>
+                      <option value="day" data-en="Daily" data-id="Harian">Harian</option>
+                      <option value="week" data-en="Weekly" data-id="Mingguan">Mingguan</option>
+                      <option value="month" data-en="Monthly" data-id="Bulanan">Bulanan</option>
+                    </select>
+                  </div>
+                  <div class="ss-filter-group">
+                    <p class="ss-filter-group__title" data-en="Severity" data-id="Tingkat Keparahan">Tingkat Keparahan</p>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-sev" value="critical" checked> <span data-en="Critical" data-id="Kritis">Kritis</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-sev" value="high" checked> <span data-en="High" data-id="Tinggi">Tinggi</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-sev" value="medium" checked> <span data-en="Medium" data-id="Sedang">Sedang</span></label>
+                  </div>
+                  <div class="ss-filter-group">
+                    <p class="ss-filter-group__title" data-en="Domain" data-id="Domain">Domain</p>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="email" checked> <span data-en="Email Security" data-id="Keamanan Email">Keamanan Email</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="identity" checked> <span data-en="Identity &amp; Access" data-id="Identitas &amp; Akses">Identitas &amp; Akses</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="network" checked> <span data-en="Network &amp; Perimeter" data-id="Jaringan &amp; Perimeter">Jaringan &amp; Perimeter</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="web" checked> <span data-en="Web &amp; Subdomains" data-id="Web &amp; Subdomain">Web &amp; Subdomain</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="log" checked> <span data-en="Log Management" data-id="Manajemen Log">Manajemen Log</span></label>
+                    <label class="ss-filter-check"><input type="checkbox" class="trend-filter-dom" value="endpoint" checked> <span data-en="Endpoint Security" data-id="Keamanan Endpoint">Keamanan Endpoint</span></label>
+                  </div>
+                  <div class="ss-filter-actions">
+                    <button type="button" class="ss-filter-reset" id="trend-filter-reset" data-en="Reset" data-id="Atur ulang">Atur ulang</button>
+                    <button type="button" class="ss-btn-primary" id="trend-filter-apply" style="font-size:12px;padding:6px 14px;" data-en="Apply" data-id="Terapkan">Terapkan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ss-bar-chart-wrap">
+            <svg class="ss-bar-chart" id="trend-svg" viewBox="0 0 270 90" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0" y1="15" x2="270" y2="15" stroke="#E5E7EB" stroke-width="0.5"/>
+              <line x1="0" y1="45" x2="270" y2="45" stroke="#E5E7EB" stroke-width="0.5"/>
+              <line x1="0" y1="75" x2="270" y2="75" stroke="#E5E7EB" stroke-width="0.5"/>
+              <g id="trend-bars"></g>
+              <g id="trend-hit-areas"></g>
+              <g id="trend-labels"></g>
+            </svg>
+            <div class="ss-chart-tooltip" id="trend-tooltip"></div>
+            <div class="ss-bar-chart-legend">
+              <span class="ss-bar-chart-legend__dot" style="background:#5DCAA5"></span>
+              <span data-en="Previous periods" data-id="Periode sebelumnya">Periode sebelumnya</span>
+              <span class="ss-bar-chart-legend__dot" style="background:#EF4444;margin-left:10px;"></span>
+              <span data-en="Current period (spike)" data-id="Periode ini (lonjakan)">Periode ini (lonjakan)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Findings status (open/monitoring/resolved — not a repeat of severity counts above) -->
+        <div class="ss-vp-section">
+          <p class="ss-vp-label" data-en="Findings Status" data-id="Status Temuan">Status Temuan</p>
+          <div class="ss-status-row">
+            <span class="ss-status-row__icon ss-status-row__icon--open"><i class="ti ti-alert-circle"></i></span>
+            <span class="ss-status-row__name" data-en="Open" data-id="Terbuka">Terbuka</span>
+            <span class="ss-status-row__val">4</span>
+          </div>
+          <div class="ss-status-row">
+            <span class="ss-status-row__icon ss-status-row__icon--monitoring"><i class="ti ti-eye"></i></span>
+            <span class="ss-status-row__name" data-en="Monitoring" data-id="Pemantauan">Pemantauan</span>
+            <span class="ss-status-row__val">3</span>
+          </div>
+          <div class="ss-status-row">
+            <span class="ss-status-row__icon ss-status-row__icon--resolved"><i class="ti ti-circle-check"></i></span>
+            <span class="ss-status-row__name" data-en="Resolved" data-id="Selesai">Selesai</span>
+            <span class="ss-status-row__val">5</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Unresolved findings -->
-    <div class="ss-findings-header">
-      <h3 class="ss-findings-title" data-en="Unresolved Security Findings" data-id="Temuan Keamanan Belum Diselesaikan">Temuan Keamanan Belum Diselesaikan</h3>
-      <div class="ss-findings-actions">
-        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" data-en="Filter: Status" data-id="Filter: Status">Filter: Status</button>
-        <button class="ss-btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="alert('Exporting…')" data-en="Export CSV" data-id="Ekspor CSV">Ekspor CSV</button>
+    <!-- Security domains grid -->
+    <div class="ss-section-hd">
+      <h2 class="ss-section-hd__title" data-en="Security Domain Coverage" data-id="Cakupan Domain Keamanan">Cakupan Domain Keamanan</h2>
+      <span class="ss-section-hd__meta" data-en="6 domains" data-id="6 domain">6 domain</span>
+    </div>
+    <div class="ss-domain-grid">
+
+      <!-- Email Security: 2c, 1h, 4ok, 9na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('email')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('email');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-mail ss-domain-card__icon"></i>
+            <span data-en="Email Security" data-id="Keamanan Email">Keamanan Email</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--c"></span><span class="ss-block ss-block--c"></span><span class="ss-block ss-block--h"></span>
+          <span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="2 critical · 1 high" data-id="2 kritis · 1 tinggi">2 kritis · 1 tinggi</span>
+          <span class="ss-domain-card__checks">7/16</span>
+        </div>
       </div>
+
+      <!-- Identity & Access: 2h, 3ok, 9na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('identity')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('identity');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-user-shield ss-domain-card__icon"></i>
+            <span data-en="Identity &amp; Access" data-id="Identitas &amp; Akses">Identitas &amp; Akses</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--h"></span><span class="ss-block ss-block--h"></span>
+          <span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--high" data-en="2 high" data-id="2 tinggi">2 tinggi</span>
+          <span class="ss-domain-card__checks">3/14</span>
+        </div>
+      </div>
+
+      <!-- Network & Perimeter: 1c, 2h, 5ok, 8na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('network')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('network');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-network ss-domain-card__icon"></i>
+            <span data-en="Network &amp; Perimeter" data-id="Jaringan &amp; Perimeter">Jaringan &amp; Perimeter</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--c"></span><span class="ss-block ss-block--h"></span><span class="ss-block ss-block--h"></span>
+          <span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="1 critical · 2 high" data-id="1 kritis · 2 tinggi">1 kritis · 2 tinggi</span>
+          <span class="ss-domain-card__checks">5/16</span>
+        </div>
+      </div>
+
+      <!-- Log Management: 1c, 2h, 1ok, 8na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('log')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('log');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-file-text ss-domain-card__icon"></i>
+            <span data-en="Log Management" data-id="Manajemen Log">Manajemen Log</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--c"></span><span class="ss-block ss-block--h"></span><span class="ss-block ss-block--h"></span>
+          <span class="ss-block ss-block--ok"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="1 critical · 2 high" data-id="1 kritis · 2 tinggi">1 kritis · 2 tinggi</span>
+          <span class="ss-domain-card__checks">1/12</span>
+        </div>
+      </div>
+
+      <!-- Endpoint Security: all na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('endpoint')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('endpoint');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-device-desktop ss-domain-card__icon"></i>
+            <span data-en="Endpoint Security" data-id="Keamanan Endpoint">Keamanan Endpoint</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--na" data-en="Not yet scanned" data-id="Belum dipindai">Belum dipindai</span>
+          <span class="ss-domain-card__checks">0/16</span>
+        </div>
+      </div>
+
+      <!-- Web & Subdomain: 1h, 5ok, 8na -->
+      <div class="ss-domain-card" tabindex="0" role="button" aria-haspopup="dialog" onclick="openDomainModal('web')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDomainModal('web');}">
+        <div class="ss-domain-card__header">
+          <div class="ss-domain-card__title">
+            <i class="ti ti-world ss-domain-card__icon"></i>
+            <span data-en="Web &amp; Subdomain" data-id="Web &amp; Subdomain">Web &amp; Subdomain</span>
+          </div>
+        </div>
+        <div class="ss-block-grid">
+          <span class="ss-block ss-block--h"></span>
+          <span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span><span class="ss-block ss-block--ok"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+          <span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span><span class="ss-block ss-block--na"></span>
+        </div>
+        <div class="ss-domain-card__footer">
+          <span class="ss-domain-card__status ss-domain-card__status--high" data-en="1 high" data-id="1 tinggi">1 tinggi</span>
+          <span class="ss-domain-card__checks">5/14</span>
+        </div>
+      </div>
+
     </div>
 
-    <div class="ss-findings-list" id="findings-list">
-      <!-- Rendered by JS -->
+    <!-- Security domain detail modal -->
+    <div class="ss-modal-overlay" id="domain-modal" hidden onclick="if(event.target===this) closeDomainModal()">
+      <div class="ss-modal" style="max-width:560px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <h3 style="display:flex;align-items:center;gap:9px;">
+            <i id="domain-modal-icon" style="color:var(--ss-on-surface-variant);"></i>
+            <span id="domain-modal-name"></span>
+          </h3>
+          <button type="button" class="ss-btn-ghost" style="padding:4px 9px;font-size:14px;" onclick="closeDomainModal()" aria-label="Close">×</button>
+        </div>
+        <p class="ss-modal__sub" id="domain-modal-sub"></p>
+        <div id="domain-modal-findings"></div>
+        <div class="ss-modal__actions">
+          <button type="button" class="ss-btn-ghost" onclick="closeDomainModal()" data-en="Close" data-id="Tutup">Tutup</button>
+          <a class="ss-btn-primary" id="domain-modal-cta" href="/agentic-soc/investigate/" data-en="View in Investigate →" data-id="Lihat di Investigate →">Lihat di Investigate →</a>
+        </div>
+      </div>
     </div>
 
     <!-- Upgrade Ladder -->
     <div class="ss-upgrade-ladder">
-      <h3 class="ss-upgrade-ladder__title" data-en="Your security journey" data-id="Perjalanan keamanan Anda">Perjalanan keamanan Anda</h3>
+      <h3 class="ss-upgrade-ladder__title" style="font-family:var(--ss-font-headline);font-size:16px;font-weight:700;letter-spacing:-0.01em;" data-en="Your security journey" data-id="Perjalanan keamanan Anda">Perjalanan keamanan Anda</h3>
       <div class="ss-upgrade-ladder__steps">
         <div class="ss-upgrade-ladder__step ss-upgrade-ladder__step--current">
           <div class="ss-upgrade-ladder__step-icon"><i class="ti ti-radar"></i></div>
@@ -326,151 +560,17 @@
       </div>
     </div>
 
-    <!-- Platform direction teaser -->
-    <div class="ss-platform-teaser">
-      <span class="ss-platform-teaser__eyebrow"
-            data-en="PLATFORM DIRECTION — NOT YET LIVE"
-            data-id="ARAH PLATFORM — BELUM TERSEDIA">
-        ARAH PLATFORM — BELUM TERSEDIA
-      </span>
-      <p class="ss-platform-teaser__title"
-         data-en="This report is the detect side. Here's where the platform is headed."
-         data-id="Laporan ini adalah sisi deteksi. Ini arah platform ke depan.">
-        Laporan ini adalah sisi deteksi. Ini arah platform ke depan.
-      </p>
-      <div class="ss-platform-teaser__items">
-        <div class="ss-platform-teaser__item">
-          <span class="ss-platform-teaser__icon"><i class="ti ti-shield"></i></span>
-          <div>
-            <p class="ss-platform-teaser__item-title"
-               data-en="Prevention edge" data-id="Edge pencegahan">Edge pencegahan</p>
-            <p class="ss-platform-teaser__item-desc"
-               data-en="Identity-based access to private apps, inline traffic inspection, and data-loss prevention."
-               data-id="Akses berbasis identitas ke aplikasi privat, inspeksi lalu lintas inline, dan pencegahan kebocoran data.">
-              Akses berbasis identitas ke aplikasi privat, inspeksi lalu lintas inline, dan pencegahan kebocoran data.
-            </p>
-          </div>
-        </div>
-        <div class="ss-platform-teaser__item">
-          <span class="ss-platform-teaser__icon"><i class="ti ti-robot"></i></span>
-          <div>
-            <p class="ss-platform-teaser__item-title"
-               data-en="Per-action AI governance" data-id="Tata kelola AI per tindakan">Tata kelola AI per tindakan</p>
-            <p class="ss-platform-teaser__item-desc"
-               data-en="Every AI agent tool call checked against policy before it runs, audited the same way as this report's findings."
-               data-id="Setiap panggilan tool agen AI diperiksa terhadap kebijakan sebelum dijalankan, diaudit dengan cara yang sama seperti temuan laporan ini.">
-              Setiap panggilan tool agen AI diperiksa terhadap kebijakan sebelum dijalankan, diaudit dengan cara yang sama seperti temuan laporan ini.
-            </p>
-          </div>
-        </div>
-      </div>
-      <a href="/agentic-soc/pricing/#platform" class="ss-platform-teaser__link"
-         data-en="Read where the platform is headed →"
-         data-id="Baca arah platform ke depan →">
-        Baca arah platform ke depan →
-      </a>
-    </div>
 
     <!-- Sales CTA (funnel-aware) -->
     <div class="ss-sales-cta" id="sales-cta"></div>
   </div>
 
-  <script src="/agentic-soc/shared.js"></script>
+  <script src="/agentic-soc/shared.js?v=6"></script>
   <script>
     if (window.SS) {
-      document.getElementById('hdr-company').textContent = window.SS.company || 'Perusahaan Anda';
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      document.getElementById('hdr-company').textContent = window.SS.company || (lang === 'en' ? 'Your Company' : 'Perusahaan Anda');
     }
-
-    const PRIORITY_ACTIONS = {
-      direktur: [
-        { urgency: 'urgent', title: 'Setujui Deployment DMARC', desc: 'Otorisasi IT untuk menutup risiko pemalsuan email perusahaan hari ini.', btn: 'Otorisasi Sekarang' },
-        { urgency: 'high',   title: 'Wajibkan MFA untuk Admin', desc: '4 akun admin tanpa MFA membuka risiko pengambilalihan akun.', btn: 'Setujui Kebijakan' },
-        { urgency: 'high',   title: 'Tinjau Risiko Retensi Log', desc: 'Retensi 7 hari membuka eksposur audit standar. Butuh keputusan segera.', btn: 'Tinjau Risiko' },
-      ],
-      it: [
-        { urgency: 'urgent', title: 'Deploy DMARC p=quarantine', desc: 'Tambahkan record TXT ke _dmarc.domain.perusahaan.com · ~1 jam.', btn: 'Eksekusi Sekarang' },
-        { urgency: 'high',   title: 'Aktifkan MFA — 4 Akun Admin', desc: '4 akun admin — gunakan SSO yang ada.', btn: 'Konfigurasi MFA' },
-        { urgency: 'high',   title: 'Patch OpenSSH di ssh.domain.com', desc: 'OpenSSH 7.4 (EOL) — CVE-2023-38408 aktif dieksploitasi.', btn: 'Jadwalkan Patch' },
-      ],
-      finance: [
-        { urgency: 'urgent', title: 'Risiko Penipuan Invoice — DMARC Hilang', desc: 'Email tagihan dapat dipalsukan. Eksposur penipuan pembayaran tinggi.', btn: 'Eskalasi ke IT' },
-        { urgency: 'high',   title: 'Akun Finance Admin Tidak Terlindungi', desc: '2 akun dengan akses sistem keuangan tidak memiliki MFA.', btn: 'Minta Tindakan' },
-        { urgency: 'high',   title: 'Eksposur Audit — Gap Log 83 Hari', desc: 'Audit standar mensyaratkan minimal 90 hari. Potensi temuan audit.', btn: 'Tinjau Eksposur' },
-      ],
-      auditor: [
-        { urgency: 'urgent', title: 'DMARC — Tidak Sesuai Kebijakan Keamanan Standar', desc: 'Kontrol autentikasi email tidak terpenuhi. Dokumentasikan segera.', btn: 'Catat Temuan' },
-        { urgency: 'high',   title: 'Retensi Log 7 Hari vs 90 Hari', desc: 'Kebijakan keamanan standar — gap 83 hari. Butuh rencana remediasi.', btn: 'Buat Catatan Audit' },
-        { urgency: 'high',   title: '4 Akun Istimewa Tanpa MFA', desc: 'Tidak sesuai persyaratan kontrol akses standar. Jadwalkan tinjauan.', btn: 'Jadwalkan Tinjauan' },
-      ],
-    };
-
-    const FINDINGS = [
-      {
-        dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
-        icon: '<i class="ti ti-mail" style="font-size:16px;"></i>',
-        title: { direktur: 'Domain Email Tidak Terlindungi', it: 'DMARC Hilang — domain perusahaan', finance: 'Risiko Penipuan Invoice', auditor: 'Ketidakpatuhan DMARC' },
-        desc:  { direktur: 'Penyerang dapat memalsukan email perusahaan Anda ke klien dan mitra.', it: 'SPF: ✓  DKIM: ✗  DMARC: ✗ — Terapkan p=quarantine segera.', finance: 'Tanpa DMARC, email tagihan dapat dipalsukan. Risiko transfer tidak sah.', auditor: 'Kontrol autentikasi email tidak dipenuhi. Tidak ada kebijakan DMARC terdokumentasi.' },
-        action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Lihat Kepatuhan →' },
-      },
-      {
-        dot: 'critical', badge: '<span class="badge badge-critical">KRITIS</span>',
-        icon: '<i class="ti ti-file-text" style="font-size:16px;"></i>',
-        title: { direktur: 'Retensi Log Tidak Memenuhi Standar Audit', it: 'Log Retention 7 Hari — SIEM Tidak Terdeteksi', finance: 'Investigasi Penipuan Terbatas', auditor: 'Retensi Log Tidak Memenuhi Standar Minimum' },
-        desc:  { direktur: 'Audit standar mensyaratkan 90 hari minimum. Saat ini hanya 7 hari. Risiko audit tinggi.', it: 'Log server 7 hari, tanpa SIEM terpusat, endpoint log tidak diteruskan.', finance: 'Log 7 hari tidak cukup untuk investigasi forensik jika terjadi penipuan.', auditor: 'Kebijakan keamanan standar — gap 83 hari. Remediasi wajib sebelum audit berikutnya.' },
-        action:{ direktur: 'Tinjau Risiko', it: 'Lihat Konfigurasi →', finance: 'Lihat Dampak →', auditor: 'Buat Catatan Audit' },
-      },
-      {
-        dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
-        icon: '<i class="ti ti-device-desktop" style="font-size:16px;"></i>',
-        title: { direktur: '3 Subdomain Terekspos ke Internet', it: 'SSH EOL + Port Terbuka di Subdomain', finance: 'Subdomain Terekspos — Risiko Akses Sistem', auditor: 'Permukaan Serangan Tidak Terdokumentasi' },
-        desc:  { direktur: 'Salah satu subdomain menjalankan SSH versi rentan yang sedang aktif diserang.', it: 'ssh.domain.com — OpenSSH 7.4 (CVE-2023-38408), port 8080 terbuka.', finance: 'Subdomain terekspos dapat menjadi pintu masuk ke sistem keuangan.', auditor: '3 subdomain tidak terlindungi belum terdokumentasi dalam register risiko.' },
-        action:{ direktur: 'Lihat Detail', it: 'Lihat Perbaikan →', finance: 'Lihat Risiko →', auditor: 'Perbarui Register' },
-      },
-      {
-        dot: 'high', badge: '<span class="badge badge-high">TINGGI</span>',
-        icon: '<i class="ti ti-user" style="font-size:16px;"></i>',
-        title: { direktur: '4 Akun Admin Tanpa MFA', it: '4 Akun Admin Tanpa MFA Terdeteksi', finance: 'Akun Finance Admin Rentan', auditor: '4 Akun Istimewa Tidak Memenuhi Kebijakan MFA' },
-        desc:  { direktur: '4 dari 12 admin belum MFA. Risiko pengambilalihan akun signifikan.', it: '4 akun admin — fix via SSO provider yang ada.', finance: '2 akun dengan akses sistem keuangan dan payroll tidak menggunakan MFA.', auditor: 'MFA wajib untuk akun istimewa per kebijakan keamanan standar — 4 akun tidak patuh.' },
-        action:{ direktur: 'Tinjau Akun', it: 'Konfigurasi MFA →', finance: 'Minta Tindakan', auditor: 'Dokumentasikan Gap' },
-      },
-    ];
-
-    function renderDashboard(aud) {
-      const actions = PRIORITY_ACTIONS[aud] || PRIORITY_ACTIONS.direktur;
-      document.getElementById('priority-actions').innerHTML = actions.map((a, i) => `
-        <div class="ss-action-card">
-          <div class="ss-action-card__head">
-            <span class="ss-action-card__num">${i + 1}</span>
-            <span class="ss-action-card__urgency ss-action-card__urgency--${a.urgency}">
-              ${a.urgency === 'urgent' ? 'URGENT' : 'HIGH'}
-            </span>
-          </div>
-          <div class="ss-action-card__title">${a.title}</div>
-          <div class="ss-action-card__desc">${a.desc}</div>
-          <button class="ss-action-card__btn" onclick="alert('${a.btn}…')">${a.btn}</button>
-        </div>
-      `).join('');
-
-      const audLabels = { direktur: 'Direktur', it: 'Manajer IT', finance: 'Keuangan', auditor: 'Auditor' };
-      document.getElementById('cmd-aud-label').textContent = audLabels[aud] || aud;
-
-      document.getElementById('findings-list').innerHTML = FINDINGS.map(f => `
-        <div class="ss-finding-row">
-          <div class="ss-finding-dot ss-finding-dot--${f.dot}"></div>
-          <div class="ss-finding-badge">${f.badge}</div>
-          <div class="ss-finding-icon">${f.icon}</div>
-          <div class="ss-finding-body">
-            <div class="ss-finding-title">${f.title[aud] || f.title.direktur}</div>
-            <div class="ss-finding-desc">${f.desc[aud] || f.desc.direktur}</div>
-          </div>
-          <button class="ss-finding-action" onclick="window.location.href='/agentic-soc/reports/'">${f.action[aud] || f.action.direktur}</button>
-        </div>
-      `).join('');
-    }
-
-    window.onAudienceChange = function(aud) {
-      renderDashboard(aud);
-    };
 
     const SALES_CTA = {
       xray: {
@@ -487,10 +587,8 @@
       }
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      setAudience(localStorage.getItem('ss-audience') || 'direktur');
-
-      const lang   = localStorage.getItem('ss-lang') || 'id';
+    function updateSalesCTA(lang) {
+      lang = lang || localStorage.getItem('ss-lang') || 'id';
       const funnel = (window.SS && window.SS.funnel) || 'xray';
       const copy   = (SALES_CTA[funnel] || SALES_CTA.xray)[lang] || SALES_CTA.xray.id;
       const ctaEl  = document.getElementById('sales-cta');
@@ -504,9 +602,453 @@
             <a href="mailto:sales@shannondynamics.id" class="ss-btn-upgrade">${copy.cta}</a>
           </div>`;
       }
+    }
+
+    window.onLangChange = function(lang) {
+      updateSalesCTA(lang);
+      renderTrendChart();
+    };
+
+    // ── Alert trend chart: date range + granularity + severity/domain filter + hover tooltip ──
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+    // Deterministic pseudo-random daily alert volumes (seeded — same on every reload).
+    function mulberry32(seed) {
+      return function() {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    const DATASET_END = new Date(2026, 4, 19); // 19 May 2026 — matches "last scan" mock timeline
+    const DATASET_DAYS = 200;
+    const _rand = mulberry32(20260519);
+    const DAILY_DATA = [];
+    for (let i = 0; i < DATASET_DAYS; i++) {
+      const d = new Date(DATASET_END);
+      d.setDate(d.getDate() - (DATASET_DAYS - 1 - i));
+      const isSpike = i === DATASET_DAYS - 1;
+      DAILY_DATA.push(isSpike
+        ? { date: d, c: 20, h: 28, m: 15 }
+        : { date: d, c: Math.round(1 + _rand() * 4), h: Math.round(2 + _rand() * 8), m: Math.round(2 + _rand() * 7) });
+    }
+
+    // Rough share of alerts each domain contributes — weights sum to 1 so
+    // "all domains selected" reproduces the unfiltered totals exactly.
+    const DOMAIN_WEIGHTS = { email: 0.30, identity: 0.20, network: 0.18, web: 0.12, log: 0.12, endpoint: 0.08 };
+    const ALL_SEVERITIES = ['critical', 'high', 'medium'];
+    const ALL_DOMAINS = Object.keys(DOMAIN_WEIGHTS);
+    const SEV_KEY = { critical: 'c', high: 'h', medium: 'm' };
+    const PRESET_DAYS = { '7d': 7, '4w': 28, '6w': 42, '3m': 90, '6m': 182 };
+
+    function toISODate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    function parseISODate(s) {
+      const [y, m, d] = s.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    // Initialized eagerly (not null) since applyLang() can fire onLangChange -> renderTrendChart()
+    // before the page's own DOMContentLoaded handler below runs applyPreset('6w').
+    let trendState = (() => {
+      const end = new Date(DATASET_END);
+      const start = new Date(DATASET_END);
+      start.setDate(start.getDate() - (PRESET_DAYS['6w'] - 1));
+      return { start, end, granularity: 'auto' };
+    })();
+    let trendFilters = { severity: [...ALL_SEVERITIES], domain: [...ALL_DOMAINS] };
+    let trendBuckets = [];
+    let trendGranularityUsed = 'week';
+
+    function pickGranularity(spanDays, requested) {
+      if (requested && requested !== 'auto') return requested;
+      if (spanDays <= 10) return 'day';
+      if (spanDays <= 60) return 'week';
+      return 'month';
+    }
+
+    function getRangeSlice(start, end) {
+      return DAILY_DATA.filter(d => d.date >= start && d.date <= end);
+    }
+
+    function aggregateDaily(daily, granularity) {
+      if (granularity === 'day') return daily.map(d => ({ start: d.date, end: d.date, c: d.c, h: d.h, m: d.m }));
+      if (granularity === 'month') {
+        const buckets = [];
+        let cur = null, curKey = null;
+        daily.forEach(d => {
+          const key = d.date.getFullYear() + '-' + d.date.getMonth();
+          if (key !== curKey) { cur = { start: d.date, end: d.date, c: 0, h: 0, m: 0 }; buckets.push(cur); curKey = key; }
+          cur.end = d.date; cur.c += d.c; cur.h += d.h; cur.m += d.m;
+        });
+        return buckets;
+      }
+      const buckets = [];
+      for (let i = 0; i < daily.length; i += 7) {
+        const chunk = daily.slice(i, i + 7);
+        buckets.push({
+          start: chunk[0].date, end: chunk[chunk.length - 1].date,
+          c: chunk.reduce((s, d) => s + d.c, 0), h: chunk.reduce((s, d) => s + d.h, 0), m: chunk.reduce((s, d) => s + d.m, 0)
+        });
+      }
+      return buckets;
+    }
+
+    function domainMultiplier() {
+      return trendFilters.domain.reduce((sum, d) => sum + (DOMAIN_WEIGHTS[d] || 0), 0);
+    }
+
+    function filteredBucketValue(bucket) {
+      const sevTotal = trendFilters.severity.reduce((sum, s) => sum + (bucket[SEV_KEY[s]] || 0), 0);
+      return sevTotal * domainMultiplier();
+    }
+
+    function fmtShortLabel(date, granularity, lang) {
+      if (granularity === 'month') return lang === 'en' ? MONTHS_EN[date.getMonth()] : MONTHS_ID[date.getMonth()];
+      const day = date.getDate();
+      return lang === 'en' ? `${MONTHS_EN[date.getMonth()]} ${day}` : `${day} ${MONTHS_ID[date.getMonth()]}`;
+    }
+
+    function fmtFullDate(date, lang) {
+      const day = date.getDate(), month = date.getMonth(), year = date.getFullYear();
+      return lang === 'en' ? `${MONTHS_EN[month]} ${day}, ${year}` : `${day} ${MONTHS_ID[month]} ${year}`;
+    }
+
+    function syncFilterPanelInputs() {
+      const startInput = document.getElementById('trend-start-date');
+      const endInput = document.getElementById('trend-end-date');
+      const granSelect = document.getElementById('trend-granularity');
+      if (startInput) startInput.value = toISODate(trendState.start);
+      if (endInput) endInput.value = toISODate(trendState.end);
+      if (granSelect) granSelect.value = trendState.granularity;
+    }
+
+    function applyPreset(key) {
+      const days = PRESET_DAYS[key];
+      trendState.end = new Date(DATASET_END);
+      trendState.start = new Date(DATASET_END);
+      trendState.start.setDate(trendState.start.getDate() - (days - 1));
+      trendState.granularity = 'auto';
+      syncFilterPanelInputs();
+      renderTrendChart();
+    }
+
+    function renderTrendChart() {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const slice = getRangeSlice(trendState.start, trendState.end);
+      const spanDays = Math.max(1, Math.round((trendState.end - trendState.start) / 86400000) + 1);
+      const granularity = pickGranularity(spanDays, trendState.granularity);
+      trendGranularityUsed = granularity;
+      trendBuckets = aggregateDaily(slice, granularity);
+
+      const values = trendBuckets.map(filteredBucketValue);
+      const n = Math.max(values.length, 1);
+      const chartW = 270, gap = 6;
+      const barW = (chartW - gap * (n + 1)) / n;
+      const baseY = 75, topY = 12, maxBarH = baseY - topY;
+      const maxVal = Math.max(...values, 1);
+
+      const barsG = document.getElementById('trend-bars');
+      const hitG = document.getElementById('trend-hit-areas');
+      const labelsG = document.getElementById('trend-labels');
+      barsG.innerHTML = ''; hitG.innerHTML = ''; labelsG.innerHTML = '';
+
+      values.forEach((v, i) => {
+        const h = Math.max(1, (v / maxVal) * maxBarH);
+        const x = gap + i * (barW + gap);
+        const y = baseY - h;
+        const isCurrent = i === values.length - 1;
+
+        const rect = document.createElementNS(SVG_NS, 'rect');
+        rect.setAttribute('x', x.toFixed(2));
+        rect.setAttribute('y', y.toFixed(2));
+        rect.setAttribute('width', barW.toFixed(2));
+        rect.setAttribute('height', h.toFixed(2));
+        rect.setAttribute('rx', '2');
+        rect.setAttribute('fill', isCurrent ? '#EF4444' : '#5DCAA5');
+        rect.setAttribute('opacity', isCurrent ? '0.8' : '0.7');
+        barsG.appendChild(rect);
+
+        // Full-height invisible hit area so hovering anywhere above a short bar still shows its tooltip.
+        const hit = document.createElementNS(SVG_NS, 'rect');
+        hit.setAttribute('class', 'ss-bar-hit');
+        hit.setAttribute('x', x.toFixed(2));
+        hit.setAttribute('y', topY);
+        hit.setAttribute('width', barW.toFixed(2));
+        hit.setAttribute('height', (baseY - topY).toFixed(2));
+        hit.setAttribute('fill', 'transparent');
+        hit.addEventListener('mouseenter', () => showTrendTooltip(i));
+        hit.addEventListener('mousemove', positionTrendTooltip);
+        hit.addEventListener('mouseleave', hideTrendTooltip);
+        hitG.appendChild(hit);
+
+        const text = document.createElementNS(SVG_NS, 'text');
+        text.setAttribute('x', (x + barW / 2).toFixed(2));
+        text.setAttribute('y', '87');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', 'Inter,sans-serif');
+        text.setAttribute('font-size', '4.5');
+        text.setAttribute('fill', '#6B7280');
+        text.textContent = fmtShortLabel(granularity === 'month' ? trendBuckets[i].start : trendBuckets[i].end, granularity, lang);
+        labelsG.appendChild(text);
+      });
+
+      const titleEl = document.getElementById('trend-title');
+      if (titleEl) {
+        const startLabel = fmtFullDate(trendState.start, lang);
+        const endLabel = fmtFullDate(trendState.end, lang);
+        titleEl.textContent = lang === 'en' ? `Alert Trend — ${startLabel} to ${endLabel}` : `Tren Alert — ${startLabel} sampai ${endLabel}`;
+      }
+    }
+
+    function showTrendTooltip(i) {
+      const bucket = trendBuckets[i];
+      if (!bucket) return;
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const dMult = domainMultiplier();
+      const dateLabel = trendGranularityUsed === 'day'
+        ? fmtFullDate(bucket.end, lang)
+        : trendGranularityUsed === 'month'
+          ? (lang === 'en' ? `${MONTHS_EN[bucket.start.getMonth()]} ${bucket.start.getFullYear()}` : `${MONTHS_ID[bucket.start.getMonth()]} ${bucket.start.getFullYear()}`)
+          : `${fmtFullDate(bucket.start, lang)} – ${fmtFullDate(bucket.end, lang)}`;
+
+      const rows = [
+        { key: 'critical', color: '#EF4444', labelEn: 'Critical', labelId: 'Kritis' },
+        { key: 'high', color: '#F59E0B', labelEn: 'High', labelId: 'Tinggi' },
+        { key: 'medium', color: '#378ADD', labelEn: 'Medium', labelId: 'Sedang' }
+      ];
+      let total = 0;
+      const rowsHtml = rows.map(r => {
+        const included = trendFilters.severity.includes(r.key);
+        const val = Math.round((bucket[SEV_KEY[r.key]] || 0) * dMult);
+        if (included) total += val;
+        return `<div class="ss-chart-tooltip__row${included ? '' : ' is-excluded'}">
+          <span class="ss-chart-tooltip__dot" style="background:${r.color}"></span>
+          <span class="ss-chart-tooltip__row-label">${lang === 'en' ? r.labelEn : r.labelId}</span>
+          <span class="ss-chart-tooltip__row-val">${val}</span>
+        </div>`;
+      }).join('');
+
+      const tooltip = document.getElementById('trend-tooltip');
+      if (!tooltip) return;
+      tooltip.innerHTML = `
+        <div class="ss-chart-tooltip__date">${dateLabel}</div>
+        ${rowsHtml}
+        <div class="ss-chart-tooltip__total">${lang === 'en' ? 'Total' : 'Total'}: ${total}</div>
+      `;
+      tooltip.classList.add('is-visible');
+    }
+
+    function positionTrendTooltip(ev) {
+      const wrap = document.querySelector('.ss-bar-chart-wrap');
+      const tooltip = document.getElementById('trend-tooltip');
+      if (!wrap || !tooltip) return;
+      const rect = wrap.getBoundingClientRect();
+      const tw = tooltip.offsetWidth || 140;
+      let left = ev.clientX - rect.left + 14;
+      if (left + tw > rect.width) left = ev.clientX - rect.left - tw - 14;
+      let top = ev.clientY - rect.top - 12;
+      top = Math.max(0, top);
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+
+    function hideTrendTooltip() {
+      const tooltip = document.getElementById('trend-tooltip');
+      if (tooltip) tooltip.classList.remove('is-visible');
+    }
+
+    function updateFilterBadge() {
+      const inactiveCount = (ALL_SEVERITIES.length - trendFilters.severity.length)
+        + (ALL_DOMAINS.length - trendFilters.domain.length)
+        + (trendState.granularity !== 'auto' ? 1 : 0);
+      const badge = document.getElementById('trend-filter-count');
+      const btn = document.getElementById('trend-filter-btn');
+      if (badge) { badge.hidden = inactiveCount === 0; badge.textContent = inactiveCount; }
+      if (btn) btn.classList.toggle('active', inactiveCount > 0);
+    }
+
+    function positionTrendFilterPanel() {
+      const panel = document.getElementById('trend-filter-panel');
+      const btn = document.getElementById('trend-filter-btn');
+      if (!panel || !btn) return;
+      const rect = btn.getBoundingClientRect();
+      const width = 270;
+      let left = rect.right - width;
+      left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+      panel.style.left = left + 'px';
+      panel.style.top = (rect.bottom + 8) + 'px';
+    }
+
+    function openTrendFilterPanel(open) {
+      const panel = document.getElementById('trend-filter-panel');
+      const btn = document.getElementById('trend-filter-btn');
+      if (!panel || !btn) return;
+      if (open) positionTrendFilterPanel();
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+    }
+
+    function applyTrendFilters() {
+      const startVal = document.getElementById('trend-start-date').value;
+      const endVal = document.getElementById('trend-end-date').value;
+      if (startVal && endVal) {
+        let s = parseISODate(startVal), e = parseISODate(endVal);
+        if (s > e) { const tmp = s; s = e; e = tmp; }
+        trendState.start = s;
+        trendState.end = e;
+      }
+      trendState.granularity = document.getElementById('trend-granularity').value;
+
+      const sevChecked = Array.from(document.querySelectorAll('.trend-filter-sev:checked')).map(el => el.value);
+      const domChecked = Array.from(document.querySelectorAll('.trend-filter-dom:checked')).map(el => el.value);
+      trendFilters = {
+        severity: sevChecked.length ? sevChecked : [...ALL_SEVERITIES],
+        domain: domChecked.length ? domChecked : [...ALL_DOMAINS]
+      };
+
+      updateFilterBadge();
+      renderTrendChart();
+      openTrendFilterPanel(false);
+    }
+
+    function resetTrendFilters() {
+      document.querySelectorAll('.trend-filter-sev, .trend-filter-dom').forEach(el => { el.checked = true; });
+      trendFilters = { severity: [...ALL_SEVERITIES], domain: [...ALL_DOMAINS] };
+      applyPreset('6w');
+      updateFilterBadge();
+    }
+
+    const DOMAIN_FINDINGS = {
+      email: {
+        icon: 'ti ti-mail',
+        nameEn: 'Email Security', nameId: 'Keamanan Email',
+        checksEn: '7 of 16 checks complete', checksId: '7 dari 16 pemeriksaan selesai',
+        findings: [
+          { sev: 'critical', en: 'DMARC policy missing on company domain', id: 'Kebijakan DMARC hilang pada domain perusahaan' },
+          { sev: 'critical', en: 'SPF record allows unauthorized senders', id: 'Rekaman SPF mengizinkan pengirim tidak sah' },
+          { sev: 'high', en: 'DKIM signing not enabled on secondary domain', id: 'Penandatanganan DKIM belum diaktifkan pada domain sekunder' },
+        ],
+      },
+      identity: {
+        icon: 'ti ti-user-shield',
+        nameEn: 'Identity & Access', nameId: 'Identitas & Akses',
+        checksEn: '3 of 14 checks complete', checksId: '3 dari 14 pemeriksaan selesai',
+        findings: [
+          { sev: 'high', en: '4 admin accounts without MFA', id: '4 akun admin tanpa MFA' },
+          { sev: 'high', en: 'Stale service account with owner-level access', id: 'Akun layanan tidak aktif dengan akses setingkat pemilik' },
+        ],
+      },
+      network: {
+        icon: 'ti ti-network',
+        nameEn: 'Network & Perimeter', nameId: 'Jaringan & Perimeter',
+        checksEn: '5 of 16 checks complete', checksId: '5 dari 16 pemeriksaan selesai',
+        findings: [
+          { sev: 'critical', en: 'Exposed RDP service on public IP', id: 'Layanan RDP terbuka pada IP publik' },
+          { sev: 'high', en: 'Outdated TLS version (1.0) on VPN gateway', id: 'Versi TLS usang (1.0) pada gateway VPN' },
+          { sev: 'high', en: 'Firewall rule allows any-to-any on port 22', id: 'Aturan firewall mengizinkan any-to-any pada port 22' },
+        ],
+      },
+      log: {
+        icon: 'ti ti-file-text',
+        nameEn: 'Log Management', nameId: 'Manajemen Log',
+        checksEn: '1 of 12 checks complete', checksId: '1 dari 12 pemeriksaan selesai',
+        findings: [
+          { sev: 'critical', en: 'No centralized log retention — SIEM ingestion gap', id: 'Tidak ada retensi log terpusat — celah pada penyerapan SIEM' },
+          { sev: 'high', en: 'Audit logging disabled on 3 critical servers', id: 'Pencatatan audit dinonaktifkan pada 3 server kritis' },
+          { sev: 'high', en: 'Log retention below compliance minimum (7 days)', id: 'Retensi log di bawah standar minimum kepatuhan (7 hari)' },
+        ],
+      },
+      endpoint: {
+        icon: 'ti ti-device-desktop',
+        nameEn: 'Endpoint Security', nameId: 'Keamanan Endpoint',
+        checksEn: '0 of 16 checks complete', checksId: '0 dari 16 pemeriksaan selesai',
+        findings: [],
+      },
+      web: {
+        icon: 'ti ti-world',
+        nameEn: 'Web & Subdomain', nameId: 'Web & Subdomain',
+        checksEn: '5 of 14 checks complete', checksId: '5 dari 14 pemeriksaan selesai',
+        findings: [
+          { sev: 'high', en: 'Expired TLS certificate on subdomain', id: 'Sertifikat TLS kedaluwarsa pada subdomain' },
+        ],
+      },
+    };
+
+    function openDomainModal(key) {
+      const data = DOMAIN_FINDINGS[key];
+      const modal = document.getElementById('domain-modal');
+      if (!data || !modal) return;
+      const isEn = (localStorage.getItem('ss-lang') || 'id') === 'en';
+
+      document.getElementById('domain-modal-icon').className = data.icon;
+      document.getElementById('domain-modal-name').textContent = isEn ? data.nameEn : data.nameId;
+      document.getElementById('domain-modal-sub').textContent = isEn ? data.checksEn : data.checksId;
+
+      const list = document.getElementById('domain-modal-findings');
+      if (data.findings.length === 0) {
+        list.innerHTML = `<div class="ss-domain-modal__empty">${isEn ? 'No findings yet — this domain has not been scanned.' : 'Belum ada temuan — domain ini belum dipindai.'}</div>`;
+      } else {
+        list.innerHTML = data.findings.map(f => `
+          <div class="ss-domain-modal__finding">
+            <span class="ss-domain-modal__finding-icon ss-domain-modal__finding-icon--${f.sev}"><i class="ti ${f.sev === 'critical' ? 'ti-alert-triangle' : 'ti-alert-circle'}"></i></span>
+            <span class="ss-domain-modal__finding-title">
+              <span class="ss-domain-modal__finding-sev ss-domain-modal__finding-sev--${f.sev}">${f.sev === 'critical' ? (isEn ? 'Critical' : 'Kritis') : (isEn ? 'High' : 'Tinggi')}</span>
+              ${isEn ? f.en : f.id}
+            </span>
+          </div>
+        `).join('');
+      }
+
+      modal.hidden = false;
+    }
+
+    function closeDomainModal() {
+      const modal = document.getElementById('domain-modal');
+      if (modal) modal.hidden = true;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSalesCTA();
+
+      const startInput = document.getElementById('trend-start-date');
+      const endInput = document.getElementById('trend-end-date');
+      if (startInput && endInput) {
+        startInput.min = toISODate(DAILY_DATA[0].date);
+        startInput.max = toISODate(DATASET_END);
+        endInput.min = toISODate(DAILY_DATA[0].date);
+        endInput.max = toISODate(DATASET_END);
+      }
+
+      applyPreset('6w');
+
+      const filterBtn = document.getElementById('trend-filter-btn');
+      const filterPanel = document.getElementById('trend-filter-panel');
+      if (filterBtn && filterPanel) {
+        filterBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openTrendFilterPanel(filterPanel.hidden);
+        });
+        filterPanel.addEventListener('click', (e) => e.stopPropagation());
+        document.getElementById('trend-filter-apply').addEventListener('click', applyTrendFilters);
+        document.getElementById('trend-filter-reset').addEventListener('click', resetTrendFilters);
+        document.addEventListener('click', () => openTrendFilterPanel(false));
+        window.addEventListener('resize', () => {
+          if (!filterPanel.hidden) positionTrendFilterPanel();
+        });
+      }
 
       const nudge = document.getElementById('nav-upgrade-nudge');
       if (nudge && window.SS && window.SS.tier !== 'free') nudge.hidden = true;
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDomainModal();
+      });
     });
   </script>
 </body>

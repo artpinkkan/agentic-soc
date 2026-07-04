@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -106,6 +107,19 @@
         <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
+      <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
+        <i class="ti ti-shield-lock ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
+      </a>
+      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
+        <i class="ti ti-robot ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+      </a>
+    </div>
+
+    <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
+      <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
+      <a href="/agentic-soc/pricing/" class="ss-btn-upgrade" style="font-size:12px; padding:6px 12px;" data-en="See paid plans →" data-id="Lihat paket berbayar →">Lihat paket berbayar →</a>
     </div>
 
     <!-- Footer -->
@@ -130,17 +144,11 @@
   <div class="ss-page">
     <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
       <div>
-        <h1 class="ss-page-title" data-en="Automated Triage" data-id="Triase Otomatis">Triase Otomatis</h1>
-        <p class="ss-page-sub" data-en="AI-classified alerts with human-in-the-loop approval for destructive actions." data-id="Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.">
-          Alert terklasifikasi AI dengan persetujuan manusia untuk tindakan destruktif.
+        <h1 class="ss-page-title" data-en="Incident Response Playbooks" data-id="Playbook Respons Insiden">Playbook Respons Insiden</h1>
+        <p class="ss-page-sub" data-en="AI-guided containment steps for active incidents — block, isolate, escalate — each requiring your approval before execution." data-id="Langkah penahanan insiden aktif dengan panduan AI — blokir, isolasi, eskalasi — setiap tindakan memerlukan persetujuan Anda sebelum dieksekusi.">
+          Langkah penahanan insiden aktif dengan panduan AI — blokir, isolasi, eskalasi — setiap tindakan memerlukan persetujuan Anda sebelum dieksekusi.
         </p>
       </div>
-      <select class="ss-aud-select" id="audience-select" onchange="setAudience(this.value)">
-        <option value="direktur" data-en="Executive Director" data-id="Direktur">Direktur</option>
-        <option value="it" data-en="IT Manager" data-id="Manajer IT">Manajer IT</option>
-        <option value="finance" data-en="Finance" data-id="Keuangan">Keuangan</option>
-        <option value="auditor" data-en="Auditor" data-id="Auditor">Auditor</option>
-      </select>
     </div>
 
     <!-- Stats -->
@@ -308,18 +316,6 @@
           </ul>
         </div>
 
-        <!-- Lock gate for containment actions -->
-        <div class="ss-card ss-locked" style="position:relative; min-height:120px; margin-bottom: var(--ss-gap-md);">
-          <div style="opacity:0.3; padding:12px;">
-            <p>Blokir Firewall · Isolasi Host · Buat Tiket</p>
-          </div>
-          <div class="ss-lock-gate">
-            <span class="ss-lock-gate__icon"><i class="ti ti-lock"></i></span>
-            <span class="ss-lock-gate__label" data-en="Containment actions require Sprint or MDR plan" data-id="Tindakan penahanan memerlukan paket Sprint atau MDR">Tindakan penahanan memerlukan paket Sprint atau MDR</span>
-            <a href="/agentic-soc/pricing/" class="ss-lock-gate__cta" data-en="See what's included →" data-id="Lihat apa yang termasuk →">Lihat apa yang termasuk →</a>
-          </div>
-        </div>
-
         <!-- Upgrade notice -->
         <div class="ss-notice ss-notice--info" style="margin-top: var(--ss-gap-md);">
           <i class="ti ti-info-circle"></i>
@@ -331,14 +327,7 @@
         </div>
       </div>
 
-      <!-- Platform-direction framing sentence -->
-      <p class="ss-triage-platform-note"
-         data-en="This step-by-step approve/reject flow is the shape of governance we're extending platform-wide — to every AI agent action, not just containment steps."
-         data-id="Alur setuju/tolak langkah demi langkah ini adalah bentuk tata kelola yang kami perluas ke seluruh platform — ke setiap tindakan agen AI, bukan hanya langkah penahanan.">
-        Alur setuju/tolak langkah demi langkah ini adalah bentuk tata kelola yang kami perluas ke seluruh platform — ke setiap tindakan agen AI, bukan hanya langkah penahanan.
-      </p>
-
-      <!-- Audit trail -->
+      <!-- Audit trail + platform note (right column) -->
       <div>
         <div class="ss-audit-panel">
           <h3 data-en="Audit Trail" data-id="Jejak Audit">Jejak Audit</h3>
@@ -357,11 +346,21 @@
             </li>
           </ul>
         </div>
+
+        <!-- Platform-direction framing note -->
+        <p class="ss-triage-platform-note">
+          <span data-en="This approve/reject flow now extends to every AI agent action in "
+                data-id="Alur setuju/tolak ini kini diperluas ke setiap tindakan agen AI di ">
+            Alur setuju/tolak ini kini diperluas ke setiap tindakan agen AI di
+          </span>
+          <a href="/agentic-soc/ai-governance/" style="font-size:12px; font-weight:600; color:var(--ss-brand);"
+             data-en="AI Governance →" data-id="Tata Kelola AI →">Tata Kelola AI →</a>
+        </p>
       </div>
     </div>
   </div>
 
-  <script src="/agentic-soc/shared.js"></script>
+  <script src="/agentic-soc/shared.js?v=3"></script>
   <script>
     const hitlStates = { 3: 'pending', 4: 'locked', 5: 'locked' };
     let statTriaged = 12;
@@ -439,7 +438,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      setAudience(localStorage.getItem('ss-audience') || 'direktur');
+      setAudience('direktur');
     });
   </script>
 </body>

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
   </script>
@@ -422,7 +422,7 @@
   </div><!-- /su-outer -->
 </div><!-- /su-page -->
 
-<script src="/agentic-soc/shared.js"></script>
+<script src="/agentic-soc/shared.js?v=3"></script>
 <script>
   const params = new URLSearchParams(window.location.search);
   const FUNNEL = params.get('funnel') || 'xray';
@@ -457,18 +457,24 @@
     }
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const lang = localStorage.getItem('ss-lang') || 'id';
+  function hydrateRightPanel(lang) {
     const meta = FUNNEL_META[FUNNEL] || FUNNEL_META.xray;
-
-    // Right panel
-    document.getElementById('rp-icon').innerHTML  = meta.icon;
+    document.getElementById('rp-icon').innerHTML   = meta.icon;
     document.getElementById('rp-name').textContent = meta.name[lang]  || meta.name.id;
     document.getElementById('rp-desc').textContent = meta.desc[lang]  || meta.desc.id;
     document.getElementById('rp-checks').innerHTML = (meta.checks[lang] || meta.checks.id)
       .map(c => `<li><i class="ti ti-check"></i>${c}</li>`).join('');
-    // Step label
     document.getElementById('step-label').textContent = meta.stepLabel[lang] || meta.stepLabel.id;
+  }
+
+  window.onLangChange = function(lang) {
+    hydrateRightPanel(lang);
+    updateStepNav(document.getElementById('signup-step-2').hidden ? 1 : 2);
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lang = localStorage.getItem('ss-lang') || 'id';
+    hydrateRightPanel(lang);
   });
 
   let signupData = {};

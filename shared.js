@@ -3,11 +3,15 @@
 // ── Language ──────────────────────────────────────────────────────────────────
 function applyLang(lang) {
   document.querySelectorAll('[data-en]').forEach(el => {
-    el.textContent = lang === 'en' ? el.dataset.en : el.dataset.id;
+    el.innerHTML = lang === 'en' ? el.dataset.en : el.dataset.id;
+  });
+  document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+    el.placeholder = lang === 'en' ? el.dataset.enPlaceholder : el.dataset.idPlaceholder;
   });
   const btn = document.getElementById('lang-btn');
   if (btn) btn.textContent = lang === 'en' ? 'ID' : 'EN';
   document.documentElement.lang = lang;
+  if (typeof window.onLangChange === 'function') window.onLangChange(lang);
 }
 
 function toggleLang() {
@@ -59,7 +63,7 @@ const _DEMO_ACCOUNTS = {
   mdr: {
     email: 'budi@majuindustri.co.id', name: 'Budi Santoso',
     company: 'Maju Industri', slug: 'maju-industri',
-    industry: 'manufacturing', tier: 'mdr', state: 'mdr_active',
+    industry: 'manufacturing', tier: 'mdr_ai', state: 'mdr_active',
     funnel: 'xray', setupComplete: true, domainVerified: true
   }
 };
@@ -69,8 +73,24 @@ function toggleAccountMenu() {
   const area = document.getElementById('nav-user-area');
   if (!menu) return;
   const isOpen = !menu.hidden;
-  menu.hidden = isOpen;
+  if (isOpen) {
+    menu.hidden = true;
+  } else {
+    positionAccountMenu();
+    menu.hidden = false;
+  }
   if (area) area.classList.toggle('ss-nav__user-area--open', !isOpen);
+}
+
+function positionAccountMenu() {
+  const menu = document.getElementById('nav-account-menu');
+  const area = document.getElementById('nav-user-area');
+  if (!menu || !area) return;
+  const rect = area.getBoundingClientRect();
+  const width = Math.max(rect.width, 220);
+  menu.style.width = width + 'px';
+  menu.style.left = rect.left + 'px';
+  menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
 }
 
 function switchAccount(tier) {
@@ -81,21 +101,28 @@ function switchAccount(tier) {
 // ── Nav ───────────────────────────────────────────────────────────────────────
 function initNav() {
   if (!window.SS) return;
-  const name = window.SS.name || '';
+  // Fall back to deriving a display name from the email local-part for sessions
+  // that predate the "name" field (or skipped it during a quick test signup),
+  // so the switcher never shows a raw "?"/placeholder for a signed-in user.
+  const fallbackName = window.SS.email
+    ? window.SS.email.split('@')[0].replace(/[._]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    : '';
+  const name = window.SS.name || fallbackName;
   const initials = name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const avatarEl = document.getElementById('nav-avatar');
   if (avatarEl) avatarEl.textContent = initials || '?';
   const nameEl = document.getElementById('nav-name');
-  if (nameEl) nameEl.textContent = name;
+  if (nameEl) nameEl.textContent = name || '—';
   const companyEl = document.getElementById('nav-company');
-  if (companyEl) companyEl.textContent = window.SS.company || '';
+  if (companyEl) companyEl.textContent = window.SS.company || '—';
 
   const tierMeta = {
+    free:    { cls: 'badge-free',   en: 'Free Tier',    id: 'Tier Gratis' },
     sprint:  { cls: 'badge-sprint', en: 'Sprint',       id: 'Sprint' },
     mdr:     { cls: 'badge-mdr',    en: 'MDR Active',   id: 'MDR Aktif' },
     mdr_ai:  { cls: 'badge-mdr',    en: 'MDR AI Active',id: 'MDR AI Aktif' },
   };
-  const tm = tierMeta[window.SS.tier];
+  const tm = tierMeta[window.SS.tier] || tierMeta.free;
   if (tm) {
     const badge = document.getElementById('nav-tier-badge');
     if (badge) {
@@ -113,7 +140,7 @@ function initNav() {
     const tierColors = {
       free:   { bg: 'linear-gradient(135deg,#00685f,#008378)', label: 'Free' },
       sprint: { bg: 'linear-gradient(135deg,#3C3489,#5B52C8)', label: 'Sprint' },
-      mdr:    { bg: 'linear-gradient(135deg,#7A4800,#C07A20)', label: 'MDR' },
+      mdr:    { bg: 'linear-gradient(135deg,#7A4800,#C07A20)', label: 'MDR AI' },
     };
     const items = Object.entries(_DEMO_ACCOUNTS).map(([tier, acc]) => {
       const ini = acc.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -163,6 +190,7 @@ function applyTierUI() {
     if (exportBar) exportBar.hidden = true;
   }
 
+
   // Unlock lock-gates for paid tiers
   if (!isFree) {
     document.querySelectorAll('.ss-locked').forEach(container => {
@@ -181,7 +209,9 @@ function applyTierUI() {
     document.querySelectorAll('.ss-notice--warning, .ss-notice--info').forEach(el => {
       const txt = el.textContent || '';
       if (txt.includes('3 hari') || txt.includes('3 days') ||
-          txt.includes('inferensi bersama') || txt.includes('shared inference')) {
+          txt.includes('inferensi bersama') || txt.includes('shared inference') ||
+          txt.includes('watermarked') || txt.includes('bertanda air') ||
+          txt.includes('Free Tier') || txt.includes('Tier Gratis')) {
         el.hidden = true;
       }
     });
@@ -191,16 +221,60 @@ function applyTierUI() {
         el.hidden = true;
       }
     });
+
+    // Report card: hide watermark overlay and free-tier preview badge
+    // (.badge-free in nav is already updated to badge-mdr/sprint by initNav() above,
+    //  so any remaining .badge-free is the report card badge)
+    document.querySelectorAll('.ss-watermark-overlay').forEach(el => { el.hidden = true; });
+    document.querySelectorAll('.badge-free').forEach(el => { el.hidden = true; });
   }
 }
 
 function toggleNav() {
   const nav = document.getElementById('ss-nav');
   if (!nav) return;
+  const menu = document.getElementById('nav-account-menu');
+  if (menu && !menu.hidden) {
+    menu.hidden = true;
+    const area = document.getElementById('nav-user-area');
+    if (area) area.classList.remove('ss-nav__user-area--open');
+  }
   const collapsed = nav.classList.toggle('ss-nav--collapsed');
   localStorage.setItem('ss-nav-collapsed', collapsed ? '1' : '0');
 }
 
+
+// ── Demo session sync — keep active session in step with _DEMO_ACCOUNTS ───────
+// Sessions can persist in a browser tab across many reloads/edits, so a session
+// created by an older version of the login/onboarding flow (e.g. missing the
+// "name" field, or holding a tier that's since been renamed) can go stale and
+// desync from the demo account it belongs to. Re-heal it here on every load by
+// fully re-adopting the canonical demo record for that email, keeping only the
+// session's own progress flags (funnel/setupComplete/domainVerified).
+(function syncDemoSession() {
+  const raw = sessionStorage.getItem('ss-session');
+  if (!raw) return;
+  try {
+    const sess = JSON.parse(raw);
+    const match = Object.values(_DEMO_ACCOUNTS).find(a => a.email === sess.email);
+    // No email match (or session predates fields like name/company entirely) —
+    // fall back to the free demo account as a base so the nav is never blank.
+    const base = match || _DEMO_ACCOUNTS.free;
+    const healed = {
+      ...base,
+      ...sess,
+      name: sess.name || base.name,
+      company: sess.company || base.company,
+      email: sess.email || base.email,
+      tier: match ? match.tier : (sess.tier || base.tier),
+      state: match ? match.state : (sess.state || base.state)
+    };
+    if (JSON.stringify(healed) !== JSON.stringify(sess)) {
+      sessionStorage.setItem('ss-session', JSON.stringify(healed));
+    }
+    window.SS = healed;
+  } catch (e) {}
+})();
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -223,4 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
       area.classList.remove('ss-nav__user-area--open');
     }
   }, true);
+
+  // Reposition account menu on resize while open
+  window.addEventListener('resize', () => {
+    const menu = document.getElementById('nav-account-menu');
+    if (menu && !menu.hidden) positionAccountMenu();
+  });
 });

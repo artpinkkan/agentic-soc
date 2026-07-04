@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -225,6 +226,18 @@
         <i class="ti ti-eye ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
       </a>
+      <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
+        <i class="ti ti-shield-lock ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
+      </a>
+      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
+        <i class="ti ti-robot ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+      </a>
+    </div>
+    <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
+      <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
+      <a href="/agentic-soc/pricing/" class="ss-btn-upgrade" style="font-size:12px; padding:6px 12px;" data-en="See paid plans →" data-id="Lihat paket berbayar →">Lihat paket berbayar →</a>
     </div>
     <div class="ss-nav__footer">
       <div class="ss-nav__footer-top">
@@ -285,7 +298,7 @@
             <div class="ss-ai-divider"></div>
             <div class="ss-ai-section">
               <div class="ss-ai-label" data-en="Threat Classification" data-id="Klasifikasi Ancaman">Klasifikasi Ancaman</div>
-              <div class="ss-ai-body">T1110.001 — Brute Force: Password Guessing (MITRE ATT&amp;CK) &nbsp;·&nbsp; <span class="badge badge-high" style="font-size:11px;vertical-align:middle">TINGGI</span></div>
+              <div class="ss-ai-body">T1110.001 — Brute Force: Password Guessing (MITRE ATT&amp;CK) &nbsp;·&nbsp; <span class="badge badge-high" style="font-size:11px;vertical-align:middle" data-en="HIGH" data-id="TINGGI">TINGGI</span></div>
             </div>
             <div class="ss-ai-divider"></div>
             <div class="ss-ai-section">
@@ -310,22 +323,12 @@
       <!-- Platform-direction note — shown once after the first AI message only -->
       <div class="ss-notice ss-notice--info" style="margin-top: 6px; font-size: 11px; padding: 6px 10px;">
         <i class="ti ti-info-circle"></i>
-        <span data-en="Human Review Required reflects message-level approval today. Per-action policy for every tool call is on our platform roadmap."
-              data-id="Human Review Required saat ini mencerminkan persetujuan tingkat pesan. Kebijakan per tindakan untuk setiap panggilan tool ada di roadmap platform kami.">
-          Human Review Required saat ini mencerminkan persetujuan tingkat pesan. Kebijakan per tindakan untuk setiap panggilan tool ada di roadmap platform kami.
+        <span data-en="Human Review here is message-level. For per-action policy on every tool call, see "
+              data-id="Tinjauan Manusia di sini adalah tingkat pesan. Untuk kebijakan per tindakan pada setiap panggilan tool, lihat ">
+          Tinjauan Manusia di sini adalah tingkat pesan. Untuk kebijakan per tindakan pada setiap panggilan tool, lihat
         </span>
-      </div>
-
-      <!-- Containment lock gate (shown inline as a locked card) -->
-      <div style="position:relative; min-height:80px; margin: 0 0 4px;" class="ss-card ss-locked">
-        <div style="opacity:0.3; padding:4px 0; font-size:13px;">
-          <span><i class="ti ti-lock"></i> Isolasi Host · Karantina · Blokir Firewall</span>
-        </div>
-        <div class="ss-lock-gate">
-          <span class="ss-lock-gate__icon"><i class="ti ti-lock"></i></span>
-          <span class="ss-lock-gate__label" data-en="Containment actions require Sprint or MDR plan" data-id="Tindakan penahanan memerlukan paket Sprint atau MDR">Tindakan penahanan memerlukan paket Sprint atau MDR</span>
-          <a href="/agentic-soc/pricing/" class="ss-lock-gate__cta" data-en="See what's included →" data-id="Lihat apa yang termasuk →">Lihat apa yang termasuk →</a>
-        </div>
+        <a href="/agentic-soc/ai-governance/" style="font-size:11px; font-weight:600;"
+           data-en="AI Governance →" data-id="Tata Kelola AI →">Tata Kelola AI →</a>
       </div>
 
       <!-- User message 2 -->
@@ -404,7 +407,7 @@
     </div>
   </div>
 
-  <script src="/agentic-soc/shared.js"></script>
+  <script src="/agentic-soc/shared.js?v=3"></script>
   <script>
     function handleChatKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -487,7 +490,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      setAudience(localStorage.getItem('ss-audience') || 'direktur');
+      setAudience('direktur');
       const lang = localStorage.getItem('ss-lang') || 'id';
       const ta = document.getElementById('chat-input');
       if (ta) ta.placeholder = lang === 'en' ? ta.dataset.enPlaceholder : ta.dataset.idPlaceholder;

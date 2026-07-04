@@ -1,0 +1,698 @@
+<script>
+(function() {
+  const sess = sessionStorage.getItem('ss-session');
+  if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+  window.SS = JSON.parse(sess);
+  if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+})();
+</script>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tata Kelola AI — Shannon Sentinel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="/agentic-soc/ai-governance/ai-governance.css">
+  <style>
+    /* Nav upgrade nudge */
+    .ss-nav__upgrade-nudge { margin: 0 var(--ss-gap-sm) var(--ss-gap-md); padding: 10px 12px; background: #EEEDFE; border-radius: var(--ss-radius-md); font-size: 12px; color: #3C3489; display: flex; flex-direction: column; gap: 8px; }
+    .ss-nav--collapsed .ss-nav__upgrade-nudge { display: none; }
+    .ss-btn-upgrade { background: var(--ss-brand-gradient); color: #fff; border: none; padding: 9px 20px; border-radius: var(--ss-radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .ss-btn-upgrade:hover { opacity: 0.88; text-decoration: none; }
+    .badge-mdr { background: #EDE9FF; color: #4C1D95; border-color: rgba(76,29,149,0.25); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar Nav ── -->
+  <nav class="ss-nav" id="ss-nav">
+
+    <!-- Header -->
+    <div class="ss-nav__header">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__brand-link">
+        <i class="ti ti-shield ss-nav__brand-icon"></i>
+        <span class="ss-nav__brand-name">Shannon Sentinel</span>
+      </a>
+      <button class="ss-nav__toggle" onclick="toggleNav()" aria-label="Collapse sidebar">
+        <i class="ti ti-chevron-left" style="font-size:16px;"></i>
+      </button>
+    </div>
+
+    <!-- Menu -->
+    <div class="ss-nav__menu">
+      <a href="/agentic-soc/dashboard/" class="ss-nav__item" title="Dashboard">
+        <i class="ti ti-layout-dashboard ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Dashboard" data-id="Dasbor">Dasbor</span>
+      </a>
+      <a href="/agentic-soc/investigate/" class="ss-nav__item" title="Investigate">
+        <i class="ti ti-search ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Investigate" data-id="Investigasi">Investigasi</span>
+      </a>
+      <a href="/agentic-soc/triage/" class="ss-nav__item" title="Triage">
+        <i class="ti ti-clipboard-check ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Triage" data-id="Triase">Triase</span>
+      </a>
+      <a href="/agentic-soc/reports/" class="ss-nav__item" title="Reports">
+        <i class="ti ti-file-text ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
+      </a>
+      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
+        <i class="ti ti-eye ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+      </a>
+      <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
+        <i class="ti ti-shield-lock ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Prevention Edge">Prevention Edge</span>
+      </a>
+      <a href="/agentic-soc/ai-governance/" class="ss-nav__item active" title="AI Governance">
+        <i class="ti ti-robot ss-nav__item-icon"></i>
+        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+      </a>
+    </div>
+
+    <!-- Upgrade nudge (free tier only) -->
+    <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
+      <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
+      <a href="/agentic-soc/pricing/" class="ss-btn-upgrade" style="font-size:12px; padding:6px 12px;" data-en="See paid plans →" data-id="Lihat paket berbayar →">Lihat paket berbayar →</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="ss-nav__footer">
+      <div class="ss-nav__footer-top">
+        <span id="nav-tier-badge" class="badge badge-free" data-en="Free Tier" data-id="Tier Gratis">Tier Gratis</span>
+        <button id="lang-btn" class="ss-btn-ghost" onclick="toggleLang()" style="padding:3px 10px;font-size:12px;">EN</button>
+      </div>
+      <div class="ss-nav__footer-divider"></div>
+      <div class="ss-nav__user-area" id="nav-user-area" onclick="toggleAccountMenu()">
+        <div class="ss-avatar" id="nav-avatar">?</div>
+        <div class="ss-nav__user-info">
+          <span id="nav-name" class="ss-nav__name">—</span>
+          <span id="nav-company" class="ss-nav__company">—</span>
+        </div>
+        <i class="ti ti-chevron-up ss-nav__user-chevron" id="nav-user-chevron"></i>
+      </div>
+      <div class="ss-nav__account-menu" id="nav-account-menu" hidden></div>
+    </div>
+  </nav>
+
+  <!-- ── Page ── -->
+  <div class="ss-page">
+
+    <!-- Page header -->
+    <div class="ss-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="ss-page-title" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</h1>
+        <p class="ss-page-sub"
+           data-en="Policy engine for AI agent data access, configuration changes, and external communications. Incident containment is handled in Triage."
+           data-id="Mesin kebijakan untuk akses data, perubahan konfigurasi, dan komunikasi eksternal oleh agen AI. Penahanan insiden ditangani di Triase.">
+          Mesin kebijakan untuk akses data, perubahan konfigurasi, dan komunikasi eksternal oleh agen AI. Penahanan insiden ditangani di Triase.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span class="badge badge-neutral" style="font-size:12px;padding:4px 10px;">
+          <i class="ti ti-robot" style="font-size:12px;margin-right:4px;"></i>
+          <span data-en="Shannon SOC Agent" data-id="Shannon SOC Agent">Shannon SOC Agent</span>
+        </span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#639922;display:inline-block;" title="Agent online"></span>
+        <span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="Active" data-id="Aktif">Aktif</span>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="ag-stats-bar">
+      <div class="ag-stat">
+        <div class="ag-stat__value ag-stat__value--danger" id="stat-pending">3</div>
+        <div class="ag-stat__label" data-en="Pending approval" data-id="Menunggu persetujuan">Menunggu persetujuan</div>
+      </div>
+      <div class="ag-stat">
+        <div class="ag-stat__value">47</div>
+        <div class="ag-stat__label" data-en="Actions today" data-id="Tindakan hari ini">Tindakan hari ini</div>
+      </div>
+      <div class="ag-stat">
+        <div class="ag-stat__value">38</div>
+        <div class="ag-stat__label" data-en="Auto-approved" data-id="Disetujui otomatis">Disetujui otomatis</div>
+      </div>
+      <div class="ag-stat">
+        <div class="ag-stat__value">6</div>
+        <div class="ag-stat__label" data-en="Human-approved" data-id="Disetujui manusia">Disetujui manusia</div>
+      </div>
+      <div class="ag-stat">
+        <div class="ag-stat__value">1</div>
+        <div class="ag-stat__label" data-en="Rejected" data-id="Ditolak">Ditolak</div>
+      </div>
+      <div class="ag-stat">
+        <div class="ag-stat__value">8</div>
+        <div class="ag-stat__label" data-en="Active policies" data-id="Kebijakan aktif">Kebijakan aktif</div>
+      </div>
+    </div>
+
+    <!-- ── Main lockable content ── -->
+    <div class="ag-main-content ss-card ss-locked" id="ag-main-content" style="padding: var(--ss-gap-xl);">
+
+      <!-- Lock gate (shown for non-mdr_ai) -->
+      <div class="ag-lock-overlay" id="ag-lock-gate">
+        <div class="ag-lock-overlay__icon">
+          <i class="ti ti-robot"></i>
+        </div>
+        <div class="ag-lock-overlay__title" data-en="Available on MDR AI plan" data-id="Tersedia di paket MDR AI">Tersedia di paket MDR AI</div>
+        <p class="ag-lock-overlay__sub"
+           data-en="Per-action AI governance — policy enforcement on every agent tool call — is a flagship feature of the MDR AI plan."
+           data-id="Tata kelola AI per-tindakan — penegakan kebijakan pada setiap pemanggilan alat agen — adalah fitur unggulan paket MDR AI.">
+          Tata kelola AI per-tindakan — penegakan kebijakan pada setiap pemanggilan alat agen — adalah fitur unggulan paket MDR AI.
+        </p>
+        <div class="ag-lock-overlay__cta">
+          <a href="/agentic-soc/pricing/" class="ss-btn-primary" style="font-size:13px; padding:8px 22px;" data-en="See MDR AI plan →" data-id="Lihat paket MDR AI →">Lihat paket MDR AI →</a>
+        </div>
+        <p style="font-size:12px;color:var(--ss-on-surface-variant);margin-top:4px;" data-en="Or switch accounts below to preview" data-id="Atau ganti akun di bawah untuk pratinjau">Atau ganti akun di bawah untuk pratinjau</p>
+      </div>
+
+      <!-- ── Section 1: Pending Actions ── -->
+      <div style="margin-bottom:var(--ss-gap-xl);">
+
+        <!-- Urgent banner -->
+        <div class="ag-pending-banner">
+          <div class="ag-pending-banner__pulse">
+            <i class="ti ti-alert-triangle"></i>
+          </div>
+          <div class="ag-pending-banner__body">
+            <div class="ag-pending-banner__title" data-en="AI Agent Awaiting Your Decision" data-id="Agen AI Menunggu Keputusan Anda">Agen AI Menunggu Keputusan Anda</div>
+            <div class="ag-pending-banner__sub"
+                 data-en="These tool calls are blocked until a human approves or rejects them."
+                 data-id="Pemanggilan alat ini diblokir hingga manusia menyetujui atau menolaknya.">
+              Pemanggilan alat ini diblokir hingga manusia menyetujui atau menolaknya.
+            </div>
+          </div>
+          <div class="ag-pending-banner__count" id="banner-count">3</div>
+        </div>
+
+        <!-- Section header -->
+        <div class="ag-section-header">
+          <div class="ag-section-title">
+            <i class="ti ti-clock-pause"></i>
+            <span data-en="Pending Actions" data-id="Tindakan Tertunda">Tindakan Tertunda</span>
+          </div>
+          <span class="ag-section-meta" data-en="Requires human decision before execution" data-id="Memerlukan keputusan manusia sebelum eksekusi">Memerlukan keputusan manusia sebelum eksekusi</span>
+        </div>
+
+        <!-- Pending cards list -->
+        <div class="ag-pending-list">
+
+          <!-- Card 1: read_employee_records — Medium -->
+          <div class="ag-pending-card" id="pending-card-1" data-risk="medium">
+            <div class="ag-pending-card__top">
+              <div class="ag-pending-card__agent-icon">
+                <i class="ti ti-robot"></i>
+              </div>
+              <div class="ag-pending-card__meta">
+                <div class="ag-pending-card__agent-name">Shannon SOC Agent</div>
+                <div class="ag-pending-card__tool">read_employee_records(department=&quot;finance&quot;, fields=[&quot;access_log&quot;,&quot;device_id&quot;], limit=50)</div>
+              </div>
+              <div class="ag-pending-card__badges">
+                <span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span>
+                <span class="ag-pending-card__time" data-en="3 min ago" data-id="3 menit lalu">3 menit lalu</span>
+              </div>
+            </div>
+            <div class="ag-pending-card__reason">
+              <i class="ti ti-info-circle"></i>
+              <span data-en="Correlating identity anomaly with employee access patterns — HR data access requires approval."
+                    data-id="Mengkorelasikan anomali identitas dengan pola akses karyawan — akses data HR memerlukan persetujuan.">
+                Mengkorelasikan anomali identitas dengan pola akses karyawan — akses data HR memerlukan persetujuan.
+              </span>
+            </div>
+            <div class="ag-pending-card__actions">
+              <div class="ag-pending-card__btns" id="card-1-btns">
+                <button class="ag-btn-approve" onclick="approveAction(1)" data-en="Approve" data-id="Setujui">
+                  <i class="ti ti-check"></i>
+                  <span data-en="Approve" data-id="Setujui">Setujui</span>
+                </button>
+                <button class="ag-btn-reject" onclick="rejectAction(1)" data-en="Reject" data-id="Tolak">
+                  <i class="ti ti-x"></i>
+                  <span data-en="Reject" data-id="Tolak">Tolak</span>
+                </button>
+              </div>
+              <a href="/agentic-soc/inspector/" class="ag-pending-card__trace">
+                <i class="ti ti-timeline" style="font-size:12px;"></i>
+                <span data-en="View trace" data-id="Lihat jejak">Lihat jejak</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 2: update_dlp_policy — High -->
+          <div class="ag-pending-card" id="pending-card-2" data-risk="high">
+            <div class="ag-pending-card__top">
+              <div class="ag-pending-card__agent-icon">
+                <i class="ti ti-robot"></i>
+              </div>
+              <div class="ag-pending-card__meta">
+                <div class="ag-pending-card__agent-name">Shannon SOC Agent</div>
+                <div class="ag-pending-card__tool">update_dlp_policy(rule_id=&quot;ext-upload-block&quot;, add_exception=&quot;trusted-vendor.co.id&quot;, duration=&quot;7d&quot;)</div>
+              </div>
+              <div class="ag-pending-card__badges">
+                <span class="badge badge-high" data-en="High" data-id="Tinggi">Tinggi</span>
+                <span class="ag-pending-card__time" data-en="7 min ago" data-id="7 menit lalu">7 menit lalu</span>
+              </div>
+            </div>
+            <div class="ag-pending-card__reason">
+              <i class="ti ti-info-circle"></i>
+              <span data-en="Temporary DLP exception requested for approved vendor data transfer — policy modification requires human approval + audit."
+                    data-id="Pengecualian DLP sementara diminta untuk transfer data vendor yang disetujui — modifikasi kebijakan memerlukan persetujuan manusia + audit.">
+                Pengecualian DLP sementara diminta untuk transfer data vendor yang disetujui — modifikasi kebijakan memerlukan persetujuan manusia + audit.
+              </span>
+            </div>
+            <div class="ag-pending-card__actions">
+              <div class="ag-pending-card__btns" id="card-2-btns">
+                <button class="ag-btn-approve" onclick="approveAction(2)" data-en="Approve" data-id="Setujui">
+                  <i class="ti ti-check"></i>
+                  <span data-en="Approve" data-id="Setujui">Setujui</span>
+                </button>
+                <button class="ag-btn-reject" onclick="rejectAction(2)" data-en="Reject" data-id="Tolak">
+                  <i class="ti ti-x"></i>
+                  <span data-en="Reject" data-id="Tolak">Tolak</span>
+                </button>
+              </div>
+              <a href="/agentic-soc/inspector/" class="ag-pending-card__trace">
+                <i class="ti ti-timeline" style="font-size:12px;"></i>
+                <span data-en="View trace" data-id="Lihat jejak">Lihat jejak</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: send_executive_brief — Medium -->
+          <div class="ag-pending-card" id="pending-card-3" data-risk="medium">
+            <div class="ag-pending-card__top">
+              <div class="ag-pending-card__agent-icon">
+                <i class="ti ti-robot"></i>
+              </div>
+              <div class="ag-pending-card__meta">
+                <div class="ag-pending-card__agent-name">Shannon SOC Agent</div>
+                <div class="ag-pending-card__tool">send_executive_brief(recipients=[&quot;ceo@contoh.co.id&quot;,&quot;ciso@contoh.co.id&quot;], subject=&quot;Incident Summary Q2&quot;)</div>
+              </div>
+              <div class="ag-pending-card__badges">
+                <span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span>
+                <span class="ag-pending-card__time" data-en="15 min ago" data-id="15 menit lalu">15 menit lalu</span>
+              </div>
+            </div>
+            <div class="ag-pending-card__reason">
+              <i class="ti ti-info-circle"></i>
+              <span data-en="AI-generated incident summary for C-suite. First-time external send to these recipients requires approval."
+                    data-id="Ringkasan insiden yang dibuat AI untuk C-suite. Pengiriman eksternal pertama kali ke penerima ini memerlukan persetujuan.">
+                Ringkasan insiden yang dibuat AI untuk C-suite. Pengiriman eksternal pertama kali ke penerima ini memerlukan persetujuan.
+              </span>
+            </div>
+            <div class="ag-pending-card__actions">
+              <div class="ag-pending-card__btns" id="card-3-btns">
+                <button class="ag-btn-approve" onclick="approveAction(3)" data-en="Approve" data-id="Setujui">
+                  <i class="ti ti-check"></i>
+                  <span data-en="Approve" data-id="Setujui">Setujui</span>
+                </button>
+                <button class="ag-btn-reject" onclick="rejectAction(3)" data-en="Reject" data-id="Tolak">
+                  <i class="ti ti-x"></i>
+                  <span data-en="Reject" data-id="Tolak">Tolak</span>
+                </button>
+              </div>
+              <a href="/agentic-soc/inspector/" class="ag-pending-card__trace">
+                <i class="ti ti-timeline" style="font-size:12px;"></i>
+                <span data-en="View trace" data-id="Lihat jejak">Lihat jejak</span>
+              </a>
+            </div>
+          </div>
+
+        </div><!-- /.ag-pending-list -->
+      </div>
+
+      <!-- ── Section 2: Policy Rules ── -->
+      <div style="margin-bottom:var(--ss-gap-xl);">
+        <div class="ag-section-header">
+          <div class="ag-section-title">
+            <i class="ti ti-shield-check"></i>
+            <span data-en="Policy Rules" data-id="Aturan Kebijakan">Aturan Kebijakan</span>
+          </div>
+          <button class="ss-btn-secondary" style="font-size:12px;padding:5px 14px;" disabled>
+            <i class="ti ti-plus" style="font-size:13px;margin-right:4px;"></i>
+            <span data-en="Add Rule" data-id="Tambah Aturan">Tambah Aturan</span>
+          </button>
+        </div>
+
+        <div class="ss-card" style="padding:0; overflow:hidden;">
+          <div class="ag-policy-table-wrap">
+            <table class="ag-policy-table">
+              <thead>
+                <tr>
+                  <th data-en="Policy" data-id="Kebijakan">Kebijakan</th>
+                  <th data-en="Applies To" data-id="Berlaku Untuk">Berlaku Untuk</th>
+                  <th data-en="Action Required" data-id="Tindakan Diperlukan">Tindakan Diperlukan</th>
+                  <th data-en="Status" data-id="Status">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-users"></i>
+                      <span data-en="Access HR / employee records" data-id="Akses data karyawan / HR">Akses data karyawan / HR</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--hitl"><i class="ti ti-user-check" style="font-size:11px;"></i><span data-en="Human approval required" data-id="Persetujuan manusia diperlukan">Persetujuan manusia diperlukan</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-settings-2"></i>
+                      <span data-en="Modify security policy" data-id="Modifikasi kebijakan keamanan">Modifikasi kebijakan keamanan</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--audit"><i class="ti ti-shield-check" style="font-size:11px;"></i><span data-en="Human approval + audit" data-id="Persetujuan manusia + audit">Persetujuan manusia + audit</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-mail-forward"></i>
+                      <span data-en="Send external communication" data-id="Kirim komunikasi eksternal">Kirim komunikasi eksternal</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--hitl"><i class="ti ti-user-check" style="font-size:11px;"></i><span data-en="Human approval required" data-id="Persetujuan manusia diperlukan">Persetujuan manusia diperlukan</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-database-export"></i>
+                      <span data-en="Export data externally" data-id="Ekspor data ke luar">Ekspor data ke luar</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--audit"><i class="ti ti-shield-check" style="font-size:11px;"></i><span data-en="Human approval + audit" data-id="Persetujuan manusia + audit">Persetujuan manusia + audit</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-world-search"></i>
+                      <span data-en="Query external threat intel" data-id="Kueri intelijen ancaman eksternal">Kueri intelijen ancaman eksternal</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--auto"><i class="ti ti-bolt" style="font-size:11px;"></i><span data-en="Auto-approve" data-id="Otomatis disetujui">Otomatis disetujui</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-file-search"></i>
+                      <span data-en="Read log data" data-id="Baca data log">Baca data log</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--auto"><i class="ti ti-bolt" style="font-size:11px;"></i><span data-en="Auto-approve" data-id="Otomatis disetujui">Otomatis disetujui</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-report-analytics"></i>
+                      <span data-en="Generate compliance report" data-id="Buat laporan kepatuhan">Buat laporan kepatuhan</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--auto"><i class="ti ti-bolt" style="font-size:11px;"></i><span data-en="Auto-approve" data-id="Otomatis disetujui">Otomatis disetujui</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="ag-policy-name">
+                      <i class="ti ti-brain"></i>
+                      <span data-en="Update knowledge base" data-id="Perbarui basis pengetahuan">Perbarui basis pengetahuan</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ss-on-surface-variant);" data-en="All agents" data-id="Semua agen">Semua agen</span></td>
+                  <td><span class="ag-action-pill ag-action-pill--hitl"><i class="ti ti-user-check" style="font-size:11px;"></i><span data-en="Human approval required" data-id="Persetujuan manusia diperlukan">Persetujuan manusia diperlukan</span></span></td>
+                  <td>
+                    <label class="ag-toggle" title="Active">
+                      <input type="checkbox" checked onchange="return false;">
+                      <span class="ag-toggle__slider"></span>
+                    </label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 3: Audit Log ── -->
+      <div>
+        <div class="ag-section-header">
+          <div class="ag-section-title">
+            <i class="ti ti-history"></i>
+            <span data-en="Audit Log" data-id="Log Audit">Log Audit</span>
+          </div>
+          <a href="#" class="ag-section-meta" style="color:var(--ss-brand); font-weight:500; font-size:12px; text-decoration:none;" data-en="Export CSV" data-id="Ekspor CSV">Ekspor CSV</a>
+        </div>
+
+        <div class="ss-card" style="padding:0; overflow:hidden;">
+          <div class="ag-audit-table-wrap">
+            <table class="ag-audit-table">
+              <thead>
+                <tr>
+                  <th data-en="Time" data-id="Waktu">Waktu</th>
+                  <th data-en="Agent" data-id="Agen">Agen</th>
+                  <th data-en="Tool Call" data-id="Pemanggilan Alat">Pemanggilan Alat</th>
+                  <th data-en="Decision" data-id="Keputusan">Keputusan</th>
+                  <th data-en="Decided By" data-id="Diputuskan Oleh">Diputuskan Oleh</th>
+                  <th data-en="Outcome" data-id="Hasil">Hasil</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ag-audit-time">14:32</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">read_logs(source=&quot;siem&quot;, days=7)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--auto"><i class="ti ti-bolt" style="font-size:10px;"></i><span data-en="Auto-approved" data-id="Otomatis">Otomatis</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);" data-en="Policy" data-id="Kebijakan">Kebijakan</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:29</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">query_threat_intel(ioc=&quot;45.33.32.156&quot;)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--auto"><i class="ti ti-bolt" style="font-size:10px;"></i><span data-en="Auto-approved" data-id="Otomatis">Otomatis</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);" data-en="Policy" data-id="Kebijakan">Kebijakan</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:27</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">send_executive_brief(recipients=[&quot;ciso@...&quot;])</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--approved"><i class="ti ti-user-check" style="font-size:10px;"></i><span data-en="Approved" data-id="Disetujui">Disetujui</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);">Budi S.</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:24</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">update_dlp_policy(rule_id=&quot;ext-upload-block&quot;)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--rejected"><i class="ti ti-x" style="font-size:10px;"></i><span data-en="Rejected" data-id="Ditolak">Ditolak</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);">Budi S.</td>
+                  <td><span class="ag-outcome-icon ag-outcome-icon--none" style="font-size:13px;">—</span></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:21</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">generate_compliance_report(framework=&quot;ISO27001&quot;)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--auto"><i class="ti ti-bolt" style="font-size:10px;"></i><span data-en="Auto-approved" data-id="Otomatis">Otomatis</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);" data-en="Policy" data-id="Kebijakan">Kebijakan</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:17</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">read_employee_records(dept=&quot;finance&quot;, limit=50)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--approved"><i class="ti ti-user-check" style="font-size:10px;"></i><span data-en="Approved" data-id="Disetujui">Disetujui</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);">Budi S.</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:12</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">read_logs(source=&quot;firewall&quot;, days=3)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--auto"><i class="ti ti-bolt" style="font-size:10px;"></i><span data-en="Auto-approved" data-id="Otomatis">Otomatis</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);" data-en="Policy" data-id="Kebijakan">Kebijakan</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:08</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">update_knowledge_base(source=&quot;incident-52&quot;)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--approved"><i class="ti ti-user-check" style="font-size:10px;"></i><span data-en="Approved" data-id="Disetujui">Disetujui</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);">Budi S.</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:05</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">export_data(dest=&quot;siem-backup&quot;, rows=1200)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--rejected"><i class="ti ti-x" style="font-size:10px;"></i><span data-en="Rejected" data-id="Ditolak">Ditolak</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);">Budi S.</td>
+                  <td><span class="ag-outcome-icon ag-outcome-icon--none" style="font-size:13px;">—</span></td>
+                </tr>
+                <tr>
+                  <td class="ag-audit-time">14:01</td>
+                  <td style="font-size:12px; white-space:nowrap;">Shannon SOC Agent</td>
+                  <td><span class="ag-audit-tool">query_threat_intel(ioc=&quot;malware.contoh.io&quot;)</span></td>
+                  <td><span class="ag-decision-badge ag-decision-badge--auto"><i class="ti ti-bolt" style="font-size:10px;"></i><span data-en="Auto-approved" data-id="Otomatis">Otomatis</span></span></td>
+                  <td style="font-size:12px; color:var(--ss-on-surface-variant);" data-en="Policy" data-id="Kebijakan">Kebijakan</td>
+                  <td><i class="ti ti-check ag-outcome-icon ag-outcome-icon--success" title="Success"></i></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Platform note -->
+        <p style="font-size:12px;color:var(--ss-on-surface-variant);line-height:1.6;margin-top:var(--ss-gap-md);padding-top:var(--ss-gap-md);border-top:0.5px dashed var(--ss-border-md);"
+           data-en="The same policy engine that governs your people governs every agent. Every AI tool call is logged here with full attribution — who approved, which policy matched, and what happened."
+           data-id="Mesin kebijakan yang sama yang mengatur orang-orang Anda mengatur setiap agen. Setiap pemanggilan alat AI dicatat di sini dengan atribusi lengkap — siapa yang menyetujui, kebijakan mana yang cocok, dan apa yang terjadi.">
+          Mesin kebijakan yang sama yang mengatur orang-orang Anda mengatur setiap agen. Setiap pemanggilan alat AI dicatat di sini dengan atribusi lengkap — siapa yang menyetujui, kebijakan mana yang cocok, dan apa yang terjadi.
+        </p>
+      </div>
+
+    </div><!-- /#ag-main-content -->
+  </div><!-- /.ss-page -->
+
+  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script>
+    // ── Track pending count ──
+    let pendingCount = 3;
+
+    // ── Approve/Reject handlers ──
+    function approveAction(n) {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const btnsEl = document.getElementById('card-' + n + '-btns');
+      if (!btnsEl) return;
+      const label = document.createElement('div');
+      label.className = 'ag-status-label ag-status-label--approved';
+      label.innerHTML = '<i class="ti ti-check"></i> ' + (lang === 'en' ? 'Approved — executing…' : 'Disetujui — mengeksekusi…');
+      btnsEl.replaceWith(label);
+      const card = document.getElementById('pending-card-' + n);
+      if (card) {
+        setTimeout(() => { card.classList.add('ag-pending-card--resolved'); }, 300);
+      }
+      decrementPending();
+    }
+
+    function rejectAction(n) {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const btnsEl = document.getElementById('card-' + n + '-btns');
+      if (!btnsEl) return;
+      const label = document.createElement('div');
+      label.className = 'ag-status-label ag-status-label--rejected';
+      label.innerHTML = '<i class="ti ti-x"></i> ' + (lang === 'en' ? 'Rejected — action blocked' : 'Ditolak — tindakan diblokir');
+      btnsEl.replaceWith(label);
+      const card = document.getElementById('pending-card-' + n);
+      if (card) {
+        setTimeout(() => { card.classList.add('ag-pending-card--resolved'); }, 300);
+      }
+      decrementPending();
+    }
+
+    function decrementPending() {
+      pendingCount = Math.max(0, pendingCount - 1);
+      const statEl = document.getElementById('stat-pending');
+      const bannerEl = document.getElementById('banner-count');
+      if (statEl) statEl.textContent = pendingCount;
+      if (bannerEl) bannerEl.textContent = pendingCount;
+      if (pendingCount === 0) {
+        const banner = document.querySelector('.ag-pending-banner');
+        if (banner) {
+          banner.style.background = 'linear-gradient(135deg, #1a3a1a 0%, #2a5c2a 100%)';
+          banner.querySelector('.ag-pending-banner__title').setAttribute('data-en', 'All Actions Resolved');
+          banner.querySelector('.ag-pending-banner__title').setAttribute('data-id', 'Semua Tindakan Terselesaikan');
+          const lang = localStorage.getItem('ss-lang') || 'id';
+          banner.querySelector('.ag-pending-banner__title').textContent = lang === 'en' ? 'All Actions Resolved' : 'Semua Tindakan Terselesaikan';
+        }
+      }
+    }
+
+    // ── Lock gate for non-mdr_ai tiers ──
+    function applyGovernanceLock() {
+      const tier = window.SS && window.SS.tier;
+      const gate = document.getElementById('ag-lock-gate');
+      const content = document.getElementById('ag-main-content');
+      if (tier === 'mdr_ai') {
+        // Fully unlocked
+        if (gate) gate.hidden = true;
+        if (content) {
+          content.classList.remove('ss-locked');
+          content.style.pointerEvents = '';
+          content.style.userSelect = '';
+        }
+      } else {
+        // Lock the section
+        if (gate) gate.hidden = false;
+        if (content) {
+          content.style.pointerEvents = 'none';
+          content.style.userSelect = 'none';
+        }
+      }
+    }
+
+    // ── Set active nav ──
+    document.querySelectorAll('.ss-nav__item').forEach(function(item) {
+      item.classList.remove('active');
+    });
+    var govLink = document.querySelector('a[href="/agentic-soc/ai-governance/"]');
+    if (govLink) govLink.classList.add('active');
+
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', function() {
+      applyLang(localStorage.getItem('ss-lang') || 'id');
+      applyGovernanceLock();
+    });
+  </script>
+</body>
+</html>

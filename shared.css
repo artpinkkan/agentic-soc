@@ -137,6 +137,7 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 .ss-nav {
   width: 224px;
   flex-shrink: 0;
+  align-self: flex-start;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -256,13 +257,12 @@ h1, h2, .ss-page-title, .ss-login-brand__headline,
 
 /* ── Account switcher menu ─────────────────────────────────────────────────── */
 .ss-nav__account-menu {
-  position: absolute; bottom: 100%; left: 0; right: 0;
+  position: fixed; min-width: 220px;
   background: var(--ss-surface-container-lowest);
   border-radius: var(--ss-radius-md);
   box-shadow: var(--ss-shadow-float);
   border: 1px solid var(--ss-outline-variant);
   overflow: hidden; z-index: 200;
-  margin-bottom: 4px;
 }
 .ss-nav__account-item {
   display: flex; align-items: center; gap: 10px;
