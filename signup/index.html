@@ -100,6 +100,9 @@
     .su-signin-hint { text-align: center; font-size: 13px; color: var(--ss-neutral-500); margin-top: 16px; }
     .su-signin-hint a { color: var(--ss-brand); font-weight: 600; }
 
+    /* Required marker */
+    .su-req { color: var(--ss-danger); margin-left: 3px; font-weight: 700; }
+
     /* Language toggle */
     .su-lang-row { display: flex; justify-content: flex-end; margin-top: 20px; }
 
@@ -224,15 +227,15 @@
           <div class="su-section">
             <p class="su-section__label" data-en="Your account" data-id="Akun Anda">Akun Anda</p>
             <div class="ss-form-group">
-              <label data-en="Your name" data-id="Nama Anda">Nama Anda</label>
+              <label data-en="Your name" data-id="Nama Anda">Nama Anda<span class="su-req">*</span></label>
               <input type="text" id="su-name" placeholder="Rudi Hartono">
             </div>
             <div class="ss-form-group">
-              <label data-en="Work email" data-id="Email kerja">Email kerja</label>
+              <label data-en="Work email" data-id="Email kerja">Email kerja<span class="su-req">*</span></label>
               <input type="email" id="su-email" placeholder="anda@perusahaan.com">
             </div>
             <div class="ss-form-group">
-              <label data-en="Password" data-id="Kata sandi">Kata sandi</label>
+              <label data-en="Password" data-id="Kata sandi">Kata sandi<span class="su-req">*</span></label>
               <input type="password" id="su-password" placeholder="Min. 8 karakter">
             </div>
           </div>
@@ -241,7 +244,7 @@
           <div class="su-section">
             <p class="su-section__label" data-en="Your organisation" data-id="Organisasi Anda">Organisasi Anda</p>
             <div class="ss-form-group">
-              <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan</label>
+              <label data-en="Company name" data-id="Nama perusahaan">Nama perusahaan<span class="su-req">*</span></label>
               <input type="text" id="su-company" placeholder="PT Contoh Corp" oninput="updateSlug(this.value)">
               <div class="su-slug-row">
                 <span class="su-slug-row__label">URL:</span>
@@ -265,7 +268,7 @@
                 </select>
               </div>
               <div class="ss-form-group" style="margin-bottom:0;">
-                <label data-en="Company domain" data-id="Domain perusahaan">Domain</label>
+                <label data-en="Company domain" data-id="Domain perusahaan">Domain<span class="su-req">*</span></label>
                 <input type="text" id="su-domain" placeholder="perusahaan.com">
               </div>
             </div>
