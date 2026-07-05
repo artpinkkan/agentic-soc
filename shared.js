@@ -230,6 +230,14 @@ function applyTierUI() {
   }
 }
 
+function toggleNavGroup(btn) {
+  const group = btn.closest('.ss-nav__group');
+  if (!group) return;
+  const open = group.classList.toggle('ss-nav__group--open');
+  const key = group.getAttribute('data-group-key');
+  if (key) localStorage.setItem('ss-nav-group-' + key + '-open', open ? '1' : '0');
+}
+
 function toggleNav() {
   const nav = document.getElementById('ss-nav');
   if (!nav) return;
@@ -287,6 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (nav && localStorage.getItem('ss-nav-collapsed') === '1') {
     nav.classList.add('ss-nav--collapsed');
   }
+
+  // Open nav groups that contain the active page, or that the user last left open
+  document.querySelectorAll('.ss-nav__group').forEach(group => {
+    const key = group.getAttribute('data-group-key');
+    const hasActive = !!group.querySelector('.ss-nav__item.active');
+    const stored = key ? localStorage.getItem('ss-nav-group-' + key + '-open') : null;
+    if (hasActive || stored === '1' || stored === null) {
+      group.classList.add('ss-nav__group--open');
+    }
+  });
 
   // Close account menu on outside click
   document.addEventListener('click', e => {

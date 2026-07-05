@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -50,6 +51,25 @@
     .ss-response-selector { display: flex; align-items: center; gap: 12px; margin-bottom: var(--ss-gap-lg); flex-wrap: wrap; }
     .ss-response-selector label { font-size: 13px; color: var(--ss-neutral-500); }
     .ss-response-selector select { padding: 7px 12px; border: 0.5px solid var(--ss-border-md); border-radius: var(--ss-radius-sm); font-size: 13px; font-family: var(--ss-font); background: var(--ss-surface-container-lowest); }
+    .ins-tabs { display: flex; gap: 4px; border-bottom: 0.5px solid var(--ss-border); margin-bottom: var(--ss-gap-lg); overflow-x: auto; }
+    .ins-tab { display: flex; align-items: center; gap: 7px; background: none; border: none; padding: 10px 4px; margin-bottom: -0.5px; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--ss-neutral-500); cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+    .ins-tab + .ins-tab { margin-left: var(--ss-gap-md); }
+    .ins-tab i { font-size: 15px; }
+    .ins-tab:hover { color: var(--ss-on-surface); }
+    .ins-tab.active { color: var(--ss-brand); border-bottom-color: var(--ss-brand); }
+    .ins-actions-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ins-actions-table th { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--ss-border-md); }
+    .ins-actions-table td { padding: 9px 8px; border-bottom: 0.5px solid var(--ss-border); vertical-align: top; }
+    .ins-actions-table tr:last-child td { border-bottom: none; }
+    .ins-actions-table code { font-size: 12px; background: var(--ss-neutral-50); padding: 1px 5px; border-radius: 4px; }
+    .ss-status-allowed { color: var(--ss-success); font-weight: 500; white-space: nowrap; }
+    .ss-status-pending { color: var(--ss-warning); font-weight: 500; white-space: nowrap; }
+    .ins-audit-chain { display: flex; flex-direction: column; gap: 0; font-family: monospace; font-size: 12px; }
+    .ins-audit-row { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--ss-border); }
+    .ins-audit-row:last-child { border-bottom: none; }
+    .ins-audit-row .ins-audit-hash { color: var(--ss-neutral-700); }
+    .ins-audit-row .ins-audit-arrow { color: var(--ss-neutral-500); }
+    .ins-review-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--ss-radius-sm); background: #FFF7E6; color: var(--ss-warning); font-size: 12px; font-weight: 500; border: 0.5px solid #FDD98F; }
   </style>
 </head>
 <body>
@@ -83,18 +103,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item active" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub active" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
@@ -136,12 +165,26 @@
       </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="ins-tabs" role="tablist">
+      <button class="ins-tab active" id="ins-tab-response" role="tab" aria-selected="true" aria-controls="ins-panel-response" onclick="switchInspectorTab('response')">
+        <i class="ti ti-message-report"></i>
+        <span data-en="Response Trace" data-id="Jejak Respons">Jejak Respons</span>
+      </button>
+      <button class="ins-tab" id="ins-tab-actions" role="tab" aria-selected="false" aria-controls="ins-panel-actions" onclick="switchInspectorTab('actions')">
+        <i class="ti ti-tool"></i>
+        <span data-en="Agent Actions" data-id="Tindakan Agen">Tindakan Agen</span>
+      </button>
+    </div>
+
+    <div id="ins-panel-response" role="tabpanel" aria-labelledby="ins-tab-response">
+
     <!-- Response selector -->
     <div class="ss-response-selector">
       <label for="resp-select" data-en="Inspect response:" data-id="Periksa respons:">Periksa respons:</label>
       <select id="resp-select" onchange="loadResponse(this.value)">
-        <option value="1" data-en="[14:09] SSH Brute Force analysis — Qwen 2.5 7B" data-id="[14:09] Analisis SSH Brute Force — Qwen 2.5 7B">[14:09] Analisis SSH Brute Force — Qwen 2.5 7B</option>
-        <option value="2" data-en="[14:11] Escalation recommendation — Qwen 2.5 7B (guardrail flag)" data-id="[14:11] Rekomendasi eskalasi — Qwen 2.5 7B (flag guardrail)">[14:11] Rekomendasi eskalasi — Qwen 2.5 7B (flag guardrail)</option>
+        <option value="1" data-en="[14:09] SSH Brute Force analysis — Sentinel SLM" data-id="[14:09] Analisis SSH Brute Force — Sentinel SLM">[14:09] Analisis SSH Brute Force — Sentinel SLM</option>
+        <option value="2" data-en="[14:11] Escalation recommendation — Sentinel SLM (guardrail flag)" data-id="[14:11] Rekomendasi eskalasi — Sentinel SLM (flag guardrail)">[14:11] Rekomendasi eskalasi — Sentinel SLM (flag guardrail)</option>
         <option value="3" data-en="[13:45] DMARC finding summary — Claude Sonnet fallback" data-id="[13:45] Ringkasan temuan DMARC — cadangan Claude Sonnet">[13:45] Ringkasan temuan DMARC — cadangan Claude Sonnet</option>
       </select>
     </div>
@@ -153,7 +196,7 @@
         <h3 data-en="Response Trace" data-id="Jejak Respons">Jejak Respons</h3>
         <div class="ss-trace-row">
           <span class="ss-trace-label" data-en="Model" data-id="Model">Model</span>
-          <span class="ss-trace-value" id="trace-model">Qwen 2.5 7B (vLLM)</span>
+          <span class="ss-trace-value" id="trace-model">Sentinel SLM (fine-tune pending)</span>
         </div>
         <div class="ss-trace-row">
           <span class="ss-trace-label" data-en="Timestamp" data-id="Stempel waktu">Stempel waktu</span>
@@ -255,7 +298,7 @@
       <pre><table class="ss-log-meta-table">
 <tr><td>request_id</td><td>req_a7f3c2e9b1d4</td></tr>
 <tr><td>tenant_id</td><td id="log-tenant-pre">tenant-unknown</td></tr>
-<tr><td>model</td><td>Qwen 2.5 7B (stub — fine-tune pending)</td></tr>
+<tr><td>model</td><td>Sentinel SLM (stub — fine-tune pending)</td></tr>
 <tr><td>fallback_model</td><td>claude-sonnet-4-6 (not triggered)</td></tr>
 <tr><td>input_tokens</td><td>847</td></tr>
 <tr><td>output_tokens</td><td>412</td></tr>
@@ -273,9 +316,123 @@
 
 [Prompt content not stored — metadata-only log per tenant privacy policy]</pre>
     </details>
+
+    </div>
+
+    <!-- Agent Actions panel -->
+    <div id="ins-panel-actions" role="tabpanel" aria-labelledby="ins-tab-actions" hidden>
+
+      <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
+        <i class="ti ti-info-circle"></i>
+        <span data-en="Concept preview: the Agentic Gateway (per-action tool-call authorization, blast-radius capping, tamper-evident audit chain) is planned but not yet built. Rows below are illustrative."
+              data-id="Pratinjau konsep: Agentic Gateway (otorisasi panggilan tool per-tindakan, batas blast-radius, rantai audit tahan-tamper) sudah direncanakan namun belum dibangun. Baris di bawah bersifat ilustratif.">
+          Pratinjau konsep: Agentic Gateway (otorisasi panggilan tool per-tindakan, batas blast-radius, rantai audit tahan-tamper) sudah direncanakan namun belum dibangun. Baris di bawah bersifat ilustratif.
+        </span>
+      </div>
+
+      <div class="ss-trace-card" style="margin-bottom: var(--ss-gap-lg);">
+        <h3 data-en="Tool-Call Trace" data-id="Jejak Panggilan Tool">Jejak Panggilan Tool</h3>
+        <table class="ins-actions-table">
+          <thead>
+            <tr>
+              <th data-en="Time" data-id="Waktu">Waktu</th>
+              <th data-en="Tool / Action" data-id="Tool / Tindakan">Tool / Tindakan</th>
+              <th data-en="Scope requested" data-id="Cakupan diminta">Cakupan diminta</th>
+              <th data-en="Registry check" data-id="Pemeriksaan registry">Pemeriksaan registry</th>
+              <th data-en="Blast radius" data-id="Blast radius">Blast radius</th>
+              <th data-en="Status" data-id="Status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>14:09:20</td>
+              <td><code>query_siem_logs(source=ssh_auth)</code></td>
+              <td data-en="Read-only, tenant-scoped" data-id="Baca-saja, cakupan tenant">Baca-saja, cakupan tenant</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> Signed</td>
+              <td data-en="Low" data-id="Rendah">Rendah</td>
+              <td class="ss-status-allowed"><i class="ti ti-check"></i> ALLOWED</td>
+            </tr>
+            <tr>
+              <td>14:09:45</td>
+              <td><code>isolate_host(ip=10.2.4.17)</code></td>
+              <td data-en="Write, host isolation" data-id="Tulis, isolasi host">Tulis, isolasi host</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> Signed</td>
+              <td data-en="High" data-id="Tinggi">Tinggi</td>
+              <td class="ss-status-pending"><i class="ti ti-alert-triangle"></i> <span data-en="PENDING REVIEW" data-id="MENUNGGU TINJAUAN">MENUNGGU TINJAUAN</span></td>
+            </tr>
+            <tr>
+              <td>14:11:10</td>
+              <td><code>block_ip(ip=203.0.113.44, fw=perimeter)</code></td>
+              <td data-en="Write, network policy change" data-id="Tulis, perubahan kebijakan jaringan">Tulis, perubahan kebijakan jaringan</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> Signed</td>
+              <td data-en="Medium" data-id="Sedang">Sedang</td>
+              <td class="ss-status-allowed"><i class="ti ti-check"></i> <span data-en="ALLOWED (auto)" data-id="DIIZINKAN (otomatis)">DIIZINKAN (otomatis)</span></td>
+            </tr>
+            <tr>
+              <td>13:45:30</td>
+              <td><code>send_email_alert(to=soc-team)</code></td>
+              <td data-en="Notify-only" data-id="Hanya notifikasi">Hanya notifikasi</td>
+              <td class="ss-status-pass"><i class="ti ti-check"></i> Signed</td>
+              <td data-en="None" data-id="Tidak ada">Tidak ada</td>
+              <td class="ss-status-allowed"><i class="ti ti-check"></i> ALLOWED</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="ss-inspector-platform-note" data-en="Blast radius above threshold routes to the human-review queue instead of auto-executing — 1 action pending below." data-id="Blast radius di atas ambang batas dialihkan ke antrean tinjauan manusia, bukan dieksekusi otomatis — 1 tindakan menunggu di bawah.">
+          Blast radius di atas ambang batas dialihkan ke antrean tinjauan manusia, bukan dieksekusi otomatis — 1 tindakan menunggu di bawah.
+        </p>
+      </div>
+
+      <div class="ss-inspector-grid">
+        <div class="ss-trace-card">
+          <h3 data-en="Pending Human Review" data-id="Menunggu Tinjauan Manusia">Menunggu Tinjauan Manusia</h3>
+          <span class="ins-review-badge"><i class="ti ti-alert-triangle"></i> <span data-en="1 action awaiting approval" data-id="1 tindakan menunggu persetujuan">1 tindakan menunggu persetujuan</span></span>
+          <div class="ss-trace-row" style="margin-top:12px;">
+            <span class="ss-trace-label" data-en="Action" data-id="Tindakan">Tindakan</span>
+            <span class="ss-trace-value">isolate_host(ip=10.2.4.17)</span>
+          </div>
+          <div class="ss-trace-row">
+            <span class="ss-trace-label" data-en="Requested by" data-id="Diminta oleh">Diminta oleh</span>
+            <span class="ss-trace-value">agent-triage-01</span>
+          </div>
+          <div class="ss-trace-row">
+            <span class="ss-trace-label" data-en="Reason" data-id="Alasan">Alasan</span>
+            <span class="ss-trace-value" data-en="Blast radius exceeds auto-approve threshold" data-id="Blast radius melebihi ambang auto-approve">Blast radius melebihi ambang auto-approve</span>
+          </div>
+        </div>
+
+        <div class="ss-trace-card">
+          <h3 data-en="Audit Chain" data-id="Rantai Audit">Rantai Audit</h3>
+          <div class="ins-audit-chain">
+            <div class="ins-audit-row">
+              <span class="ins-audit-hash">#a7f3c2…e9b1</span>
+              <span class="ins-audit-arrow">→</span>
+              <span class="ins-audit-hash">#3d81f0…7c4a</span>
+              <span class="ss-status-pass" style="margin-left:auto;"><i class="ti ti-lock"></i> <span data-en="signed" data-id="ditandatangani">ditandatangani</span></span>
+            </div>
+            <div class="ins-audit-row">
+              <span class="ins-audit-hash">#3d81f0…7c4a</span>
+              <span class="ins-audit-arrow">→</span>
+              <span class="ins-audit-hash">#9e02b6…41f8</span>
+              <span class="ss-status-pass" style="margin-left:auto;"><i class="ti ti-lock"></i> <span data-en="signed" data-id="ditandatangani">ditandatangani</span></span>
+            </div>
+            <div class="ins-audit-row">
+              <span class="ins-audit-hash">#9e02b6…41f8</span>
+              <span class="ins-audit-arrow">→</span>
+              <span class="ins-audit-hash" data-en="(pending — awaiting review action)" data-id="(menunggu — tindakan belum selesai ditinjau)">(menunggu — tindakan belum selesai ditinjau)</span>
+              <span class="ss-status-pending" style="margin-left:auto;"><i class="ti ti-clock"></i> <span data-en="unsealed" data-id="belum disegel">belum disegel</span></span>
+            </div>
+          </div>
+          <p class="ss-inspector-platform-note" data-en="Hash-chained, per-tenant, tamper-evident — each entry signs the previous. Anomalies feed a detector that can trigger review, never auto-remediation." data-id="Berantai hash, per-tenant, tahan-tamper — setiap entri menandatangani entri sebelumnya. Anomali diumpankan ke detektor yang dapat memicu tinjauan, tidak pernah remediasi otomatis.">
+            Berantai hash, per-tenant, tahan-tamper — setiap entri menandatangani entri sebelumnya. Anomali diumpankan ke detektor yang dapat memicu tinjauan, tidak pernah remediasi otomatis.
+          </p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     // Hydrate tenant from session
     (function() {
@@ -295,7 +452,7 @@
 
     const responses = {
       '1': {
-        model: 'Qwen 2.5 7B (vLLM)',
+        model: 'Sentinel SLM (fine-tune pending)',
         ts: '2026-04-25T14:09:17+07:00',
         routing: 'severity=HIGH → SLM primary',
         latency: '1,247 ms',
@@ -317,7 +474,7 @@
         ]
       },
       '2': {
-        model: 'Qwen 2.5 7B (vLLM)',
+        model: 'Sentinel SLM (fine-tune pending)',
         ts: '2026-04-25T14:11:04+07:00',
         routing: 'severity=HIGH → SLM primary',
         latency: '1,089 ms',
@@ -355,6 +512,19 @@
         ]
       }
     };
+
+    function switchInspectorTab(name) {
+      ['response', 'actions'].forEach(function(key) {
+        var tab = document.getElementById('ins-tab-' + key);
+        var panel = document.getElementById('ins-panel-' + key);
+        var active = key === name;
+        if (tab) {
+          tab.classList.toggle('active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+        if (panel) panel.hidden = !active;
+      });
+    }
 
     function loadResponse(id) {
       const r = responses[id];

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -70,6 +70,41 @@
     .ss-lock-gate__label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface); }
     .ss-lock-gate__cta { font-size: 12px; color: var(--ss-brand); font-weight: 500; }
     .ss-locked { border: 0.5px solid var(--ss-border-md) !important; }
+    .trg-tabs { display: flex; gap: 4px; border-bottom: 0.5px solid var(--ss-border); margin-bottom: var(--ss-gap-lg); overflow-x: auto; }
+    .trg-tab { display: flex; align-items: center; gap: 7px; background: none; border: none; padding: 10px 4px; margin-bottom: -0.5px; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--ss-neutral-500); cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+    .trg-tab + .trg-tab { margin-left: var(--ss-gap-md); }
+    .trg-tab i { font-size: 15px; }
+    .trg-tab:hover { color: var(--ss-on-surface); }
+    .trg-tab.active { color: var(--ss-brand); border-bottom-color: var(--ss-brand); }
+    .trg-queue-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: var(--ss-gap-md); flex-wrap: wrap; }
+    .trg-queue-filter { padding: 6px 12px; border-radius: var(--ss-radius-sm); border: 0.5px solid var(--ss-border-md); background: var(--ss-surface-container-lowest); font-size: 12px; font-weight: 500; color: var(--ss-neutral-700); cursor: pointer; }
+    .trg-queue-filter.active { background: var(--ss-brand); color: #fff; border-color: var(--ss-brand); }
+    .trg-queue-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--ss-surface-container-lowest); box-shadow: var(--ss-shadow-card); border-radius: var(--ss-radius-lg); overflow: hidden; }
+    .trg-queue-table th { font-size: 11px; font-weight: 600; color: var(--ss-neutral-500); text-transform: uppercase; letter-spacing: 0.04em; text-align: left; padding: 10px 14px; border-bottom: 0.5px solid var(--ss-border-md); }
+    .trg-queue-table td { padding: 12px 14px; border-bottom: 0.5px solid var(--ss-border); vertical-align: middle; }
+    .trg-queue-table tr:last-child td { border-bottom: none; }
+    .trg-case-title { font-weight: 500; }
+    .trg-case-id { font-size: 11px; color: var(--ss-neutral-500); font-family: monospace; }
+    .trg-assignee { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ss-neutral-700); }
+    .trg-assignee--unassigned { color: var(--ss-neutral-500); font-style: italic; }
+
+    /* Structured evidence citations (SRF-style: source id + provenance) */
+    .ss-citation-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ss-citation-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 100px; font-size: 11px;
+      border: 0.5px solid; cursor: help; font-family: monospace;
+    }
+    .ss-citation-chip--attck    { background: #F9ECFE; color: #6B21A8; border-color: #D8B4FE; }
+    .ss-citation-chip--abuseipdb { background: #FFF9C4; color: #92400E; border-color: #FCD34D; }
+    .ss-citation-chip--internal { background: #E6F1FB; color: #1E40AF; border-color: #BFDBFE; }
+    .ss-citation-coverage {
+      font-size: 11px; color: var(--ss-success); margin-top: 6px;
+      display: flex; align-items: center; gap: 4px; font-weight: 500;
+    }
+    .ss-badge-verify { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--ss-info-light); color: #1E40AF; }
+    .trg-role-select { padding: 6px 12px; border-radius: var(--ss-radius-sm); border: 0.5px solid var(--ss-border-md); background: var(--ss-surface-container-lowest); font-size: 12px; font-weight: 500; color: var(--ss-neutral-700); margin-left: auto; }
+    .trg-soar-note { font-size: 12px; color: var(--ss-neutral-500); line-height: 1.5; margin-top: var(--ss-gap-sm); padding-top: var(--ss-gap-sm); border-top: 0.5px dashed var(--ss-border-md); }
   </style>
 </head>
 <body>
@@ -103,18 +138,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
@@ -171,28 +215,31 @@
       </div>
     </div>
 
-    <!-- Alert feed -->
-    <div class="ss-alert-feed">
-      <div class="ss-alert-item ss-alert-item--new">
+    <!-- Currently-triaging strip (replaces the old static alert list, which duplicated Case Queue) -->
+    <div class="ss-alert-feed" style="display:flex; align-items:center; gap:10px;">
+      <div class="ss-alert-item ss-alert-item--new" style="flex:1;">
         <div class="ss-alert-dot ss-alert-dot--critical"></div>
+        <span data-en="Currently triaging:" data-id="Sedang ditriase:" style="color:var(--ss-neutral-500); font-weight:400;">Sedang ditriase:</span>
         <span class="ss-alert-name">SSH Brute Force — ssh.domain.com</span>
         <span class="badge badge-critical" data-en="Critical" data-id="Kritis">Kritis</span>
         <span class="ss-alert-time">14:07</span>
       </div>
-      <div class="ss-alert-item">
-        <div class="ss-alert-dot ss-alert-dot--high"></div>
-        <span class="ss-alert-name" data-en="DMARC policy missing — domain perusahaan" data-id="Kebijakan DMARC hilang — domain perusahaan">Kebijakan DMARC hilang — domain perusahaan</span>
-        <span class="badge badge-high" data-en="High" data-id="Tinggi">Tinggi</span>
-        <span class="ss-alert-time">13:45</span>
-      </div>
-      <div class="ss-alert-item">
-        <div class="ss-alert-dot ss-alert-dot--medium"></div>
-        <span class="ss-alert-name" data-en="4 admin accounts without MFA" data-id="4 akun admin tanpa MFA">4 akun admin tanpa MFA</span>
-        <span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span>
-        <span class="ss-alert-time">12:20</span>
-      </div>
+      <a href="javascript:void(0)" onclick="switchTriageTab('queue')" style="font-size:12px; font-weight:500; color:var(--ss-brand); white-space:nowrap;" data-en="2 more alerts waiting → View Case Queue" data-id="2 alert lain menunggu → Lihat Antrean Kasus">2 alert lain menunggu → Lihat Antrean Kasus</a>
     </div>
 
+    <!-- Tabs -->
+    <div class="trg-tabs" role="tablist">
+      <button class="trg-tab active" id="trg-tab-playbook" role="tab" aria-selected="true" aria-controls="trg-panel-playbook" onclick="switchTriageTab('playbook')">
+        <i class="ti ti-list-check"></i>
+        <span data-en="Active Playbook" data-id="Playbook Aktif">Playbook Aktif</span>
+      </button>
+      <button class="trg-tab" id="trg-tab-queue" role="tab" aria-selected="false" aria-controls="trg-panel-queue" onclick="switchTriageTab('queue')">
+        <i class="ti ti-layout-list"></i>
+        <span data-en="Case Queue" data-id="Antrean Kasus">Antrean Kasus</span>
+      </button>
+    </div>
+
+    <div id="trg-panel-playbook" role="tabpanel" aria-labelledby="trg-tab-playbook">
     <div class="ss-triage-layout">
       <div>
         <!-- Playbook -->
@@ -202,7 +249,10 @@
               <div class="ss-playbook__title" data-en="Brute Force Response" data-id="Respons Brute Force">Respons Brute Force</div>
               <div class="ss-playbook__meta">ssh.domain.com · 14:07 WIB · 847 <span data-en="failed attempts" data-id="percobaan gagal">percobaan gagal</span></div>
             </div>
-            <span class="badge badge-critical" data-en="Active" data-id="Aktif">Aktif</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="ss-badge-verify" title="5/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 5/5" data-id="Terverifikasi 5/5">Terverifikasi 5/5</span></span>
+              <span class="badge badge-critical" data-en="Active" data-id="Aktif">Aktif</span>
+            </div>
           </div>
 
           <ul class="ss-playbook__steps">
@@ -218,6 +268,14 @@
                     T1110.001 Brute Force — Kepercayaan AI 94%. IP sumber teridentifikasi.
                   </span>
                 </div>
+                <div class="ss-citation-chips">
+                  <span class="ss-citation-chip ss-citation-chip--attck" title="node_hash: 7f3a91e2 · ingested: 2026-04-25 13:58 WIB · tier: knowledge-graph">
+                    <i class="ti ti-link"></i> attck:T1110.001
+                  </span>
+                  <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 91ae7c30 · ingested: 2026-04-25 14:07 WIB · tier: internal-telemetry (sshd auth log)">
+                    <i class="ti ti-server"></i> log:sshd_auth
+                  </span>
+                </div>
               </div>
             </li>
 
@@ -231,6 +289,15 @@
                         data-id="Tidak ada login berhasil terdeteksi. Semua 3 IP sumber ditandai di AbuseIPDB. Tidak ada lateral movement terdeteksi.">
                     Tidak ada login berhasil terdeteksi. Semua 3 IP sumber ditandai di AbuseIPDB.
                   </span>
+                </div>
+                <div class="ss-citation-chips">
+                  <span class="ss-citation-chip ss-citation-chip--abuseipdb" title="node_hash: b04c22d1 · ingested: 2026-04-25 14:02 WIB · tier: external-threat-intel">
+                    <i class="ti ti-alert-circle"></i> abuseipdb:×3
+                  </span>
+                </div>
+                <div class="ss-citation-coverage">
+                  <i class="ti ti-shield-check"></i>
+                  <span data-en="2 independent citations — meets ≥2 required for HIGH-severity verdict" data-id="2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI">2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI</span>
                 </div>
               </div>
             </li>
@@ -325,6 +392,10 @@
           </span>
           <a href="/agentic-soc/pricing/" data-en="Learn more →" data-id="Pelajari lebih lanjut →" style="margin-left:8px; color:var(--ss-brand); font-weight:500; white-space:nowrap;">Pelajari lebih lanjut →</a>
         </div>
+
+        <p class="trg-soar-note" data-en="Approved containment steps hand off to the case-management / SOAR layer for execution and ticketing — this trace only reflects the analyst decision, not direct tool execution." data-id="Langkah penahanan yang disetujui diserahkan ke lapisan manajemen kasus / SOAR untuk eksekusi dan pencatatan tiket — jejak ini hanya mencerminkan keputusan analis, bukan eksekusi tool secara langsung.">
+          Langkah penahanan yang disetujui diserahkan ke lapisan manajemen kasus / SOAR untuk eksekusi dan pencatatan tiket — jejak ini hanya mencerminkan keputusan analis, bukan eksekusi tool secara langsung.
+        </p>
       </div>
 
       <!-- Audit trail + platform note (right column) -->
@@ -358,9 +429,109 @@
         </p>
       </div>
     </div>
+    </div>
+
+    <!-- Case Queue panel -->
+    <div id="trg-panel-queue" role="tabpanel" aria-labelledby="trg-tab-queue" hidden>
+
+      <div class="ss-notice ss-notice--info" style="margin-bottom: var(--ss-gap-md);">
+        <i class="ti ti-info-circle"></i>
+        <span data-en="Concept preview: a role-gated, multi-case analyst queue (analyst / tenant-admin / compliance views) is planned but not yet built. Rows below are illustrative."
+              data-id="Pratinjau konsep: antrean analis multi-kasus dengan akses berbasis peran (analis / admin-tenant / kepatuhan) sudah direncanakan namun belum dibangun. Baris di bawah bersifat ilustratif.">
+          Pratinjau konsep: antrean analis multi-kasus dengan akses berbasis peran (analis / admin-tenant / kepatuhan) sudah direncanakan namun belum dibangun. Baris di bawah bersifat ilustratif.
+        </span>
+      </div>
+
+      <div class="trg-queue-toolbar">
+        <button class="trg-queue-filter active" data-en="All cases" data-id="Semua kasus">Semua kasus</button>
+        <button class="trg-queue-filter" data-en="Assigned to me" data-id="Ditugaskan ke saya">Ditugaskan ke saya</button>
+        <button class="trg-queue-filter" data-en="Unassigned" data-id="Belum ditugaskan">Belum ditugaskan</button>
+        <button class="trg-queue-filter" data-en="Pending approval" data-id="Menunggu persetujuan">Menunggu persetujuan</button>
+        <select class="trg-role-select" title="Role-gated view — case fields shown adjust per role" onchange="switchRoleView(this.value)">
+          <option value="analyst" data-en="Viewing as: Analyst" data-id="Tampilan: Analis">Tampilan: Analis</option>
+          <option value="admin" data-en="Viewing as: Tenant Admin" data-id="Tampilan: Admin Tenant">Tampilan: Admin Tenant</option>
+          <option value="compliance" data-en="Viewing as: Compliance" data-id="Tampilan: Kepatuhan">Tampilan: Kepatuhan</option>
+        </select>
+      </div>
+      <p id="trg-role-note" style="font-size: 12px; color: var(--ss-neutral-500); margin: -6px 0 var(--ss-gap-md);">Tampilan berbasis peran (pratinjau konsep): analis melihat detail kasus dan sitasi lengkap.</p>
+
+      <table class="trg-queue-table">
+        <thead>
+          <tr>
+            <th data-en="Case" data-id="Kasus">Kasus</th>
+            <th data-en="Severity" data-id="Keparahan">Keparahan</th>
+            <th data-en="Status" data-id="Status">Status</th>
+            <th data-en="AI confidence" data-id="Kepercayaan AI">Kepercayaan AI</th>
+            <th data-en="Assignee" data-id="Ditugaskan ke">Ditugaskan ke</th>
+            <th data-en="Updated" data-id="Diperbarui">Diperbarui</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="trg-case-title">SSH Brute Force — ssh.domain.com</div>
+              <div class="trg-case-id">CASE-2026-0417</div>
+            </td>
+            <td><span class="badge badge-critical" data-en="Critical" data-id="Kritis">Kritis</span></td>
+            <td><span class="badge badge-high" data-en="Pending approval" data-id="Menunggu persetujuan">Menunggu persetujuan</span></td>
+            <td>94%</td>
+            <td><div class="trg-assignee"><i class="ti ti-user-circle"></i> Rangga P.</div></td>
+            <td>14:08</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="trg-case-title" data-en="DMARC policy missing — company domain" data-id="Kebijakan DMARC hilang — domain perusahaan">Kebijakan DMARC hilang — domain perusahaan</div>
+              <div class="trg-case-id">CASE-2026-0416</div>
+            </td>
+            <td><span class="badge badge-high" data-en="High" data-id="Tinggi">Tinggi</span></td>
+            <td><span class="badge badge-neutral" data-en="New" data-id="Baru">Baru</span></td>
+            <td>88%</td>
+            <td><div class="trg-assignee trg-assignee--unassigned"><i class="ti ti-user-question"></i> <span data-en="Unassigned" data-id="Belum ditugaskan">Belum ditugaskan</span></div></td>
+            <td>13:45</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="trg-case-title" data-en="4 admin accounts without MFA" data-id="4 akun admin tanpa MFA">4 akun admin tanpa MFA</div>
+              <div class="trg-case-id">CASE-2026-0415</div>
+            </td>
+            <td><span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span></td>
+            <td><span class="badge badge-medium" data-en="Investigating" data-id="Diselidiki">Diselidiki</span></td>
+            <td>97%</td>
+            <td><div class="trg-assignee"><i class="ti ti-user-circle"></i> Dian K.</div></td>
+            <td>12:20</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="trg-case-title" data-en="Unusual outbound traffic — finance VLAN" data-id="Lalu lintas keluar tidak wajar — VLAN keuangan">Lalu lintas keluar tidak wajar — VLAN keuangan</div>
+              <div class="trg-case-id">CASE-2026-0411</div>
+            </td>
+            <td><span class="badge badge-medium" data-en="Medium" data-id="Sedang">Sedang</span></td>
+            <td><span class="badge badge-free" data-en="Resolved" data-id="Selesai">Selesai</span></td>
+            <td>91%</td>
+            <td><div class="trg-assignee"><i class="ti ti-user-circle"></i> Rangga P.</div></td>
+            <td data-en="Yesterday" data-id="Kemarin">Kemarin</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="trg-case-title" data-en="Phishing email reported by employee" data-id="Email phishing dilaporkan karyawan">Email phishing dilaporkan karyawan</div>
+              <div class="trg-case-id">CASE-2026-0409</div>
+            </td>
+            <td><span class="badge badge-low" data-en="Low" data-id="Rendah">Rendah</span></td>
+            <td><span class="badge badge-free" data-en="Resolved" data-id="Selesai">Selesai</span></td>
+            <td>99%</td>
+            <td><div class="trg-assignee"><i class="ti ti-user-circle"></i> Dian K.</div></td>
+            <td data-en="Yesterday" data-id="Kemarin">Kemarin</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="ss-triage-platform-note" data-en="Role-gated views and citation trail are previewed above; full calibration feedback and cross-tenant case ownership remain a separate planned capability." data-id="Tampilan berbasis peran dan jejak sitasi telah dipratinjau di atas; umpan balik kalibrasi penuh dan kepemilikan kasus lintas tenant masih merupakan kapabilitas terencana terpisah.">
+        Tampilan berbasis peran dan jejak sitasi telah dipratinjau di atas; umpan balik kalibrasi penuh dan kepemilikan kasus lintas tenant masih merupakan kapabilitas terencana terpisah.
+      </p>
+    </div>
   </div>
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     const hitlStates = { 3: 'pending', 4: 'locked', 5: 'locked' };
     let statTriaged = 12;
@@ -424,6 +595,38 @@
       if (icon) { icon.className = 'ss-step__icon ss-step__icon--rejected'; icon.textContent = '✗'; }
       const lang = localStorage.getItem('ss-lang') || 'id';
       addAudit(lang === 'en' ? `Step ${n} rejected by analyst` : `Langkah ${n} ditolak oleh analis`);
+    }
+
+    function switchTriageTab(name) {
+      ['playbook', 'queue'].forEach(function(key) {
+        var tab = document.getElementById('trg-tab-' + key);
+        var panel = document.getElementById('trg-panel-' + key);
+        var active = key === name;
+        if (tab) {
+          tab.classList.toggle('active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+        if (panel) panel.hidden = !active;
+      });
+    }
+
+    document.querySelectorAll('.trg-queue-filter').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.trg-queue-filter').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+
+    function switchRoleView(role) {
+      var labels = {
+        analyst: { en: 'Role-gated view (concept preview): analysts see full case detail and citations.', id: 'Tampilan berbasis peran (pratinjau konsep): analis melihat detail kasus dan sitasi lengkap.' },
+        admin: { en: 'Role-gated view (concept preview): tenant admins see cross-team case ownership and SLA fields.', id: 'Tampilan berbasis peran (pratinjau konsep): admin tenant melihat kepemilikan kasus lintas tim dan field SLA.' },
+        compliance: { en: 'Role-gated view (concept preview): compliance sees citation trail and audit export fields only.', id: 'Tampilan berbasis peran (pratinjau konsep): kepatuhan hanya melihat jejak sitasi dan field ekspor audit.' }
+      };
+      var lang = localStorage.getItem('ss-lang') || 'id';
+      var note = labels[role] || labels.analyst;
+      var banner = document.getElementById('trg-role-note');
+      if (banner) banner.textContent = note[lang];
     }
 
     function unlockStep(n) {

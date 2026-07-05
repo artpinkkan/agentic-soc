@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -211,18 +211,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Prevention Edge">Prevention Edge</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
@@ -343,14 +352,14 @@
       <!-- RIGHT: detail preview -->
       <div class="ss-report-detail-col" id="detail-col">
 
-        <!-- Panel: active report (047) -->
+        <!-- Panel: report preview (all reports render here) -->
         <div id="detail-047">
 
           <!-- Detail header bar -->
           <div class="ss-detail-bar">
             <div>
-              <div class="ss-detail-bar__title" data-en="SSH Brute Force — ws-04" data-id="Brute Force SSH — ws-04">Brute Force SSH — ws-04</div>
-              <div class="ss-detail-bar__id">RPT-2026-047 · 05 Jul 2026</div>
+              <div class="ss-detail-bar__title" id="detail-title">SSH Brute Force — ws-04</div>
+              <div class="ss-detail-bar__id" id="detail-rptid">RPT-2026-047 · 05 Jul 2026</div>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
               <button class="ss-btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="generateCompliancePack()" id="compliance-btn-label" data-en="Compliance Pack" data-id="Paket Kepatuhan">Paket Kepatuhan</button>
@@ -378,17 +387,7 @@
                 <div>
                   <h2 id="report-company-name" style="font-size:18px; font-weight:600; font-family:var(--ss-font-headline);">PT Bank Contoh Tbk</h2>
                   <p style="font-size:12px; color:var(--ss-on-surface-variant); margin-top:2px;">
-                    <span id="aud-report-type"
-                      data-direktur-en="Cyber X-Ray Executive Report — 5 Jul 2026"
-                      data-direktur-id="Laporan Eksekutif Cyber X-Ray — 5 Jul 2026"
-                      data-it-en="Cyber X-Ray Technical Report — 5 Jul 2026"
-                      data-it-id="Laporan Teknis Cyber X-Ray — 5 Jul 2026"
-                      data-finance-en="Cyber X-Ray Financial Risk Report — 5 Jul 2026"
-                      data-finance-id="Laporan Risiko Keuangan Cyber X-Ray — 5 Jul 2026"
-                      data-auditor-en="Cyber X-Ray Compliance Report — 5 Jul 2026"
-                      data-auditor-id="Laporan Kepatuhan Cyber X-Ray — 5 Jul 2026">
-                      Laporan Eksekutif Cyber X-Ray — 5 Jul 2026
-                    </span>
+                    <span id="aud-report-type">Laporan Eksekutif Cyber X-Ray — 5 Jul 2026</span>
                   </p>
                 </div>
                 <span class="badge badge-free" data-en="Free Tier · Preview" data-id="Tier Gratis · Pratinjau">Tier Gratis · Pratinjau</span>
@@ -396,198 +395,27 @@
 
               <div class="ss-notice ss-notice--danger">
                 <span>🔴</span>
-                <strong id="aud-summary"
-                  data-direktur-en="Critical findings: 2 critical risks, 2 requiring attention. Immediate executive action required."
-                  data-direktur-id="Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan eksekutif segera diperlukan."
-                  data-it-en="2 critical controls failed (DMARC, log retention). 2 high findings (SSH exposure, MFA gap). Patch and configuration changes required."
-                  data-it-id="2 kontrol kritis gagal (DMARC, retensi log). 2 temuan tinggi (SSH terekspos, gap MFA). Patch dan perubahan konfigurasi diperlukan."
-                  data-finance-en="Financial risk identified: email fraud and unauthorized access to financial systems are possible without immediate action."
-                  data-finance-id="Risiko keuangan teridentifikasi: penipuan email dan akses tidak sah ke sistem keuangan mungkin terjadi tanpa tindakan segera."
-                  data-auditor-en="4 findings do not meet compliance requirements: DMARC missing, log retention below audit standard minimum, MFA gap, undocumented attack surface."
-                  data-auditor-id="4 temuan tidak memenuhi persyaratan kepatuhan: DMARC tidak ada, retensi log di bawah minimum standar audit, gap MFA, permukaan serangan tidak terdokumentasi.">
-                  Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan eksekutif segera diperlukan.
-                </strong>
+                <strong id="aud-summary">Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan eksekutif segera diperlukan.</strong>
               </div>
             </div>
 
             <!-- Findings -->
             <div class="ss-report-section">
               <div class="ss-report-section__title" data-en="Security Findings" data-id="Temuan Keamanan">Temuan Keamanan</div>
-
-              <div class="ss-finding-row">
-                <span class="badge badge-critical" style="font-size:10px;" data-en="CRITICAL" data-id="KRITIS">KRITIS</span>
-                <div class="ss-finding-main">
-                  <div id="f1-title"
-                    data-direktur-en="No DMARC policy — email spoofing risk to stakeholders"
-                    data-direktur-id="Tidak ada kebijakan DMARC — risiko pemalsuan email ke pemangku kepentingan"
-                    data-it-en="DMARC missing on company domain — SPF found, DKIM absent, policy p=none"
-                    data-it-id="DMARC tidak ada di domain perusahaan — SPF ditemukan, DKIM tidak ada, kebijakan p=none"
-                    data-finance-en="No DMARC — invoice and payment emails can be spoofed, high fraud risk"
-                    data-finance-id="Tidak ada DMARC — email tagihan dan pembayaran dapat dipalsukan, risiko penipuan tinggi"
-                    data-auditor-en="DMARC policy absent — non-compliant with email authentication requirements"
-                    data-auditor-id="Kebijakan DMARC tidak ada — tidak sesuai persyaratan autentikasi email">
-                    Tidak ada kebijakan DMARC — risiko pemalsuan email ke pemangku kepentingan
-                  </div>
-                  <div class="ss-finding-sub" id="f1-sub"
-                    data-direktur-en="Business impact: brand damage, fraud exposure"
-                    data-direktur-id="Dampak bisnis: kerusakan merek, eksposur penipuan"
-                    data-it-en="Fix: add TXT record _dmarc.domain.com with p=quarantine · ~1 hr"
-                    data-it-id="Perbaikan: tambahkan record TXT _dmarc.domain.com dengan p=quarantine · ~1 jam"
-                    data-finance-en="Estimated fraud exposure: medium-high based on transaction volume"
-                    data-finance-id="Estimasi eksposur penipuan: sedang-tinggi berdasarkan volume transaksi"
-                    data-auditor-en="Required by: standard email security policy §4.2"
-                    data-auditor-id="Disyaratkan oleh: kebijakan keamanan email standar §4.2">
-                    Dampak bisnis: kerusakan merek, eksposur penipuan
-                  </div>
-                </div>
-              </div>
-
-              <div class="ss-finding-row">
-                <span class="badge badge-critical" style="font-size:10px;" data-en="CRITICAL" data-id="KRITIS">KRITIS</span>
-                <div class="ss-finding-main">
-                  <div id="f2-title"
-                    data-direktur-en="Log retention 7 days — below audit standard"
-                    data-direktur-id="Retensi log 7 hari — di bawah standar audit"
-                    data-it-en="Log retention 7 days vs audit-standard 90 days — affects SIEM coverage and forensics"
-                    data-it-id="Retensi log 7 hari vs 90 hari standar audit — memengaruhi cakupan SIEM dan forensik"
-                    data-finance-en="Short log retention limits fraud investigation window — audit trail incomplete"
-                    data-finance-id="Retensi log pendek membatasi jendela investigasi penipuan — jejak audit tidak lengkap"
-                    data-auditor-en="Log retention 7 days — audit standard minimum is 90 days. Immediate remediation required."
-                    data-auditor-id="Retensi log 7 hari — minimum standar audit adalah 90 hari. Remediasi segera diperlukan.">
-                    Retensi log 7 hari — ketidakpatuhan regulasi
-                  </div>
-                  <div class="ss-finding-sub" id="f2-sub"
-                    data-direktur-en="Regulatory risk: audit exposure"
-                    data-direktur-id="Risiko regulasi: eksposur audit"
-                    data-it-en="Fix: configure log pipeline retention to 90+ days · ~1 week"
-                    data-it-id="Perbaikan: konfigurasi retensi pipeline log ke 90+ hari · ~1 minggu"
-                    data-finance-en="Potential regulatory fine if audited in current state"
-                    data-finance-id="Potensi denda regulasi jika diaudit dalam kondisi saat ini"
-                    data-auditor-en="Ref: security policy standard §7.1 — log retention minimum 90 days"
-                    data-auditor-id="Ref: standar kebijakan keamanan §7.1 — retensi log minimum 90 hari">
-                    Risiko regulasi: eksposur audit kepatuhan
-                  </div>
-                </div>
-              </div>
-
-              <div class="ss-finding-row">
-                <span class="badge badge-high" style="font-size:10px;" data-en="HIGH" data-id="TINGGI">TINGGI</span>
-                <div class="ss-finding-main">
-                  <div id="f3-title"
-                    data-direktur-en="3 public subdomains exposed with outdated services"
-                    data-direktur-id="3 subdomain publik terekspos dengan layanan usang"
-                    data-it-en="ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 open on panel.domain.com"
-                    data-it-id="ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 terbuka di panel.domain.com"
-                    data-finance-en="Exposed subdomains could provide entry to financial systems"
-                    data-finance-id="Subdomain terekspos dapat memberi akses ke sistem keuangan"
-                    data-auditor-en="3 unprotected subdomains — attack surface not documented in risk register"
-                    data-auditor-id="3 subdomain tidak terlindungi — permukaan serangan tidak terdokumentasi">
-                    3 subdomain publik terekspos dengan layanan usang
-                  </div>
-                  <div class="ss-finding-sub" id="f3-sub"
-                    data-direktur-en="One runs a vulnerable SSH version actively being targeted"
-                    data-direktur-id="Salah satunya menjalankan SSH versi rentan yang sedang aktif diserang"
-                    data-it-en="Patch OpenSSH to 9.x, restrict port 22 to VPN-only, close port 8080"
-                    data-it-id="Patch OpenSSH ke 9.x, batasi port 22 ke VPN saja, tutup port 8080"
-                    data-finance-en="~14 brute-force attempts/min detected since 14:07 WIB today"
-                    data-finance-id="~14 percobaan brute-force/menit terdeteksi sejak 14:07 WIB hari ini"
-                    data-auditor-en="Required: update asset inventory and network diagram"
-                    data-auditor-id="Diperlukan: perbarui inventaris aset dan diagram jaringan">
-                    Salah satunya menjalankan SSH versi rentan yang sedang aktif diserang
-                  </div>
-                </div>
-              </div>
-
-              <div class="ss-finding-row">
-                <span class="badge badge-high" style="font-size:10px;" data-en="HIGH" data-id="TINGGI">TINGGI</span>
-                <div class="ss-finding-main">
-                  <div id="f4-title"
-                    data-direktur-en="4 of 12 admin accounts without MFA — account takeover risk"
-                    data-direktur-id="4 dari 12 akun admin tanpa MFA — risiko pengambilalihan akun"
-                    data-it-en="4 admin accounts (2 domain admin, 2 cloud admin) lack MFA"
-                    data-it-id="4 akun admin (2 domain admin, 2 cloud admin) tanpa MFA"
-                    data-finance-en="2 accounts with financial system access have no MFA — unauthorized transfer risk"
-                    data-finance-id="2 akun dengan akses sistem keuangan tidak memiliki MFA — risiko transfer tidak sah"
-                    data-auditor-en="4 privileged accounts without MFA — non-compliant with access control policy"
-                    data-auditor-id="4 akun dengan hak istimewa tanpa MFA — tidak sesuai kebijakan kontrol akses">
-                    4 dari 12 akun admin tanpa MFA — risiko pengambilalihan akun
-                  </div>
-                  <div class="ss-finding-sub" id="f4-sub"
-                    data-direktur-en="Risk: full admin compromise possible without MFA"
-                    data-direktur-id="Risiko: kompromi admin penuh mungkin terjadi tanpa MFA"
-                    data-it-en="Affected: domain.admin.01, domain.admin.03, cloud.admin.01, cloud.admin.04"
-                    data-it-id="Terdampak: domain.admin.01, domain.admin.03, cloud.admin.01, cloud.admin.04"
-                    data-finance-en="Financial system admins: cloud.admin.01 and cloud.admin.04 — high priority"
-                    data-finance-id="Admin sistem keuangan: cloud.admin.01 dan cloud.admin.04 — prioritas tinggi"
-                    data-auditor-en="Mandatory MFA for privileged accounts — access control policy"
-                    data-auditor-id="MFA wajib untuk akun dengan hak istimewa — kebijakan kontrol akses">
-                    Risiko: kompromi admin penuh mungkin terjadi tanpa MFA
-                  </div>
-                </div>
-              </div>
+              <div id="findings-list"></div>
             </div>
 
             <!-- Recommendations -->
             <div class="ss-report-section">
               <div class="ss-report-section__title" data-en="Top Recommended Actions" data-id="Tindakan yang Direkomendasikan">Tindakan yang Direkomendasikan</div>
-              <div class="ss-finding-row">
-                <span style="font-size:13px;font-weight:600;min-width:18px;color:var(--ss-brand);">1.</span>
-                <div class="ss-finding-main">
-                  <div id="r1"
-                    data-direktur-en="Approve DMARC deployment — authorise IT to deploy p=quarantine today"
-                    data-direktur-id="Setujui deployment DMARC — otorisasi IT untuk menerapkan kebijakan p=quarantine hari ini"
-                    data-it-en="Deploy DMARC: add TXT record p=quarantine to company domain DNS"
-                    data-it-id="Deploy DMARC: tambahkan record TXT p=quarantine ke DNS domain perusahaan"
-                    data-finance-en="Enable DMARC to prevent email fraud — no budget required"
-                    data-finance-id="Aktifkan DMARC untuk mencegah penipuan email — tidak ada anggaran diperlukan"
-                    data-auditor-en="Deploy DMARC p=quarantine — closes email authentication gap"
-                    data-auditor-id="Deploy DMARC p=quarantine — menutup gap autentikasi email">
-                    Setujui deployment DMARC — otorisasi IT untuk menerapkan kebijakan p=quarantine hari ini
-                  </div>
-                  <div class="ss-finding-sub">~1 <span data-en="hour" data-id="jam">jam</span></div>
-                </div>
-              </div>
-              <div class="ss-finding-row">
-                <span style="font-size:13px;font-weight:600;min-width:18px;color:var(--ss-brand);">2.</span>
-                <div class="ss-finding-main">
-                  <div id="r2"
-                    data-direktur-en="Mandate MFA for all admin accounts by end of week"
-                    data-direktur-id="Wajibkan MFA untuk semua akun admin sebelum akhir minggu"
-                    data-it-en="Enable MFA on 4 admin accounts — use existing SSO provider"
-                    data-it-id="Aktifkan MFA pada 4 akun admin — gunakan penyedia SSO yang ada"
-                    data-finance-en="Prioritise MFA for cloud.admin.01 and cloud.admin.04 (financial system access)"
-                    data-finance-id="Prioritaskan MFA untuk cloud.admin.01 dan cloud.admin.04 (akses sistem keuangan)"
-                    data-auditor-en="Enable MFA on 4 privileged accounts — document for audit evidence"
-                    data-auditor-id="Aktifkan MFA pada 4 akun dengan hak istimewa — dokumentasikan untuk bukti audit">
-                    Wajibkan MFA untuk semua akun admin sebelum akhir minggu
-                  </div>
-                  <div class="ss-finding-sub">~1 <span data-en="day" data-id="hari">hari</span></div>
-                </div>
-              </div>
-              <div class="ss-finding-row">
-                <span style="font-size:13px;font-weight:600;min-width:18px;color:var(--ss-brand);">3.</span>
-                <div class="ss-finding-main">
-                  <div id="r3"
-                    data-direktur-en="Extend log retention to 90 days to meet audit standards"
-                    data-direktur-id="Perpanjang retensi log ke 90 hari untuk memenuhi standar audit"
-                    data-it-en="Reconfigure SIEM/log pipeline retention from 7 to 90 days"
-                    data-it-id="Konfigurasi ulang retensi SIEM/pipeline log dari 7 ke 90 hari"
-                    data-finance-en="Extend log retention — required for fraud investigation and compliance"
-                    data-finance-id="Perpanjang retensi log — diperlukan untuk investigasi penipuan dan kepatuhan"
-                    data-auditor-en="Extend log retention to 90 days — document policy change and deployment date"
-                    data-auditor-id="Perpanjang retensi log ke 90 hari — dokumentasikan perubahan kebijakan dan tanggal deployment">
-                    Perpanjang retensi log ke 90 hari untuk memenuhi persyaratan kepatuhan
-                  </div>
-                  <div class="ss-finding-sub">~1 <span data-en="week" data-id="minggu">minggu</span></div>
-                </div>
-              </div>
+              <div id="recommendations-list"></div>
             </div>
 
             <!-- Footer -->
             <div style="font-size:10px; color:var(--ss-on-surface-variant); text-align:center; padding-top:var(--ss-gap-md);">
-              <span data-en="Generated by Shannon Sentinel AI · Model: Qwen 2.5 7B · Human review required before sharing"
-                    data-id="Dibuat oleh Shannon Sentinel AI · Model: Qwen 2.5 7B · Diperlukan tinjauan manusia sebelum dibagikan">
-                Dibuat oleh Shannon Sentinel AI · Model: Qwen 2.5 7B · Diperlukan tinjauan manusia sebelum dibagikan
+              <span data-en="Generated by Shannon Sentinel AI · Model: Sentinel SLM · Human review required before sharing"
+                    data-id="Dibuat oleh Shannon Sentinel AI · Model: Sentinel SLM · Diperlukan tinjauan manusia sebelum dibagikan">
+                Dibuat oleh Shannon Sentinel AI · Model: Sentinel SLM · Diperlukan tinjauan manusia sebelum dibagikan
               </span>
             </div>
           </div>
@@ -612,7 +440,7 @@
               Dokumen bukti yang dibuat untuk tinjauan kepatuhan:
             </p>
             <ul class="ss-ojk-list">
-              <li data-en="AI System Registry — Qwen 2.5 7B + Claude Sonnet fallback" data-id="Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet">Registri Sistem AI — Qwen 2.5 7B + cadangan Claude Sonnet</li>
+              <li data-en="AI System Registry — Sentinel SLM + Claude Sonnet fallback" data-id="Registri Sistem AI — Sentinel SLM + cadangan Claude Sonnet">Registri Sistem AI — Sentinel SLM + cadangan Claude Sonnet</li>
               <li data-en="Guardrail activation log — 30-day window" data-id="Log aktivasi guardrail — jendela 30 hari">Log aktivasi guardrail — jendela 30 hari</li>
               <li data-en="Human review checkpoint record — all HITL decisions" data-id="Catatan checkpoint tinjauan manusia — semua keputusan HITL">Catatan checkpoint tinjauan manusia — semua keputusan HITL</li>
               <li data-en="Model confidence distribution — last 500 responses" data-id="Distribusi kepercayaan model — 500 respons terakhir">Distribusi kepercayaan model — 500 respons terakhir</li>
@@ -620,17 +448,6 @@
             </ul>
             <button class="ss-btn-secondary" style="margin-top:10px;font-size:12px;" onclick="document.getElementById('ojk-pack').hidden=true"
                     data-en="Close" data-id="Tutup">Tutup</button>
-          </div>
-        </div>
-
-        <!-- Placeholder panel for other reports -->
-        <div id="detail-other" hidden>
-          <div class="ss-detail-placeholder">
-            <i class="ti ti-file-text"></i>
-            <p id="detail-other-label" data-en="This report has been closed. Full detail available on Sprint and MDR plans." data-id="Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.">
-              Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.
-            </p>
-            <a href="/agentic-soc/pricing/" class="ss-report-btn-view" data-en="See plans →" data-id="Lihat paket →">Lihat paket →</a>
           </div>
         </div>
 
@@ -666,7 +483,7 @@
     </div>
   </div>
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     if (window.SS) document.getElementById('report-company-name').textContent = window.SS.company || 'Perusahaan Anda';
 
@@ -678,27 +495,214 @@
       default:       { en: 'Compliance Evidence Pack', id: 'Paket Bukti Kepatuhan' }
     };
 
-    const REPORT_META = {
-      '046': { status: 'review', en: 'This report is under review by the analyst team.', id: 'Laporan ini sedang ditinjau oleh tim analis.' },
-      '045': { status: 'closed', en: 'This report has been closed. Full detail available on Sprint and MDR plans.', id: 'Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.' },
-      '044': { status: 'closed', en: 'This report has been closed. Full detail available on Sprint and MDR plans.', id: 'Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.' },
-      '043': { status: 'closed', en: 'This report has been closed. Full detail available on Sprint and MDR plans.', id: 'Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.' },
-      '042': { status: 'closed', en: 'This report has been closed. Full detail available on Sprint and MDR plans.', id: 'Laporan ini telah ditutup. Detail lengkap tersedia di paket Sprint dan MDR.' },
+    const REPORT_TYPE_LABEL = {
+      direktur: { en: 'Executive Report', id: 'Laporan Eksekutif' },
+      it:       { en: 'Technical Report', id: 'Laporan Teknis' },
+      finance:  { en: 'Financial Risk Report', id: 'Laporan Risiko Keuangan' },
+      auditor:  { en: 'Compliance Report', id: 'Laporan Kepatuhan' },
     };
 
-    const AUDIENCE_FIELDS = ['aud-summary','aud-report-type','f1-title','f1-sub','f2-title','f2-sub','f3-title','f3-sub','f4-title','f4-sub','r1','r2','r3'];
+    // Findings/recommendations text is audience-tailored (direktur/it/finance/auditor) for RPT-047;
+    // other reports use a single EN/ID pair shared across audiences to keep authored content manageable.
+    const REPORT_DATA = {
+      '047': {
+        titleEn: 'SSH Brute Force — ws-04', titleId: 'Brute Force SSH — ws-04',
+        date: '05 Jul 2026',
+        summary: {
+          direktur: { en: 'Critical findings: 2 critical risks, 2 requiring attention. Immediate executive action required.', id: 'Temuan kritis: 2 risiko kritis, 2 perlu perhatian. Tindakan eksekutif segera diperlukan.' },
+          it:       { en: '2 critical controls failed (DMARC, log retention). 2 high findings (SSH exposure, MFA gap). Patch and configuration changes required.', id: '2 kontrol kritis gagal (DMARC, retensi log). 2 temuan tinggi (SSH terekspos, gap MFA). Patch dan perubahan konfigurasi diperlukan.' },
+          finance:  { en: 'Financial risk identified: email fraud and unauthorized access to financial systems are possible without immediate action.', id: 'Risiko keuangan teridentifikasi: penipuan email dan akses tidak sah ke sistem keuangan mungkin terjadi tanpa tindakan segera.' },
+          auditor:  { en: '4 findings do not meet compliance requirements: DMARC missing, log retention below audit standard minimum, MFA gap, undocumented attack surface.', id: '4 temuan tidak memenuhi persyaratan kepatuhan: DMARC tidak ada, retensi log di bawah minimum standar audit, gap MFA, permukaan serangan tidak terdokumentasi.' },
+        },
+        findings: [
+          { sev: 'critical', title: {
+              direktur: { en: 'No DMARC policy — email spoofing risk to stakeholders', id: 'Tidak ada kebijakan DMARC — risiko pemalsuan email ke pemangku kepentingan' },
+              it:       { en: 'DMARC missing on company domain — SPF found, DKIM absent, policy p=none', id: 'DMARC tidak ada di domain perusahaan — SPF ditemukan, DKIM tidak ada, kebijakan p=none' },
+              finance:  { en: 'No DMARC — invoice and payment emails can be spoofed, high fraud risk', id: 'Tidak ada DMARC — email tagihan dan pembayaran dapat dipalsukan, risiko penipuan tinggi' },
+              auditor:  { en: 'DMARC policy absent — non-compliant with email authentication requirements', id: 'Kebijakan DMARC tidak ada — tidak sesuai persyaratan autentikasi email' },
+            }, sub: {
+              direktur: { en: 'Business impact: brand damage, fraud exposure', id: 'Dampak bisnis: kerusakan merek, eksposur penipuan' },
+              it:       { en: 'Fix: add TXT record _dmarc.domain.com with p=quarantine · ~1 hr', id: 'Perbaikan: tambahkan record TXT _dmarc.domain.com dengan p=quarantine · ~1 jam' },
+              finance:  { en: 'Estimated fraud exposure: medium-high based on transaction volume', id: 'Estimasi eksposur penipuan: sedang-tinggi berdasarkan volume transaksi' },
+              auditor:  { en: 'Required by: standard email security policy §4.2', id: 'Disyaratkan oleh: kebijakan keamanan email standar §4.2' },
+            } },
+          { sev: 'critical', title: {
+              direktur: { en: 'Log retention 7 days — below audit standard', id: 'Retensi log 7 hari — di bawah standar audit' },
+              it:       { en: 'Log retention 7 days vs audit-standard 90 days — affects SIEM coverage and forensics', id: 'Retensi log 7 hari vs 90 hari standar audit — memengaruhi cakupan SIEM dan forensik' },
+              finance:  { en: 'Short log retention limits fraud investigation window — audit trail incomplete', id: 'Retensi log pendek membatasi jendela investigasi penipuan — jejak audit tidak lengkap' },
+              auditor:  { en: 'Log retention 7 days — audit standard minimum is 90 days. Immediate remediation required.', id: 'Retensi log 7 hari — minimum standar audit adalah 90 hari. Remediasi segera diperlukan.' },
+            }, sub: {
+              direktur: { en: 'Regulatory risk: audit exposure', id: 'Risiko regulasi: eksposur audit' },
+              it:       { en: 'Fix: configure log pipeline retention to 90+ days · ~1 week', id: 'Perbaikan: konfigurasi retensi pipeline log ke 90+ hari · ~1 minggu' },
+              finance:  { en: 'Potential regulatory fine if audited in current state', id: 'Potensi denda regulasi jika diaudit dalam kondisi saat ini' },
+              auditor:  { en: 'Ref: security policy standard §7.1 — log retention minimum 90 days', id: 'Ref: standar kebijakan keamanan §7.1 — retensi log minimum 90 hari' },
+            } },
+          { sev: 'high', title: {
+              direktur: { en: '3 public subdomains exposed with outdated services', id: '3 subdomain publik terekspos dengan layanan usang' },
+              it:       { en: 'ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 open on panel.domain.com', id: 'ssh.domain.com — OpenSSH 7.4 (EOL, CVE-2023-38408). Port 8080 terbuka di panel.domain.com' },
+              finance:  { en: 'Exposed subdomains could provide entry to financial systems', id: 'Subdomain terekspos dapat memberi akses ke sistem keuangan' },
+              auditor:  { en: '3 unprotected subdomains — attack surface not documented in risk register', id: '3 subdomain tidak terlindungi — permukaan serangan tidak terdokumentasi' },
+            }, sub: {
+              direktur: { en: 'One runs a vulnerable SSH version actively being targeted', id: 'Salah satunya menjalankan SSH versi rentan yang sedang aktif diserang' },
+              it:       { en: 'Patch OpenSSH to 9.x, restrict port 22 to VPN-only, close port 8080', id: 'Patch OpenSSH ke 9.x, batasi port 22 ke VPN saja, tutup port 8080' },
+              finance:  { en: '~14 brute-force attempts/min detected since 14:07 WIB today', id: '~14 percobaan brute-force/menit terdeteksi sejak 14:07 WIB hari ini' },
+              auditor:  { en: 'Required: update asset inventory and network diagram', id: 'Diperlukan: perbarui inventaris aset dan diagram jaringan' },
+            } },
+          { sev: 'high', title: {
+              direktur: { en: '4 of 12 admin accounts without MFA — account takeover risk', id: '4 dari 12 akun admin tanpa MFA — risiko pengambilalihan akun' },
+              it:       { en: '4 admin accounts (2 domain admin, 2 cloud admin) lack MFA', id: '4 akun admin (2 domain admin, 2 cloud admin) tanpa MFA' },
+              finance:  { en: '2 accounts with financial system access have no MFA — unauthorized transfer risk', id: '2 akun dengan akses sistem keuangan tidak memiliki MFA — risiko transfer tidak sah' },
+              auditor:  { en: '4 privileged accounts without MFA — non-compliant with access control policy', id: '4 akun dengan hak istimewa tanpa MFA — tidak sesuai kebijakan kontrol akses' },
+            }, sub: {
+              direktur: { en: 'Risk: full admin compromise possible without MFA', id: 'Risiko: kompromi admin penuh mungkin terjadi tanpa MFA' },
+              it:       { en: 'Affected: domain.admin.01, domain.admin.03, cloud.admin.01, cloud.admin.04', id: 'Terdampak: domain.admin.01, domain.admin.03, cloud.admin.01, cloud.admin.04' },
+              finance:  { en: 'Financial system admins: cloud.admin.01 and cloud.admin.04 — high priority', id: 'Admin sistem keuangan: cloud.admin.01 dan cloud.admin.04 — prioritas tinggi' },
+              auditor:  { en: 'Mandatory MFA for privileged accounts — access control policy', id: 'MFA wajib untuk akun dengan hak istimewa — kebijakan kontrol akses' },
+            } },
+        ],
+        recommendations: [
+          { en: 'Approve DMARC deployment — authorise IT to deploy p=quarantine today', id: 'Setujui deployment DMARC — otorisasi IT untuk menerapkan kebijakan p=quarantine hari ini', duration: { en: '~1 hour', id: '~1 jam' } },
+          { en: 'Mandate MFA for all admin accounts by end of week', id: 'Wajibkan MFA untuk semua akun admin sebelum akhir minggu', duration: { en: '~1 day', id: '~1 hari' } },
+          { en: 'Extend log retention to 90 days to meet audit standards', id: 'Perpanjang retensi log ke 90 hari untuk memenuhi persyaratan kepatuhan', duration: { en: '~1 week', id: '~1 minggu' } },
+        ],
+      },
+      '046': {
+        titleEn: 'Suspicious DLP Bypass Attempt', titleId: 'Percobaan Bypass DLP Mencurigakan',
+        date: '04 Jul 2026',
+        summary: { en: 'Investigation in progress: an employee attempted to move sensitive data outside approved channels using a renamed file extension. No confirmed data loss yet.', id: 'Investigasi sedang berlangsung: seorang karyawan mencoba memindahkan data sensitif ke luar kanal yang disetujui menggunakan ekstensi file yang diubah namanya. Belum ada kebocoran data yang terkonfirmasi.' },
+        findings: [
+          { sev: 'high', title: { en: 'Attempted upload of customer data to personal cloud storage', id: 'Percobaan unggah data pelanggan ke penyimpanan cloud pribadi' },
+            sub: { en: 'File renamed from .xlsx to .dat to evade DLP content inspection, blocked before upload completed', id: 'File diubah namanya dari .xlsx ke .dat untuk menghindari inspeksi konten DLP, diblokir sebelum unggahan selesai' } },
+          { sev: 'medium', title: { en: 'Personal cloud storage domains not blocked at proxy', id: 'Domain penyimpanan cloud pribadi belum diblokir di proxy' },
+            sub: { en: 'Outbound web filter allows access to consumer file-sharing services from the corporate network', id: 'Filter web keluar mengizinkan akses ke layanan berbagi file konsumen dari jaringan perusahaan' } },
+        ],
+        recommendations: [
+          { en: 'Suspend user session and interview employee pending investigation', id: 'Tangguhkan sesi pengguna dan wawancarai karyawan hingga investigasi selesai', duration: { en: 'Immediate', id: 'Segera' } },
+          { en: 'Block personal cloud storage domains at the proxy/web filter', id: 'Blokir domain penyimpanan cloud pribadi di proxy/filter web', duration: { en: '~1 day', id: '~1 hari' } },
+        ],
+      },
+      '045': {
+        titleEn: 'Phishing Campaign — Finance Team', titleId: 'Kampanye Phishing — Tim Keuangan',
+        date: '02 Jul 2026',
+        summary: { en: 'Resolved: a spoofed invoice-payment phishing email reached 12 finance staff. 2 clicked the link and 1 entered credentials before the account was locked.', id: 'Diselesaikan: email phishing pembayaran tagihan palsu menjangkau 12 staf keuangan. 2 mengklik tautan dan 1 memasukkan kredensial sebelum akun dikunci.' },
+        findings: [
+          { sev: 'critical', title: { en: 'Credentials entered on spoofed vendor-payment page', id: 'Kredensial dimasukkan di halaman pembayaran vendor palsu' },
+            sub: { en: 'Account was locked and password reset within 40 minutes of detection — no unauthorized transactions occurred', id: 'Akun dikunci dan kata sandi direset dalam 40 menit sejak terdeteksi — tidak ada transaksi tidak sah yang terjadi' } },
+          { sev: 'high', title: { en: '12 finance staff received the spoofed invoice email', id: '12 staf keuangan menerima email tagihan palsu' },
+            sub: { en: 'Email spoofed a known vendor domain, bypassed the spam filter due to missing DMARC enforcement', id: 'Email memalsukan domain vendor yang dikenal, melewati filter spam karena penegakan DMARC yang hilang' } },
+        ],
+        recommendations: [
+          { en: 'Enforce DMARC p=quarantine on the company domain to block future spoofed sends', id: 'Terapkan DMARC p=quarantine pada domain perusahaan untuk memblokir pengiriman palsu di masa depan', duration: { en: '~1 hour', id: '~1 jam' } },
+          { en: 'Run a phishing-awareness refresher training for the finance team', id: 'Jalankan pelatihan penyegaran kesadaran phishing untuk tim keuangan', duration: { en: '~1 week', id: '~1 minggu' } },
+        ],
+      },
+      '044': {
+        titleEn: 'Unauthorized API Access — Internal Portal', titleId: 'Akses API Tidak Sah — Portal Internal',
+        date: '28 Jun 2026',
+        summary: { en: 'Resolved: an API key with excessive permissions was used from an unrecognized IP to query the internal portal API. The key has been revoked.', id: 'Diselesaikan: kunci API dengan izin berlebihan digunakan dari IP yang tidak dikenal untuk mengakses API portal internal. Kunci telah dicabut.' },
+        findings: [
+          { sev: 'high', title: { en: 'API key with admin-level scope used from an unrecognized IP address', id: 'Kunci API dengan cakupan setingkat admin digunakan dari alamat IP yang tidak dikenal' },
+            sub: { en: '~3,200 requests over 20 minutes enumerated internal employee records before the key was revoked', id: '~3.200 permintaan selama 20 menit melakukan enumerasi data karyawan internal sebelum kunci dicabut' } },
+          { sev: 'medium', title: { en: 'Internal API endpoints missing rate-limiting', id: 'Endpoint API internal belum memiliki pembatasan laju (rate-limiting)' },
+            sub: { en: 'No throttling allowed rapid enumeration once a valid key was obtained', id: 'Tidak ada pembatasan yang memungkinkan enumerasi cepat setelah kunci valid diperoleh' } },
+        ],
+        recommendations: [
+          { en: 'Rotate all API keys and reissue with least-privilege scopes', id: 'Rotasi semua kunci API dan terbitkan ulang dengan cakupan hak akses minimum', duration: { en: '~1 day', id: '~1 hari' } },
+          { en: 'Add rate-limiting and IP allowlisting to internal API endpoints', id: 'Tambahkan rate-limiting dan allowlist IP pada endpoint API internal', duration: { en: '~1 week', id: '~1 minggu' } },
+        ],
+      },
+      '043': {
+        titleEn: 'Malware Detection — Endpoint ws-12', titleId: 'Deteksi Malware — Endpoint ws-12',
+        date: '25 Jun 2026',
+        summary: { en: 'Resolved: a trojan was detected and quarantined on endpoint ws-12 before lateral movement occurred. Three other endpoints were found running outdated antivirus signatures.', id: 'Diselesaikan: sebuah trojan terdeteksi dan dikarantina pada endpoint ws-12 sebelum terjadi pergerakan lateral. Tiga endpoint lain ditemukan menjalankan tanda tangan antivirus yang usang.' },
+        findings: [
+          { sev: 'critical', title: { en: 'Trojan quarantined on ws-12 before lateral movement', id: 'Trojan dikarantina pada ws-12 sebelum pergerakan lateral' },
+            sub: { en: 'Malware attempted an outbound connection to a known C2 domain, blocked by egress filtering', id: 'Malware mencoba koneksi keluar ke domain C2 yang dikenal, diblokir oleh egress filtering' } },
+          { sev: 'high', title: { en: '3 endpoints running outdated antivirus signatures', id: '3 endpoint menjalankan tanda tangan antivirus yang usang' },
+            sub: { en: 'Signature updates had failed silently for 18 days on the affected machines', id: 'Pembaruan tanda tangan gagal secara diam-diam selama 18 hari pada mesin yang terdampak' } },
+        ],
+        recommendations: [
+          { en: 'Reimage ws-12 and rotate any credentials used on that machine', id: 'Reimage ws-12 dan rotasi kredensial apa pun yang digunakan pada mesin tersebut', duration: { en: '~1 day', id: '~1 hari' } },
+          { en: 'Patch antivirus signature updates fleet-wide and alert on update failures', id: 'Perbarui tanda tangan antivirus di seluruh armada dan beri peringatan saat pembaruan gagal', duration: { en: '~1 week', id: '~1 minggu' } },
+        ],
+      },
+      '042': {
+        titleEn: 'Credential Stuffing — Login Portal', titleId: 'Credential Stuffing — Portal Login',
+        date: '22 Jun 2026',
+        summary: { en: 'Resolved: approximately 2,400 automated login attempts from a botnet targeted the customer login portal. 3 accounts were locked as a precaution, no confirmed compromise.', id: 'Diselesaikan: sekitar 2.400 percobaan login otomatis dari botnet menargetkan portal login pelanggan. 3 akun dikunci sebagai tindakan pencegahan, tidak ada kompromi yang terkonfirmasi.' },
+        findings: [
+          { sev: 'medium', title: { en: '~2,400 login attempts from botnet IPs against the customer portal', id: '~2.400 percobaan login dari IP botnet terhadap portal pelanggan' },
+            sub: { en: 'Traffic originated from over 300 distinct IPs over 6 hours, consistent with credential-stuffing lists', id: 'Lalu lintas berasal dari lebih dari 300 IP berbeda selama 6 jam, konsisten dengan daftar credential-stuffing' } },
+          { sev: 'low', title: { en: 'Login endpoint has no CAPTCHA or rate-limiting', id: 'Endpoint login belum memiliki CAPTCHA atau rate-limiting' },
+            sub: { en: 'Allowed high-volume automated attempts to run undetected until anomaly alerting triggered', id: 'Memungkinkan percobaan otomatis bervolume tinggi berjalan tanpa terdeteksi hingga peringatan anomali terpicu' } },
+        ],
+        recommendations: [
+          { en: 'Enable CAPTCHA and rate-limiting on the login endpoint', id: 'Aktifkan CAPTCHA dan rate-limiting pada endpoint login', duration: { en: '~1 day', id: '~1 hari' } },
+          { en: 'Force password reset for the 3 locked accounts and screen against known-breach password lists', id: 'Wajibkan reset kata sandi untuk 3 akun yang dikunci dan periksa terhadap daftar kata sandi yang bocor', duration: { en: '~1 day', id: '~1 hari' } },
+        ],
+      },
+    };
+
+    const SEV_LABEL = {
+      critical: { en: 'CRITICAL', id: 'KRITIS' },
+      high:     { en: 'HIGH', id: 'TINGGI' },
+      medium:   { en: 'MEDIUM', id: 'SEDANG' },
+      low:      { en: 'LOW', id: 'RENDAH' },
+    };
+
+    let currentReportId = '047';
+
+    function pick(field, aud, lang) {
+      // Fields may be audience-tailored ({direktur:{en,id}, it:{...}, ...}) or a flat {en,id} pair.
+      const scoped = field[aud] || field.direktur;
+      return (scoped || field)[lang];
+    }
+
+    function renderReportDetail(id) {
+      const data = REPORT_DATA[id];
+      if (!data) return;
+      currentReportId = id;
+
+      const aud = localStorage.getItem('ss-audience') || 'direktur';
+      const lang = localStorage.getItem('ss-lang') || 'id';
+
+      document.getElementById('detail-title').textContent = lang === 'en' ? data.titleEn : data.titleId;
+      document.getElementById('detail-rptid').textContent = `RPT-2026-${id} · ${data.date}`;
+
+      const typeLabel = REPORT_TYPE_LABEL[aud][lang];
+      document.getElementById('aud-report-type').textContent = lang === 'en'
+        ? `Cyber X-Ray ${typeLabel} — ${data.date}`
+        : `${typeLabel} Cyber X-Ray — ${data.date}`;
+
+      document.getElementById('aud-summary').textContent = pick(data.summary, aud, lang);
+
+      document.getElementById('findings-list').innerHTML = data.findings.map(f => `
+        <div class="ss-finding-row">
+          <span class="badge badge-${f.sev}" style="font-size:10px;">${SEV_LABEL[f.sev][lang]}</span>
+          <div class="ss-finding-main">
+            <div>${pick(f.title, aud, lang)}</div>
+            <div class="ss-finding-sub">${pick(f.sub, aud, lang)}</div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('recommendations-list').innerHTML = data.recommendations.map((r, i) => `
+        <div class="ss-finding-row">
+          <span style="font-size:13px;font-weight:600;min-width:18px;color:var(--ss-brand);">${i + 1}.</span>
+          <div class="ss-finding-main">
+            <div>${lang === 'en' ? r.en : r.id}</div>
+            <div class="ss-finding-sub">${r.duration[lang]}</div>
+          </div>
+        </div>
+      `).join('');
+    }
 
     window.onAudienceChange = function(aud, lang) {
-      AUDIENCE_FIELDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const key = aud + '-' + lang;
-        if (el.dataset[key]) el.textContent = el.dataset[key];
-      });
+      renderReportDetail(currentReportId);
     };
 
     window.onLangChange = function(lang) {
-      window.onAudienceChange('direktur', lang);
+      renderReportDetail(currentReportId);
       const industry = (window.SS && window.SS.industry) || 'default';
       const label = (COMPLIANCE_LABEL[industry] || COMPLIANCE_LABEL.default)[lang];
       ['compliance-pack-label', 'ojk-pack-title', 'compliance-btn-label'].forEach(id => {
@@ -711,19 +715,7 @@
       // Update active item highlight
       document.querySelectorAll('.ss-report-item').forEach(el => el.classList.remove('ss-report-item--active'));
       event.currentTarget.classList.add('ss-report-item--active');
-
-      const lang = localStorage.getItem('ss-lang') || 'id';
-
-      if (id === '047') {
-        document.getElementById('detail-047').hidden = false;
-        document.getElementById('detail-other').hidden = true;
-      } else {
-        document.getElementById('detail-047').hidden = true;
-        document.getElementById('detail-other').hidden = false;
-        const meta = REPORT_META[id];
-        const label = document.getElementById('detail-other-label');
-        if (label && meta) label.textContent = lang === 'en' ? meta.en : meta.id;
-      }
+      renderReportDetail(id);
     }
 
     function showReviewModal() { document.getElementById('review-modal').style.display = 'flex'; }

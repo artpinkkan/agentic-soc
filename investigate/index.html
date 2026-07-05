@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -114,7 +114,8 @@
     }
     .ss-badge-model   { background: var(--ss-surface-container-low); color: var(--ss-on-surface-variant); }
     .ss-badge-conf    { background: var(--ss-success-light); color: #27500A; }
-    .ss-badge-hitl    { background: var(--ss-warning-light); color: #633806; }
+    .ss-badge-hitl    { background: var(--ss-warning-light); color: #633806; text-decoration: none; cursor: help; }
+    .ss-badge-hitl:hover { background: var(--ss-warning); color: #fff; }
     .ss-badge-inspect {
       background: none; color: var(--ss-brand);
       border: 1px solid var(--ss-brand);
@@ -192,6 +193,102 @@
     .ss-lock-gate__label { font-size: 13px; font-weight: 500; color: var(--ss-on-surface); }
     .ss-lock-gate__cta { font-size: 12px; color: var(--ss-brand); font-weight: 500; }
     .ss-locked { border: 0.5px solid var(--ss-border-md) !important; }
+
+    /* Structured evidence citations (SRF-style: source id + provenance) */
+    .ss-citation-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .ss-citation-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 100px; font-size: 11px;
+      border: 0.5px solid; cursor: help; font-family: monospace;
+    }
+    .ss-citation-chip--attck    { background: #F9ECFE; color: #6B21A8; border-color: #D8B4FE; }
+    .ss-citation-chip--abuseipdb { background: #FFF9C4; color: #92400E; border-color: #FCD34D; }
+    .ss-citation-chip--cve      { background: #FFF7ED; color: #9A3412; border-color: #FDC5A4; }
+    .ss-citation-chip--internal { background: #E6F1FB; color: #1E40AF; border-color: #BFDBFE; }
+    .ss-citation-coverage {
+      font-size: 11px; color: var(--ss-success); margin-top: 6px;
+      display: flex; align-items: center; gap: 4px; font-weight: 500;
+    }
+    .ss-badge-verify { background: var(--ss-info-light); color: #1E40AF; }
+
+    /* ── Conversation history sidebar (chat history, like a normal assistant) ── */
+    .ss-chat-layout { position: relative; flex: 1; display: flex; min-height: 0; overflow: hidden; min-width: 0; }
+    .ss-conv-sidebar {
+      width: 250px; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+      border-right: 1px solid var(--ss-outline-variant);
+      background: var(--ss-surface-container-lowest);
+      display: flex; flex-direction: column;
+      transition: width 0.18s ease, min-width 0.18s ease, opacity 0.18s ease;
+    }
+    .ss-conv-sidebar__hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 14px 14px 10px; }
+    .ss-conv-sidebar__hd-title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ss-on-surface-variant); }
+    .ss-conv-new-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600; color: var(--ss-brand);
+      background: var(--ss-brand-light); border: none; border-radius: var(--ss-radius-sm);
+      padding: 5px 10px; cursor: pointer; white-space: nowrap;
+    }
+    .ss-conv-new-btn:hover { opacity: 0.85; }
+    .ss-conv-item {
+      display: flex; align-items: flex-start; gap: 9px;
+      padding: 10px 16px; cursor: pointer; border-left: 3px solid transparent;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .ss-conv-item:hover { background: var(--ss-surface-container-low); }
+    .ss-conv-item.active { background: var(--ss-brand-light); border-left-color: var(--ss-brand); }
+    .ss-conv-item__icon {
+      width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--ss-surface-container-low); color: var(--ss-on-surface-variant); font-size: 13px;
+    }
+    .ss-conv-item.active .ss-conv-item__icon { background: var(--ss-brand); color: #fff; }
+    .ss-conv-item__body { min-width: 0; flex: 1; overflow: hidden; }
+    .ss-conv-item__title { font-size: 12.5px; font-weight: 600; color: var(--ss-on-surface); line-height: 1.3; overflow: hidden; }
+    .ss-conv-item__snippet { font-size: 11.5px; color: var(--ss-on-surface-variant); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ss-conv-item__meta { display: flex; align-items: center; gap: 6px; margin-top: 5px; overflow: hidden; min-width: 0; }
+    .ss-conv-item__ref {
+      font-size: 10px; font-family: monospace; font-weight: 600;
+      color: var(--ss-on-surface-variant); background: var(--ss-surface-container-low);
+      padding: 1px 6px; border-radius: 4px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-shrink: 1;
+    }
+    .ss-conv-item__time { font-size: 10.5px; color: var(--ss-on-surface-variant); margin-left: auto; white-space: nowrap; }
+    .ss-conv-item__empty { font-size: 11px; color: var(--ss-on-surface-variant); font-style: italic; margin-top: 2px; }
+    .ss-chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+    /* Center message column so free space is distributed evenly, not just on the right, as the window widens */
+    .ss-chat-messages { align-items: center; }
+    .ss-chat-messages > .ss-conv-thread {
+      width: 100%; max-width: 820px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .ss-chat-input-bar > * { max-width: 820px; margin-left: auto; margin-right: auto; }
+
+    /* Sidebar toggle (mobile / narrow viewports) */
+    .ss-conv-toggle-btn {
+      display: none; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--ss-radius-sm);
+      border: 1px solid var(--ss-outline-variant); background: var(--ss-surface-container-lowest);
+      color: var(--ss-on-surface-variant); cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .ss-conv-toggle-btn { display: inline-flex; }
+      .ss-conv-sidebar {
+        position: absolute; top: 0; bottom: 0; left: 0; z-index: 120;
+        width: 82vw; max-width: 300px; box-shadow: var(--ss-shadow-float);
+        transform: translateX(-100%); transition: transform 0.2s ease;
+      }
+      .ss-conv-sidebar.open { transform: translateX(0); }
+      .ss-conv-sidebar-scrim {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 110;
+      }
+      .ss-conv-sidebar-scrim.open { display: block; }
+      .ss-chat-header { padding: 12px 14px; }
+      .ss-chat-messages { padding: 18px 14px; }
+      .ss-chat-input-bar { padding: 10px 14px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -222,18 +319,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
     <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
       <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
@@ -258,14 +364,89 @@
   </nav>
 
   <div class="ss-page">
+  <div class="ss-chat-layout">
+
+    <!-- Conversation history — chat history, like a normal assistant -->
+    <div class="ss-conv-sidebar" id="conv-sidebar">
+      <div class="ss-conv-sidebar__hd">
+        <span class="ss-conv-sidebar__hd-title" data-en="Conversations" data-id="Percakapan">Percakapan</span>
+        <button type="button" class="ss-conv-new-btn" onclick="createNewConversation()"><i class="ti ti-plus"></i> <span data-en="New" data-id="Baru">Baru</span></button>
+      </div>
+      <div class="ss-conv-item active" id="conv-item-network" onclick="switchConversation('network')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="SSH brute force — ssh.domain.com" data-id="Brute force SSH — ssh.domain.com">Brute force SSH — ssh.domain.com</div>
+          <div class="ss-conv-item__snippet" data-en="Is this an active attack?" data-id="Apakah ini serangan aktif?">Apakah ini serangan aktif?</div>
+          <div class="ss-conv-item__meta">
+            <span class="ss-conv-item__ref">CASE-2026-0417</span>
+            <span class="ss-conv-item__time">14:07</span>
+          </div>
+        </div>
+      </div>
+      <div class="ss-conv-item" id="conv-item-email" onclick="switchConversation('email')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="DMARC policy missing on domain" data-id="Kebijakan DMARC hilang di domain">Kebijakan DMARC hilang di domain</div>
+          <div class="ss-conv-item__snippet" data-en="How do we fix this?" data-id="Bagaimana cara memperbaikinya?">Bagaimana cara memperbaikinya?</div>
+          <div class="ss-conv-item__meta">
+            <span class="ss-conv-item__ref">CASE-2026-0416</span>
+            <span class="ss-conv-item__time">13:45</span>
+          </div>
+        </div>
+      </div>
+      <div class="ss-conv-item" id="conv-item-identity" onclick="switchConversation('identity')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="4 admin accounts without MFA" data-id="4 akun admin tanpa MFA">4 akun admin tanpa MFA</div>
+          <div class="ss-conv-item__snippet" data-en="Which accounts are affected?" data-id="Akun mana saja yang terdampak?">Akun mana saja yang terdampak?</div>
+          <div class="ss-conv-item__meta">
+            <span class="ss-conv-item__ref">CASE-2026-0415</span>
+            <span class="ss-conv-item__time">12:20</span>
+          </div>
+        </div>
+      </div>
+      <div class="ss-conv-item" id="conv-item-log" onclick="switchConversation('log')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="SIEM ingestion pipeline delayed 6h" data-id="Pipa ingesti SIEM tertunda 6 jam">Pipa ingesti SIEM tertunda 6 jam</div>
+          <div class="ss-conv-item__snippet" data-en="Why is ingestion lagging?" data-id="Mengapa ingesti tertunda?">Mengapa ingesti tertunda?</div>
+          <div class="ss-conv-item__meta">
+            <span class="ss-conv-item__ref">CASE-2026-0414</span>
+            <span class="ss-conv-item__time">11:52</span>
+          </div>
+        </div>
+      </div>
+      <div class="ss-conv-item" id="conv-item-web" onclick="switchConversation('web')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="Expired TLS cert on staging subdomain" data-id="Sertifikat TLS kedaluwarsa di subdomain staging">Sertifikat TLS kedaluwarsa di subdomain staging</div>
+          <div class="ss-conv-item__snippet" data-en="Which cert, and how urgent?" data-id="Sertifikat mana, seberapa mendesak?">Sertifikat mana, seberapa mendesak?</div>
+          <div class="ss-conv-item__meta">
+            <span class="ss-conv-item__ref">CASE-2026-0413</span>
+            <span class="ss-conv-item__time">09:14</span>
+          </div>
+        </div>
+      </div>
+      <div class="ss-conv-item" id="conv-item-endpoint" onclick="switchConversation('endpoint')">
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title" data-en="New conversation" data-id="Percakapan baru">Percakapan baru</div>
+          <div class="ss-conv-item__empty" data-en="No messages yet" data-id="Belum ada pesan">Belum ada pesan</div>
+        </div>
+      </div>
+    </div>
+    <div class="ss-conv-sidebar-scrim" id="conv-sidebar-scrim" onclick="toggleConvSidebar(false)"></div>
+
+    <div class="ss-chat-main">
     <!-- Chat header -->
     <div class="ss-chat-header">
+      <button type="button" class="ss-conv-toggle-btn" onclick="toggleConvSidebar()" aria-label="Toggle conversation list"><i class="ti ti-menu-2"></i></button>
       <div>
-        <div class="ss-chat-header__title" data-en="SOC Investigation Assistant" data-id="Asisten Investigasi SOC">Asisten Investigasi SOC</div>
-        <div class="ss-chat-header__sub" data-en="Ask about alerts, threats, or request a root-cause analysis" data-id="Tanyakan tentang alert, ancaman, atau minta analisis akar masalah">Tanyakan tentang alert, ancaman, atau minta analisis akar masalah</div>
+        <div class="ss-chat-header__title" id="chat-header-title" data-en="SOC Investigation Assistant" data-id="Asisten Investigasi SOC">Asisten Investigasi SOC</div>
+        <div class="ss-chat-header__sub" id="chat-header-sub" data-en="Ask about alerts, threats, or request a root-cause analysis" data-id="Tanyakan tentang alert, ancaman, atau minta analisis akar masalah">Tanyakan tentang alert, ancaman, atau minta analisis akar masalah</div>
       </div>
       <div class="ss-chat-header__meta">
-        <span class="ss-model-pill"><span class="ss-model-pill__dot"></span>Qwen 2.5 7B</span>
+        <span class="ss-model-pill"><span class="ss-model-pill__dot"></span>Sentinel SLM</span>
         <span class="badge badge-high" style="font-size:11px;">3 <span data-en="Active Alerts" data-id="Alert Aktif">Alert Aktif</span></span>
         <a href="/agentic-soc/triage/" class="ss-btn-secondary" style="font-size:12px; padding:5px 12px;" data-en="Open Triage" data-id="Buka Triase">Buka Triase</a>
       </div>
@@ -274,6 +455,7 @@
     <!-- Messages -->
     <div class="ss-chat-messages" id="chat-messages">
 
+    <div class="ss-conv-thread" id="thread-network">
       <!-- User message 1 -->
       <div class="ss-msg-row ss-msg-row--user">
         <div class="ss-msg-bubble">
@@ -304,6 +486,21 @@
             <div class="ss-ai-section">
               <div class="ss-ai-label" data-en="Evidence" data-id="Bukti">Bukti</div>
               <div class="ss-ai-body" data-en="Source IPs: 45.152.67.23, 185.220.101.9, 91.240.118.172 — flagged in AbuseIPDB (>85% confidence). Attack began 14:07 WIB · ~14 attempts/min." data-id="IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — ditandai di AbuseIPDB (>85%). Serangan mulai 14:07 WIB · ~14 percobaan/menit.">IP Sumber: 45.152.67.23, 185.220.101.9, 91.240.118.172 — ditandai di AbuseIPDB (&gt;85%). Serangan mulai 14:07 WIB · ~14 percobaan/menit.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--attck" title="node_hash: 7f3a91e2 · ingested: 2026-04-25 13:58 WIB · tier: knowledge-graph">
+                  <i class="ti ti-link"></i> attck:T1110.001
+                </span>
+                <span class="ss-citation-chip ss-citation-chip--abuseipdb" title="node_hash: b04c22d1 · ingested: 2026-04-25 14:02 WIB · tier: external-threat-intel">
+                  <i class="ti ti-alert-circle"></i> abuseipdb:×3
+                </span>
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 91ae7c30 · ingested: 2026-04-25 14:07 WIB · tier: internal-telemetry (sshd auth log)">
+                  <i class="ti ti-server"></i> log:sshd_auth
+                </span>
+              </div>
+              <div class="ss-citation-coverage">
+                <i class="ti ti-shield-check"></i>
+                <span data-en="3 independent citations — meets ≥2 required for HIGH-severity verdict" data-id="3 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI">3 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI</span>
+              </div>
             </div>
             <div class="ss-ai-divider"></div>
             <div class="ss-ai-section">
@@ -312,23 +509,13 @@
             </div>
           </div>
           <div class="ss-msg-footer">
-            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Qwen 2.5 7B</span>
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
             <span class="ss-badge-sm ss-badge-conf">✓ 94%</span>
-            <span class="ss-badge-sm ss-badge-hitl"><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></span>
+            <span class="ss-badge-sm ss-badge-verify" title="5/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 5/5" data-id="Terverifikasi 5/5">Terverifikasi 5/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
             <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
           </div>
         </div>
-      </div>
-
-      <!-- Platform-direction note — shown once after the first AI message only -->
-      <div class="ss-notice ss-notice--info" style="margin-top: 6px; font-size: 11px; padding: 6px 10px;">
-        <i class="ti ti-info-circle"></i>
-        <span data-en="Human Review here is message-level. For per-action policy on every tool call, see "
-              data-id="Tinjauan Manusia di sini adalah tingkat pesan. Untuk kebijakan per tindakan pada setiap panggilan tool, lihat ">
-          Tinjauan Manusia di sini adalah tingkat pesan. Untuk kebijakan per tindakan pada setiap panggilan tool, lihat
-        </span>
-        <a href="/agentic-soc/ai-governance/" style="font-size:11px; font-weight:600;"
-           data-en="AI Governance →" data-id="Tata Kelola AI →">Tata Kelola AI →</a>
       </div>
 
       <!-- User message 2 -->
@@ -351,6 +538,18 @@
             <div class="ss-ai-section">
               <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
               <div class="ss-ai-body" data-en="Yes — escalate immediately. No successful logins reduces severity but the attack is ongoing and the server runs an EOL version with a known CVE." data-id="Ya — eskalasi segera. Tidak ada login berhasil mengurangi keparahan, tetapi serangan masih berlangsung dan server menggunakan versi EOL dengan CVE yang diketahui.">Ya — eskalasi segera. Tidak ada login berhasil mengurangi keparahan, tetapi serangan masih berlangsung dan server menggunakan versi EOL dengan CVE yang diketahui.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--cve" title="node_hash: 3d81f076 · ingested: 2026-04-25 14:10 WIB · tier: nvd-cve-feed">
+                  <i class="ti ti-clipboard"></i> nvd:CVE-2023-38408
+                </span>
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 91ae7c30 · ingested: 2026-04-25 14:07 WIB · tier: internal-telemetry (sshd auth log)">
+                  <i class="ti ti-server"></i> log:sshd_auth
+                </span>
+              </div>
+              <div class="ss-citation-coverage">
+                <i class="ti ti-shield-check"></i>
+                <span data-en="2 independent citations — meets ≥2 required for escalation verdict" data-id="2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict eskalasi">2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict eskalasi</span>
+              </div>
             </div>
             <div class="ss-ai-divider"></div>
             <div class="ss-ai-section">
@@ -359,15 +558,173 @@
             </div>
           </div>
           <div class="ss-msg-footer">
-            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Qwen 2.5 7B</span>
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
             <span class="ss-badge-sm ss-badge-conf">✓ 91%</span>
-            <span class="ss-badge-sm ss-badge-hitl"><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></span>
+            <span class="ss-badge-sm ss-badge-verify" title="4/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 4/5" data-id="Terverifikasi 4/5">Terverifikasi 4/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
             <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
           </div>
         </div>
       </div>
 
-    </div>
+    </div><!-- /thread-network -->
+
+    <div class="ss-conv-thread" id="thread-email" hidden>
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble" data-en="We're seeing spoofed emails reach inboxes despite having SPF set up. What's going on with DMARC?" data-id="Kami melihat email spoof lolos ke inbox meskipun SPF sudah diatur. Bagaimana status DMARC kami?">Kami melihat email spoof lolos ke inbox meskipun SPF sudah diatur. Bagaimana status DMARC kami?</div>
+      </div>
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar"><i class="ti ti-shield" style="font-size:16px; color:#fff;"></i></div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="Your domain has no DMARC record (p=none or missing), so SPF/DKIM failures aren't enforced — spoofed mail can still land in inboxes." data-id="Domain Anda tidak memiliki rekaman DMARC (p=none atau hilang), sehingga kegagalan SPF/DKIM tidak ditegakkan — email spoof masih bisa masuk ke inbox.">Domain Anda tidak memiliki rekaman DMARC (p=none atau hilang), sehingga kegagalan SPF/DKIM tidak ditegakkan — email spoof masih bisa masuk ke inbox.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: a41c9e02 · ingested: 2026-04-25 13:45 WIB · tier: internal-telemetry (DNS scan)"><i class="ti ti-server"></i> dns:txt_scan</span>
+                <span class="ss-citation-chip ss-citation-chip--attck" title="node_hash: 0e77b213 · ingested: 2026-04-25 13:46 WIB · tier: knowledge-graph"><i class="ti ti-link"></i> attck:T1566</span>
+              </div>
+              <div class="ss-citation-coverage">
+                <i class="ti ti-shield-check"></i>
+                <span data-en="2 independent citations — meets ≥2 required for HIGH-severity verdict" data-id="2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI">2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI</span>
+              </div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
+              <div class="ss-ai-body" data-en="Publish a DMARC record starting at p=quarantine, monitor reports for 2 weeks, then move to p=reject." data-id="Terbitkan rekaman DMARC mulai dari p=quarantine, pantau laporan selama 2 minggu, lalu pindah ke p=reject.">Terbitkan rekaman DMARC mulai dari p=quarantine, pantau laporan selama 2 minggu, lalu pindah ke p=reject.</div>
+            </div>
+          </div>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 88%</span>
+            <span class="ss-badge-sm ss-badge-verify" title="4/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 4/5" data-id="Terverifikasi 4/5">Terverifikasi 4/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+          </div>
+        </div>
+      </div>
+    </div><!-- /thread-email -->
+
+    <div class="ss-conv-thread" id="thread-identity" hidden>
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble" data-en="We found 4 admin accounts without MFA enabled. How urgent is this?" data-id="Kami menemukan 4 akun admin tanpa MFA aktif. Seberapa mendesak ini?">Kami menemukan 4 akun admin tanpa MFA aktif. Seberapa mendesak ini?</div>
+      </div>
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar"><i class="ti ti-shield" style="font-size:16px; color:#fff;"></i></div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="High priority — admin accounts are the highest-value credential-stuffing targets, and 2 of the 4 have been seen in recent breach-dump correlations." data-id="Prioritas tinggi — akun admin adalah target credential-stuffing bernilai tertinggi, dan 2 dari 4 akun cocok dengan korelasi kebocoran data terbaru.">Prioritas tinggi — akun admin adalah target credential-stuffing bernilai tertinggi, dan 2 dari 4 akun cocok dengan korelasi kebocoran data terbaru.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 7bf4a810 · ingested: 2026-04-25 12:19 WIB · tier: internal-telemetry (IdP audit log)"><i class="ti ti-server"></i> log:idp_audit</span>
+                <span class="ss-citation-chip ss-citation-chip--abuseipdb" title="node_hash: c92e5f31 · ingested: 2026-04-25 12:20 WIB · tier: external-threat-intel (breach corpus)"><i class="ti ti-alert-circle"></i> breach:corpus_match</span>
+              </div>
+              <div class="ss-citation-coverage">
+                <i class="ti ti-shield-check"></i>
+                <span data-en="2 independent citations — meets ≥2 required for HIGH-severity verdict" data-id="2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI">2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI</span>
+              </div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
+              <div class="ss-ai-body" data-en="Enforce MFA on all admin roles today; force password reset for the 2 breach-matched accounts." data-id="Terapkan MFA untuk semua peran admin hari ini; paksa reset kata sandi untuk 2 akun yang cocok dengan kebocoran data.">Terapkan MFA untuk semua peran admin hari ini; paksa reset kata sandi untuk 2 akun yang cocok dengan kebocoran data.</div>
+            </div>
+          </div>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 90%</span>
+            <span class="ss-badge-sm ss-badge-verify" title="5/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 5/5" data-id="Terverifikasi 5/5">Terverifikasi 5/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+          </div>
+        </div>
+      </div>
+    </div><!-- /thread-identity -->
+
+    <div class="ss-conv-thread" id="thread-log" hidden>
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble" data-en="The SIEM dashboard looks stale. Is log ingestion actually working?" data-id="Dasbor SIEM terlihat basi. Apakah ingesti log benar-benar berjalan?">Dasbor SIEM terlihat basi. Apakah ingesti log benar-benar berjalan?</div>
+      </div>
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar"><i class="ti ti-shield" style="font-size:16px; color:#fff;"></i></div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="No — the ingestion pipeline for the firewall log source has been delayed 6 hours due to a connector timeout. Detection coverage for that source is currently blind." data-id="Tidak — pipa ingesti untuk sumber log firewall tertunda 6 jam karena timeout konektor. Cakupan deteksi untuk sumber tersebut saat ini buta.">Tidak — pipa ingesti untuk sumber log firewall tertunda 6 jam karena timeout konektor. Cakupan deteksi untuk sumber tersebut saat ini buta.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 5f018cc4 · ingested: 2026-04-25 11:52 WIB · tier: internal-telemetry (pipeline health check)"><i class="ti ti-server"></i> log:pipeline_health</span>
+              </div>
+              <div class="ss-citation-coverage" style="color: var(--ss-warning);">
+                <i class="ti ti-alert-triangle"></i>
+                <span data-en="1 citation only — below ≥2 threshold, verdict flagged for analyst confirmation" data-id="Hanya 1 sitasi — di bawah ambang ≥2, verdict ditandai untuk konfirmasi analis">Hanya 1 sitasi — di bawah ambang ≥2, verdict ditandai untuk konfirmasi analis</span>
+              </div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
+              <div class="ss-ai-body" data-en="Restart the firewall log connector and backfill the 6-hour gap; escalate to Triage if backfill fails." data-id="Mulai ulang konektor log firewall dan isi ulang celah 6 jam; eskalasi ke Triase jika pengisian gagal.">Mulai ulang konektor log firewall dan isi ulang celah 6 jam; eskalasi ke Triase jika pengisian gagal.</div>
+            </div>
+          </div>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 76%</span>
+            <span class="ss-badge-sm ss-badge-verify" title="3/5 self-consistency votes agree · judge model: ABSTAIN"><i class="ti ti-checks"></i> <span data-en="Verified 3/5" data-id="Terverifikasi 3/5">Terverifikasi 3/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+          </div>
+        </div>
+      </div>
+    </div><!-- /thread-log -->
+
+    <div class="ss-conv-thread" id="thread-web" hidden>
+      <div class="ss-msg-row ss-msg-row--user">
+        <div class="ss-msg-bubble" data-en="A browser warning showed up on our staging subdomain. Is our TLS cert expired?" data-id="Muncul peringatan browser di subdomain staging kami. Apakah sertifikat TLS kami kedaluwarsa?">Muncul peringatan browser di subdomain staging kami. Apakah sertifikat TLS kami kedaluwarsa?</div>
+      </div>
+      <div class="ss-msg-row ss-msg-row--ai">
+        <div class="ss-msg-avatar"><i class="ti ti-shield" style="font-size:16px; color:#fff;"></i></div>
+        <div>
+          <div class="ss-msg-bubble">
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Summary" data-id="Ringkasan">Ringkasan</div>
+              <div class="ss-ai-body" data-en="Yes — the TLS certificate for staging.domain.com expired 2 days ago. The subdomain is reachable and unencrypted-fallback is not enabled, so this is a availability/trust issue, not a breach." data-id="Ya — sertifikat TLS untuk staging.domain.com kedaluwarsa 2 hari lalu. Subdomain masih dapat diakses dan fallback tanpa enkripsi tidak aktif, jadi ini masalah ketersediaan/kepercayaan, bukan pelanggaran.">Ya — sertifikat TLS untuk staging.domain.com kedaluwarsa 2 hari lalu. Subdomain masih dapat diakses dan fallback tanpa enkripsi tidak aktif, jadi ini masalah ketersediaan/kepercayaan, bukan pelanggaran.</div>
+              <div class="ss-citation-chips">
+                <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 2a6d90e7 · ingested: 2026-04-25 09:14 WIB · tier: internal-telemetry (subdomain scan)"><i class="ti ti-server"></i> scan:tls_cert</span>
+                <span class="ss-citation-chip ss-citation-chip--cve" title="node_hash: 9f30b1c2 · ingested: 2026-04-25 09:15 WIB · tier: nvd-cve-feed"><i class="ti ti-clipboard"></i> nvd:advisory_lookup</span>
+              </div>
+              <div class="ss-citation-coverage">
+                <i class="ti ti-shield-check"></i>
+                <span data-en="2 independent citations — meets ≥2 required for HIGH-severity verdict" data-id="2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI">2 sitasi independen — memenuhi ≥2 yang diperlukan untuk verdict keparahan TINGGI</span>
+              </div>
+            </div>
+            <div class="ss-ai-divider"></div>
+            <div class="ss-ai-section">
+              <div class="ss-ai-label" data-en="Recommendations" data-id="Rekomendasi">Rekomendasi</div>
+              <div class="ss-ai-body" data-en="Renew and auto-rotate the certificate; add staging.domain.com to the certificate-expiry monitor to prevent recurrence." data-id="Perbarui dan aktifkan rotasi otomatis sertifikat; tambahkan staging.domain.com ke monitor kedaluwarsa sertifikat agar tidak terulang.">Perbarui dan aktifkan rotasi otomatis sertifikat; tambahkan staging.domain.com ke monitor kedaluwarsa sertifikat agar tidak terulang.</div>
+            </div>
+          </div>
+          <div class="ss-msg-footer">
+            <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
+            <span class="ss-badge-sm ss-badge-conf">✓ 93%</span>
+            <span class="ss-badge-sm ss-badge-verify" title="5/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> <span data-en="Verified 5/5" data-id="Terverifikasi 5/5">Terverifikasi 5/5</span></span>
+            <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> <span data-en="Human Review" data-id="Tinjauan Manusia">Tinjauan Manusia</span></a>
+            <a href="/agentic-soc/inspector/" class="ss-badge-inspect" data-en="Inspect →" data-id="Periksa →">Periksa →</a>
+          </div>
+        </div>
+      </div>
+    </div><!-- /thread-web -->
+
+    <div class="ss-conv-thread" id="thread-endpoint" hidden>
+      <div class="ss-chat-welcome">
+        <div class="ss-chat-welcome__icon"><i class="ti ti-device-desktop" style="font-size:22px; color:#fff;"></i></div>
+        <h2 data-en="No conversation yet" data-id="Belum ada percakapan">Belum ada percakapan</h2>
+        <p data-en="Endpoint Security hasn't been scanned yet, so there's no investigation history for this domain. Ask a question below once endpoint data is available." data-id="Keamanan Endpoint belum dipindai, sehingga belum ada riwayat investigasi untuk domain ini. Ajukan pertanyaan di bawah setelah data endpoint tersedia.">Keamanan Endpoint belum dipindai, sehingga belum ada riwayat investigasi untuk domain ini. Ajukan pertanyaan di bawah setelah data endpoint tersedia.</p>
+      </div>
+    </div><!-- /thread-endpoint -->
+
+    </div><!-- /chat-messages -->
 
     <!-- Retention notice -->
     <div class="ss-notice ss-notice--warning" style="margin: 0 24px var(--ss-gap-sm);">
@@ -405,9 +762,11 @@
         </button>
       </div>
     </div>
+    </div><!-- /ss-chat-main -->
+  </div><!-- /ss-chat-layout -->
   </div>
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     function handleChatKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -424,6 +783,82 @@
       sendMessage();
     }
 
+    var currentConversation = 'network';
+
+    var CONVERSATIONS = {
+      network:  { en: 'SSH brute force — ssh.domain.com', id: 'Brute force SSH — ssh.domain.com', subEn: 'Is this an active attack?', subId: 'Apakah ini serangan aktif?', ref: 'CASE-2026-0417' },
+      email:    { en: 'DMARC policy missing on domain', id: 'Kebijakan DMARC hilang di domain', subEn: 'How do we fix this?', subId: 'Bagaimana cara memperbaikinya?', ref: 'CASE-2026-0416' },
+      identity: { en: '4 admin accounts without MFA', id: '4 akun admin tanpa MFA', subEn: 'Which accounts are affected?', subId: 'Akun mana saja yang terdampak?', ref: 'CASE-2026-0415' },
+      log:      { en: 'SIEM ingestion pipeline delayed 6h', id: 'Pipa ingesti SIEM tertunda 6 jam', subEn: 'Why is ingestion lagging?', subId: 'Mengapa ingesti tertunda?', ref: 'CASE-2026-0414' },
+      web:      { en: 'Expired TLS cert on staging subdomain', id: 'Sertifikat TLS kedaluwarsa di subdomain staging', subEn: 'Which cert, and how urgent?', subId: 'Sertifikat mana, seberapa mendesak?', ref: 'CASE-2026-0413' },
+      endpoint: { en: 'New conversation', id: 'Percakapan baru', subEn: 'Ask about alerts, threats, or request a root-cause analysis', subId: 'Tanyakan tentang alert, ancaman, atau minta analisis akar masalah', ref: null }
+    };
+
+    var conversationCounter = 0;
+
+    function switchConversation(key) {
+      if (!CONVERSATIONS[key]) return;
+      currentConversation = key;
+      const lang = localStorage.getItem('ss-lang') || 'id';
+
+      document.querySelectorAll('.ss-conv-thread').forEach(function(t) { t.hidden = (t.id !== 'thread-' + key); });
+      document.querySelectorAll('.ss-conv-item').forEach(function(item) {
+        item.classList.toggle('active', item.id === 'conv-item-' + key);
+      });
+
+      const title = document.getElementById('chat-header-title');
+      const sub = document.getElementById('chat-header-sub');
+      const conv = CONVERSATIONS[key];
+      if (title) title.textContent = lang === 'en' ? conv.en : conv.id;
+      if (sub) sub.textContent = lang === 'en' ? conv.subEn : conv.subId;
+
+      const messages = document.getElementById('chat-messages');
+      if (messages) messages.scrollTop = 0;
+
+      toggleConvSidebar(false);
+    }
+
+    function createNewConversation() {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      const ref = window.prompt(lang === 'en' ? 'Reference an incident ID? (optional, leave blank to skip)' : 'Rujuk ke ID insiden? (opsional, kosongkan untuk lewati)', '');
+
+      conversationCounter += 1;
+      const key = 'new-' + conversationCounter;
+      const label = lang === 'en' ? 'New conversation' : 'Percakapan baru';
+
+      CONVERSATIONS[key] = { en: label, id: label, subEn: 'Ask about alerts, threats, or request a root-cause analysis', subId: 'Tanyakan tentang alert, ancaman, atau minta analisis akar masalah', ref: ref ? ref.trim() : null };
+
+      const sidebar = document.getElementById('conv-sidebar');
+      const item = document.createElement('div');
+      item.className = 'ss-conv-item';
+      item.id = 'conv-item-' + key;
+      item.setAttribute('onclick', "switchConversation('" + key + "')");
+      item.innerHTML = `
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title">${escapeHtml(label)}</div>
+          <div class="ss-conv-item__empty">${lang === 'en' ? 'No messages yet' : 'Belum ada pesan'}</div>
+          ${CONVERSATIONS[key].ref ? `<div class="ss-conv-item__meta"><span class="ss-conv-item__ref">${escapeHtml(CONVERSATIONS[key].ref)}</span></div>` : ''}
+        </div>`;
+      sidebar.insertBefore(item, sidebar.children[1] || null);
+
+      const thread = document.createElement('div');
+      thread.className = 'ss-conv-thread';
+      thread.id = 'thread-' + key;
+      document.getElementById('chat-messages').appendChild(thread);
+
+      switchConversation(key);
+    }
+
+    function toggleConvSidebar(force) {
+      const sidebar = document.getElementById('conv-sidebar');
+      const scrim = document.getElementById('conv-sidebar-scrim');
+      if (!sidebar || !scrim) return;
+      const open = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', open);
+      scrim.classList.toggle('open', open);
+    }
+
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
@@ -432,7 +867,8 @@
       input.style.height = 'auto';
       document.getElementById('quick-chips').style.display = 'none';
 
-      const messages = document.getElementById('chat-messages');
+      const messages = document.getElementById('thread-' + currentConversation);
+      const scrollBox = document.getElementById('chat-messages');
       const lang = localStorage.getItem('ss-lang') || 'id';
 
       // User bubble
@@ -440,7 +876,7 @@
       userRow.className = 'ss-msg-row ss-msg-row--user';
       userRow.innerHTML = `<div class="ss-msg-bubble">${escapeHtml(text)}</div>`;
       messages.appendChild(userRow);
-      messages.scrollTop = messages.scrollHeight;
+      scrollBox.scrollTop = scrollBox.scrollHeight;
 
       // Typing indicator
       const typingRow = document.createElement('div');
@@ -451,7 +887,7 @@
         </div>
         <div class="ss-msg-bubble"><div class="ss-typing"><span></span><span></span><span></span></div></div>`;
       messages.appendChild(typingRow);
-      messages.scrollTop = messages.scrollHeight;
+      scrollBox.scrollTop = scrollBox.scrollHeight;
 
       setTimeout(() => {
         messages.removeChild(typingRow);
@@ -466,6 +902,18 @@
               <div class="ss-ai-section">
                 <div class="ss-ai-label">${lang === 'en' ? 'Summary' : 'Ringkasan'}</div>
                 <div class="ss-ai-body">${lang === 'en' ? 'Analysis complete. Based on current telemetry and threat intelligence, this requires immediate attention.' : 'Analisis selesai. Berdasarkan telemetri saat ini dan intelijen ancaman, ini memerlukan perhatian segera.'}</div>
+                <div class="ss-citation-chips">
+                  <span class="ss-citation-chip ss-citation-chip--internal" title="node_hash: 5c9e14af · tier: internal-telemetry">
+                    <i class="ti ti-server"></i> log:siem_query
+                  </span>
+                  <span class="ss-citation-chip ss-citation-chip--attck" title="node_hash: 2b7f0a91 · tier: knowledge-graph">
+                    <i class="ti ti-link"></i> attck:lookup
+                  </span>
+                </div>
+                <div class="ss-citation-coverage">
+                  <i class="ti ti-shield-check"></i>
+                  <span>${lang === 'en' ? '2 independent citations — meets ≥2 required' : '2 sitasi independen — memenuhi ≥2 yang diperlukan'}</span>
+                </div>
               </div>
               <div class="ss-ai-divider"></div>
               <div class="ss-ai-section">
@@ -474,14 +922,15 @@
               </div>
             </div>
             <div class="ss-msg-footer">
-              <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Qwen 2.5 7B</span>
+              <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
               <span class="ss-badge-sm ss-badge-conf">✓ 87%</span>
-              <span class="ss-badge-sm ss-badge-hitl"><i class="ti ti-alert-triangle"></i> ${lang === 'en' ? 'Human Review' : 'Tinjauan Manusia'}</span>
+              <span class="ss-badge-sm ss-badge-verify" title="4/5 self-consistency votes agree · judge model: PASS"><i class="ti ti-checks"></i> ${lang === 'en' ? 'Verified 4/5' : 'Terverifikasi 4/5'}</span>
+              <a href="/agentic-soc/ai-governance/" class="ss-badge-sm ss-badge-hitl" title="Human review here is message-level. For per-action policy on every tool call, see AI Governance."><i class="ti ti-alert-triangle"></i> ${lang === 'en' ? 'Human Review' : 'Tinjauan Manusia'}</a>
               <a href="/agentic-soc/inspector/" class="ss-badge-inspect">${lang === 'en' ? 'Inspect →' : 'Periksa →'}</a>
             </div>
           </div>`;
         messages.appendChild(aiRow);
-        messages.scrollTop = messages.scrollHeight;
+        scrollBox.scrollTop = scrollBox.scrollHeight;
       }, 1600);
     }
 
@@ -489,11 +938,84 @@
       return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
+    // Opens a dedicated conversation for one specific finding (e.g. from a Dashboard domain-modal row),
+    // creating it on first visit so each finding gets its own thread instead of sharing one.
+    function ensureFindingConversation(key, title, sev, dom) {
+      const lang = localStorage.getItem('ss-lang') || 'id';
+      if (CONVERSATIONS[key]) { switchConversation(key); return; }
+
+      CONVERSATIONS[key] = {
+        en: title, id: title,
+        subEn: 'Ask about this finding, or request a root-cause analysis',
+        subId: 'Tanyakan tentang temuan ini, atau minta analisis akar masalah',
+        ref: null
+      };
+
+      const sevClass = sev === 'critical' ? 'badge-critical' : 'badge-high';
+      const sevLabel = sev === 'critical' ? (lang === 'en' ? 'Critical' : 'Kritis') : (lang === 'en' ? 'High' : 'Tinggi');
+
+      const sidebar = document.getElementById('conv-sidebar');
+      const item = document.createElement('div');
+      item.className = 'ss-conv-item';
+      item.id = 'conv-item-' + key;
+      item.setAttribute('onclick', "switchConversation('" + key + "')");
+      item.innerHTML = `
+        <span class="ss-conv-item__icon"><i class="ti ti-message-circle"></i></span>
+        <div class="ss-conv-item__body">
+          <div class="ss-conv-item__title">${escapeHtml(title)}</div>
+          <div class="ss-conv-item__meta">
+            <span class="badge ${sevClass}" style="font-size:10px;padding:1px 6px;">${sevLabel}</span>
+            ${dom ? `<span class="ss-conv-item__ref">${escapeHtml(dom)}</span>` : ''}
+          </div>
+        </div>`;
+      sidebar.insertBefore(item, sidebar.children[1] || null);
+
+      const thread = document.createElement('div');
+      thread.className = 'ss-conv-thread';
+      thread.id = 'thread-' + key;
+      thread.innerHTML = `
+        <div class="ss-msg-row ss-msg-row--ai">
+          <div class="ss-msg-avatar"><i class="ti ti-shield" style="font-size:16px; color:#fff;"></i></div>
+          <div>
+            <div class="ss-msg-bubble">
+              <div class="ss-ai-section">
+                <div class="ss-ai-label">${lang === 'en' ? 'Finding' : 'Temuan'}</div>
+                <div class="ss-ai-body">
+                  <span class="badge ${sevClass}" style="font-size:10px;padding:1px 6px;margin-right:6px;">${sevLabel}</span>
+                  ${escapeHtml(title)}
+                </div>
+              </div>
+              <div class="ss-ai-divider"></div>
+              <div class="ss-ai-section">
+                <div class="ss-ai-label">${lang === 'en' ? 'Next step' : 'Langkah berikutnya'}</div>
+                <div class="ss-ai-body">${lang === 'en' ? 'Ask a question below to start the investigation for this specific finding.' : 'Ajukan pertanyaan di bawah untuk memulai investigasi temuan ini.'}</div>
+              </div>
+            </div>
+            <div class="ss-msg-footer">
+              <span class="ss-badge-sm ss-badge-model"><i class="ti ti-robot"></i> Sentinel SLM</span>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById('chat-messages').appendChild(thread);
+
+      switchConversation(key);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       setAudience('direktur');
       const lang = localStorage.getItem('ss-lang') || 'id';
       const ta = document.getElementById('chat-input');
       if (ta) ta.placeholder = lang === 'en' ? ta.dataset.enPlaceholder : ta.dataset.idPlaceholder;
+
+      const params = new URLSearchParams(window.location.search);
+      const convKey = params.get('conv');
+      const requestedDomain = params.get('domain');
+
+      if (convKey) {
+        ensureFindingConversation(convKey, params.get('t') || convKey, params.get('sev') || 'high', params.get('dom') || '');
+      } else if (requestedDomain && CONVERSATIONS[requestedDomain]) {
+        switchConversation(requestedDomain);
+      }
     });
   </script>
 </body>

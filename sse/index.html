@@ -1,11 +1,3 @@
-<script>
-(function() {
-  const sess = sessionStorage.getItem('ss-session');
-  if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
-  window.SS = JSON.parse(sess);
-  if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
-})();
-</script>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,10 +8,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
-  <link rel="stylesheet" href="/agentic-soc/sse/sse.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
+  <link rel="stylesheet" href="/agentic-soc/sse/sse.css?v=4">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
+  </script>
+  <script>
+    (function() {
+      var sess = sessionStorage.getItem('ss-session');
+      if (!sess) { window.location.replace('/agentic-soc/login/'); return; }
+      window.SS = JSON.parse(sess);
+      if (!window.SS.setupComplete) { window.location.replace('/agentic-soc/onboarding/'); }
+    })();
   </script>
 </head>
 <body>
@@ -53,18 +53,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item active" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Upgrade nudge (free tier only) -->
@@ -111,7 +120,7 @@
     <!-- Stats summary -->
     <div class="sse-stats-bar">
       <div class="sse-stat-card">
-        <div class="sse-stat-card__value">4</div>
+        <div class="sse-stat-card__value" id="stat-apps-count">9</div>
         <div class="sse-stat-card__label" data-en="Private apps connected" data-id="Aplikasi privat terhubung">Aplikasi privat terhubung</div>
       </div>
       <div class="sse-stat-card">
@@ -127,7 +136,7 @@
         <div class="sse-stat-card__label" data-en="DLP violations today" data-id="Pelanggaran DLP hari ini">Pelanggaran DLP hari ini</div>
       </div>
       <div class="sse-stat-card">
-        <div class="sse-stat-card__value">5</div>
+        <div class="sse-stat-card__value" id="stat-dlp-count">9</div>
         <div class="sse-stat-card__label" data-en="DLP rules active" data-id="Aturan DLP aktif">Aturan DLP aktif</div>
       </div>
     </div>
@@ -152,8 +161,24 @@
            data-en="Upgrade to MDR AI →" data-id="Upgrade ke MDR AI →">Upgrade ke MDR AI →</a>
       </div>
 
+      <!-- ── Tabs ─────────────────────────────────────────────────────────── -->
+      <div class="sse-tabs" role="tablist">
+        <button class="sse-tab active" id="sse-tab-apps" role="tab" aria-selected="true" aria-controls="sse-panel-apps" onclick="switchSseTab('apps')">
+          <i class="ti ti-building-community"></i>
+          <span data-en="Private App Access" data-id="Akses Aplikasi Privat">Akses Aplikasi Privat</span>
+        </button>
+        <button class="sse-tab" id="sse-tab-traffic" role="tab" aria-selected="false" aria-controls="sse-panel-traffic" onclick="switchSseTab('traffic')">
+          <i class="ti ti-network"></i>
+          <span data-en="Inline Traffic Inspection" data-id="Inspeksi Lalu Lintas Inline">Inspeksi Lalu Lintas Inline</span>
+        </button>
+        <button class="sse-tab" id="sse-tab-dlp" role="tab" aria-selected="false" aria-controls="sse-panel-dlp" onclick="switchSseTab('dlp')">
+          <i class="ti ti-shield-lock"></i>
+          <span data-en="Data Loss Prevention" data-id="Pencegahan Kebocoran Data">Pencegahan Kebocoran Data</span>
+        </button>
+      </div>
+
       <!-- ── Section 1: Private App Access ──────────────────────────────────── -->
-      <div class="sse-section">
+      <div class="sse-section sse-tab-panel" id="sse-panel-apps" role="tabpanel" aria-labelledby="sse-tab-apps">
         <div class="sse-section-header">
           <div class="sse-section-title">
             <div class="sse-section-icon"><i class="ti ti-building-community"></i></div>
@@ -162,9 +187,8 @@
             </div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            <button class="ss-btn-secondary" id="add-app-btn" disabled
-              title="Upgrade to MDR AI to add private apps"
-              data-en="+ Add app" data-id="+ Tambah aplikasi">+ Tambah aplikasi</button>
+            <button class="ss-btn-primary" onclick="openAddApp()"
+              data-en="+ Add App" data-id="+ Tambah Aplikasi">+ Tambah Aplikasi</button>
           </div>
         </div>
         <p class="sse-section-desc"
@@ -173,82 +197,43 @@
           Akses jaringan Zero Trust (ZTNA) berbasis identitas — pengguna terhubung ke aplikasi privat tanpa mengeksposnya ke internet publik.
         </p>
 
+        <!-- Toolbar -->
+        <div class="sse-table-toolbar">
+          <div class="sse-search-box">
+            <i class="ti ti-search"></i>
+            <input type="text" id="apps-search" placeholder="Cari aplikasi…" oninput="setSearch('apps', this.value)">
+          </div>
+          <select class="sse-filter-select" id="apps-filter" onchange="setFilter('apps', this.value)">
+            <option value="all" data-en="All Status" data-id="Semua Status">Semua Status</option>
+            <option value="active" data-en="Active" data-id="Aktif">Aktif</option>
+            <option value="protected" data-en="Protected" data-id="Dilindungi">Dilindungi</option>
+            <option value="reviewing" data-en="Reviewing" data-id="Ditinjau">Ditinjau</option>
+          </select>
+          <span style="margin-left:auto; font-size:12px; color:var(--ss-on-surface-variant);" id="apps-count"></span>
+        </div>
+
         <div class="ss-card" style="padding:0; overflow:hidden;">
-          <div class="sse-table-wrap">
-            <table class="sse-table">
-              <thead>
-                <tr>
-                  <th data-en="Application" data-id="Aplikasi">Aplikasi</th>
-                  <th data-en="Users Connected" data-id="Pengguna Terhubung">Pengguna Terhubung</th>
-                  <th data-en="Last Access" data-id="Akses Terakhir">Akses Terakhir</th>
-                  <th data-en="Status" data-id="Status">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="sse-app-name">Jira Internal</div>
-                    <div class="sse-app-domain">jira.internal.corp</div>
-                  </td>
-                  <td>
-                    <span style="font-weight:500;">47</span>
-                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
-                  </td>
-                  <td>
-                    <span class="sse-log-time" data-en="2 min ago" data-id="2 menit lalu">2 menit lalu</span>
-                  </td>
-                  <td><span class="badge badge-active" data-en="Active" data-id="Aktif">Aktif</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="sse-app-name">HR Portal</div>
-                    <div class="sse-app-domain">hr.internal.corp</div>
-                  </td>
-                  <td>
-                    <span style="font-weight:500;">12</span>
-                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
-                  </td>
-                  <td>
-                    <span class="sse-log-time" data-en="15 min ago" data-id="15 menit lalu">15 menit lalu</span>
-                  </td>
-                  <td><span class="badge badge-active" data-en="Active" data-id="Aktif">Aktif</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="sse-app-name">Finance Dashboard</div>
-                    <div class="sse-app-domain">finance.internal.corp</div>
-                  </td>
-                  <td>
-                    <span style="font-weight:500;">8</span>
-                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
-                  </td>
-                  <td>
-                    <span class="sse-log-time" data-en="1 hour ago" data-id="1 jam lalu">1 jam lalu</span>
-                  </td>
-                  <td><span class="badge badge-protected" data-en="Protected" data-id="Dilindungi">Dilindungi</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="sse-app-name">Legacy ERP</div>
-                    <div class="sse-app-domain">erp.internal.corp</div>
-                  </td>
-                  <td>
-                    <span style="font-weight:500;">23</span>
-                    <span style="font-size:12px;color:var(--ss-neutral-500);"> <span data-en="users" data-id="pengguna">pengguna</span></span>
-                  </td>
-                  <td>
-                    <span class="sse-log-time" data-en="3 hours ago" data-id="3 jam lalu">3 jam lalu</span>
-                  </td>
-                  <td><span class="badge badge-reviewing" data-en="Reviewing" data-id="Ditinjau">Ditinjau</span></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="sse-app-grid" id="apps-grid"></div>
+          <div class="sse-table-meta">
+            <div class="sse-per-page">
+              <span data-en="Show" data-id="Tampilkan">Tampilkan</span>
+              <select onchange="setPerPage('apps', +this.value)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+              </select>
+              <span data-en="items" data-id="item">item</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="apps-range" style="font-size:12px;color:var(--ss-on-surface-variant);"></span>
+              <div class="sse-pagination" id="apps-pagination"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ── Section 2: Inline Traffic Inspection ───────────────────────────── -->
-      <div class="sse-section">
+      <div class="sse-section sse-tab-panel" id="sse-panel-traffic" role="tabpanel" aria-labelledby="sse-tab-traffic" hidden>
         <div class="sse-section-header">
           <div class="sse-section-title">
             <div class="sse-section-icon" style="background:rgba(55,138,221,0.10);color:var(--ss-info);">
@@ -275,109 +260,55 @@
           Log real-time semua sesi yang diproxy — setiap koneksi diperiksa untuk ancaman, pelanggaran DLP, dan perilaku anomali.
         </p>
 
+        <!-- Toolbar -->
+        <div class="sse-table-toolbar">
+          <div class="sse-search-box">
+            <i class="ti ti-search"></i>
+            <input type="text" id="traffic-search" placeholder="Cari log…" oninput="setSearch('traffic', this.value)">
+          </div>
+          <select class="sse-filter-select" id="traffic-filter" onchange="setFilter('traffic', this.value)">
+            <option value="all" data-en="All Actions" data-id="Semua Tindakan">Semua Tindakan</option>
+            <option value="allow" data-en="Allow" data-id="Izinkan">Izinkan</option>
+            <option value="block" data-en="Block" data-id="Blokir">Blokir</option>
+            <option value="inspect" data-en="Inspect" data-id="Periksa">Periksa</option>
+          </select>
+          <span style="margin-left:auto; font-size:12px; color:var(--ss-on-surface-variant);" id="traffic-count"></span>
+        </div>
+
         <div class="ss-card" style="padding:0; overflow:hidden;">
-          <div class="sse-table-wrap">
-            <table class="sse-table">
-              <thead>
-                <tr>
-                  <th data-en="Time" data-id="Waktu">Waktu</th>
-                  <th data-en="User" data-id="Pengguna">Pengguna</th>
-                  <th data-en="Destination" data-id="Tujuan">Tujuan</th>
-                  <th data-en="Action" data-id="Tindakan">Tindakan</th>
-                  <th data-en="Reason" data-id="Alasan">Alasan</th>
-                </tr>
-              </thead>
-              <tbody id="traffic-log-body">
-                <tr>
-                  <td class="sse-log-time">14:32</td>
-                  <td class="sse-log-user">rudi@contoh.co.id</td>
-                  <td class="sse-log-dest">jira.internal.corp</td>
-                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
-                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:31</td>
-                  <td class="sse-log-user">sari@contoh.co.id</td>
-                  <td class="sse-log-dest">suspicious-site.com</td>
-                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
-                  <td class="sse-log-reason" data-en="DLP policy: external upload blocked" data-id="Kebijakan DLP: unggahan eksternal diblokir">Kebijakan DLP: unggahan eksternal diblokir</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:30</td>
-                  <td class="sse-log-user">budi@contoh.co.id</td>
-                  <td class="sse-log-dest">finance.internal.corp</td>
-                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
-                  <td class="sse-log-reason" data-en="Identity verified + MFA" data-id="Identitas terverifikasi + MFA">Identitas terverifikasi + MFA</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:29</td>
-                  <td class="sse-log-user">unknown@contoh.co.id</td>
-                  <td class="sse-log-dest">api.external-service.com</td>
-                  <td><span class="badge badge-inspect" data-en="Inspect" data-id="Periksa">Periksa</span></td>
-                  <td class="sse-log-reason" data-en="Anomalous data volume" data-id="Volume data anomali">Volume data anomali</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:28</td>
-                  <td class="sse-log-user">rudi@contoh.co.id</td>
-                  <td class="sse-log-dest">hr.internal.corp</td>
-                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
-                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:27</td>
-                  <td class="sse-log-user">sari@contoh.co.id</td>
-                  <td class="sse-log-dest">dropbox.com</td>
-                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
-                  <td class="sse-log-reason" data-en="DLP: unauthorized cloud storage" data-id="DLP: penyimpanan cloud tidak diizinkan">DLP: penyimpanan cloud tidak diizinkan</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:26</td>
-                  <td class="sse-log-user">admin@contoh.co.id</td>
-                  <td class="sse-log-dest">erp.internal.corp</td>
-                  <td><span class="badge badge-inspect" data-en="Inspect" data-id="Periksa">Periksa</span></td>
-                  <td class="sse-log-reason" data-en="First-time access" data-id="Akses pertama kali">Akses pertama kali</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:25</td>
-                  <td class="sse-log-user">budi@contoh.co.id</td>
-                  <td class="sse-log-dest">suspicious-site.com</td>
-                  <td><span class="badge badge-block" data-en="Block" data-id="Blokir">Blokir</span></td>
-                  <td class="sse-log-reason" data-en="Malware indicator" data-id="Indikator malware">Indikator malware</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:24</td>
-                  <td class="sse-log-user">rudi@contoh.co.id</td>
-                  <td class="sse-log-dest">api.external-service.com</td>
-                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
-                  <td class="sse-log-reason" data-en="Approved app" data-id="Aplikasi disetujui">Aplikasi disetujui</td>
-                </tr>
-                <tr>
-                  <td class="sse-log-time">14:23</td>
-                  <td class="sse-log-user">sari@contoh.co.id</td>
-                  <td class="sse-log-dest">finance.internal.corp</td>
-                  <td><span class="badge badge-allow" data-en="Allow" data-id="Izinkan">Izinkan</span></td>
-                  <td class="sse-log-reason" data-en="Identity verified" data-id="Identitas terverifikasi">Identitas terverifikasi</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="sse-traffic-feed" id="traffic-feed"></div>
+          <div class="sse-table-meta">
+            <div class="sse-per-page">
+              <span data-en="Show" data-id="Tampilkan">Tampilkan</span>
+              <select onchange="setPerPage('traffic', +this.value)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+              </select>
+              <span data-en="items" data-id="item">item</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="traffic-range" style="font-size:12px;color:var(--ss-on-surface-variant);"></span>
+              <div class="sse-pagination" id="traffic-pagination"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ── Section 3: Data Loss Prevention ───────────────────────────────── -->
-      <div class="sse-section">
+      <div class="sse-section sse-tab-panel" id="sse-panel-dlp" role="tabpanel" aria-labelledby="sse-tab-dlp" hidden>
         <div class="sse-section-header">
           <div class="sse-section-title">
             <div class="sse-section-icon" style="background:rgba(239,159,39,0.12);color:var(--ss-warning);">
-              <i class="ti ti-database-lock"></i>
+              <i class="ti ti-shield-lock"></i>
             </div>
             <div>
               <h2 data-en="Data Loss Prevention (DLP)" data-id="Pencegahan Kebocoran Data (DLP)">Pencegahan Kebocoran Data (DLP)</h2>
             </div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            <button class="ss-btn-secondary" disabled
-              data-en="+ Add rule" data-id="+ Tambah aturan">+ Tambah aturan</button>
+            <button class="ss-btn-primary" onclick="openAddRule()"
+              data-en="+ Add Rule" data-id="+ Tambah Aturan">+ Tambah Aturan</button>
           </div>
         </div>
         <p class="sse-section-desc"
@@ -386,132 +317,38 @@
           Aturan kebijakan ditegakkan secara inline — pelanggaran diblokir atau ditandai secara real-time sebelum data keluar dari perimeter.
         </p>
 
+        <!-- Toolbar -->
+        <div class="sse-table-toolbar">
+          <div class="sse-search-box">
+            <i class="ti ti-search"></i>
+            <input type="text" id="dlp-search" placeholder="Cari aturan…" oninput="setSearch('dlp', this.value)">
+          </div>
+          <select class="sse-filter-select" id="dlp-filter" onchange="setFilter('dlp', this.value)">
+            <option value="all" data-en="All Actions" data-id="Semua Tindakan">Semua Tindakan</option>
+            <option value="block" data-en="Block" data-id="Blokir">Blokir</option>
+            <option value="inspect" data-en="Inspect" data-id="Periksa">Periksa</option>
+            <option value="alert" data-en="Alert" data-id="Peringatan">Peringatan</option>
+            <option value="mfa" data-en="Require MFA" data-id="Wajib MFA">Wajib MFA</option>
+          </select>
+          <span style="margin-left:auto; font-size:12px; color:var(--ss-on-surface-variant);" id="dlp-count"></span>
+        </div>
+
         <div class="ss-card" style="padding:0; overflow:hidden;">
-          <div class="sse-dlp-list">
-
-            <!-- Rule 1 -->
-            <div class="sse-dlp-rule">
-              <div class="sse-dlp-rule__toggle">
-                <input type="checkbox" class="sse-toggle" checked aria-label="Block external cloud upload">
-              </div>
-              <div class="sse-dlp-rule__body">
-                <div class="sse-dlp-rule__name"
-                     data-en="Block external cloud upload"
-                     data-id="Blokir unggahan cloud eksternal">Blokir unggahan cloud eksternal</div>
-                <div class="sse-dlp-rule__desc"
-                     data-en="Prevent uploads to non-approved cloud storage (Dropbox, WeTransfer, etc.)"
-                     data-id="Cegah unggahan ke penyimpanan cloud yang tidak disetujui (Dropbox, WeTransfer, dll.)">
-                  Cegah unggahan ke penyimpanan cloud yang tidak disetujui (Dropbox, WeTransfer, dll.)
-                </div>
-              </div>
-              <div class="sse-dlp-rule__action">
-                <span class="sse-action-tag sse-action-tag--block">
-                  <i class="ti ti-ban" style="font-size:10px;"></i>
-                  <span data-en="Block" data-id="Blokir">Blokir</span>
-                </span>
-              </div>
+          <div class="sse-dlp-list" id="dlp-list"></div>
+          <div class="sse-table-meta">
+            <div class="sse-per-page">
+              <span data-en="Show" data-id="Tampilkan">Tampilkan</span>
+              <select onchange="setPerPage('dlp', +this.value)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+              </select>
+              <span data-en="items" data-id="item">item</span>
             </div>
-
-            <!-- Rule 2 -->
-            <div class="sse-dlp-rule">
-              <div class="sse-dlp-rule__toggle">
-                <input type="checkbox" class="sse-toggle" checked aria-label="Flag large data transfers">
-              </div>
-              <div class="sse-dlp-rule__body">
-                <div class="sse-dlp-rule__name"
-                     data-en="Flag large data transfers"
-                     data-id="Tandai transfer data besar">Tandai transfer data besar</div>
-                <div class="sse-dlp-rule__desc"
-                     data-en="Alert when &gt;50 MB transferred to external destinations"
-                     data-id="Beri peringatan jika &gt;50 MB ditransfer ke tujuan eksternal">
-                  Beri peringatan jika &gt;50 MB ditransfer ke tujuan eksternal
-                </div>
-              </div>
-              <div class="sse-dlp-rule__action" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">
-                <span class="sse-action-tag sse-action-tag--inspect">
-                  <i class="ti ti-search" style="font-size:10px;"></i>
-                  <span data-en="Inspect" data-id="Periksa">Periksa</span>
-                </span>
-                <span class="sse-action-tag sse-action-tag--alert">
-                  <i class="ti ti-bell" style="font-size:10px;"></i>
-                  <span data-en="Alert" data-id="Peringatan">Peringatan</span>
-                </span>
-              </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="dlp-range" style="font-size:12px;color:var(--ss-on-surface-variant);"></span>
+              <div class="sse-pagination" id="dlp-pagination"></div>
             </div>
-
-            <!-- Rule 3 -->
-            <div class="sse-dlp-rule">
-              <div class="sse-dlp-rule__toggle">
-                <input type="checkbox" class="sse-toggle" checked aria-label="Restrict finance data">
-              </div>
-              <div class="sse-dlp-rule__body">
-                <div class="sse-dlp-rule__name"
-                     data-en="Restrict finance data"
-                     data-id="Batasi data keuangan">Batasi data keuangan</div>
-                <div class="sse-dlp-rule__desc"
-                     data-en="Block access to finance.internal.corp from unverified devices"
-                     data-id="Blokir akses ke finance.internal.corp dari perangkat yang tidak terverifikasi">
-                  Blokir akses ke finance.internal.corp dari perangkat yang tidak terverifikasi
-                </div>
-              </div>
-              <div class="sse-dlp-rule__action">
-                <span class="sse-action-tag sse-action-tag--block">
-                  <i class="ti ti-ban" style="font-size:10px;"></i>
-                  <span data-en="Block" data-id="Blokir">Blokir</span>
-                </span>
-              </div>
-            </div>
-
-            <!-- Rule 4 -->
-            <div class="sse-dlp-rule">
-              <div class="sse-dlp-rule__toggle">
-                <input type="checkbox" class="sse-toggle" checked aria-label="Credit card number detection">
-              </div>
-              <div class="sse-dlp-rule__body">
-                <div class="sse-dlp-rule__name"
-                     data-en="Credit card number detection"
-                     data-id="Deteksi nomor kartu kredit">Deteksi nomor kartu kredit</div>
-                <div class="sse-dlp-rule__desc"
-                     data-en="Scan outbound traffic for PAN data (Primary Account Number)"
-                     data-id="Pindai lalu lintas keluar untuk data PAN (Primary Account Number)">
-                  Pindai lalu lintas keluar untuk data PAN (Primary Account Number)
-                </div>
-              </div>
-              <div class="sse-dlp-rule__action" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">
-                <span class="sse-action-tag sse-action-tag--block">
-                  <i class="ti ti-ban" style="font-size:10px;"></i>
-                  <span data-en="Block" data-id="Blokir">Blokir</span>
-                </span>
-                <span class="sse-action-tag sse-action-tag--alert">
-                  <i class="ti ti-bell" style="font-size:10px;"></i>
-                  <span data-en="Alert" data-id="Peringatan">Peringatan</span>
-                </span>
-              </div>
-            </div>
-
-            <!-- Rule 5 -->
-            <div class="sse-dlp-rule">
-              <div class="sse-dlp-rule__toggle">
-                <input type="checkbox" class="sse-toggle" checked aria-label="Enforce MFA for admin apps">
-              </div>
-              <div class="sse-dlp-rule__body">
-                <div class="sse-dlp-rule__name"
-                     data-en="Enforce MFA for admin apps"
-                     data-id="Wajibkan MFA untuk aplikasi admin">Wajibkan MFA untuk aplikasi admin</div>
-                <div class="sse-dlp-rule__desc"
-                     data-en="Require multi-factor authentication before accessing admin applications"
-                     data-id="Wajibkan autentikasi multi-faktor sebelum mengakses aplikasi admin">
-                  Wajibkan autentikasi multi-faktor sebelum mengakses aplikasi admin
-                </div>
-              </div>
-              <div class="sse-dlp-rule__action">
-                <span class="sse-action-tag sse-action-tag--mfa">
-                  <i class="ti ti-shield-check" style="font-size:10px;"></i>
-                  <span data-en="Require MFA" data-id="Wajib MFA">Wajib MFA</span>
-                </span>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>
@@ -520,7 +357,253 @@
 
   </div><!-- end ss-page -->
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- MODALS                                                                    -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+
+  <!-- Modal 1: Add App -->
+  <div class="sse-modal-overlay" id="modal-add-app" hidden onclick="handleOverlayClick(event,'modal-add-app')">
+    <div class="sse-modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-app-title">
+      <div class="sse-modal__header">
+        <span class="sse-modal__title" id="modal-add-app-title" data-en="Add App" data-id="Tambah Aplikasi">Tambah Aplikasi</span>
+        <button class="sse-modal__close" onclick="closeModal('modal-add-app')" aria-label="Close">×</button>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="App Name *" data-id="Nama Aplikasi *">Nama Aplikasi *</label>
+        <input class="sse-form-input" id="app-form-name" type="text" required placeholder="e.g. Finance Dashboard">
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Internal URL / Domain *" data-id="URL / Domain Internal *">URL / Domain Internal *</label>
+        <input class="sse-form-input" id="app-form-domain" type="text" required placeholder="e.g. finance.internal.corp">
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Access Groups" data-id="Grup Akses">Grup Akses</label>
+        <input class="sse-form-input" id="app-form-groups" type="text" placeholder="e.g. finance-team, admin">
+        <div class="sse-form-hint" data-en="Comma-separated group names" data-id="Nama grup dipisahkan koma">Nama grup dipisahkan koma</div>
+      </div>
+      <div class="sse-form-row">
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Authentication" data-id="Autentikasi">Autentikasi</label>
+          <select class="sse-form-select" id="app-form-auth">
+            <option value="sso" data-en="SSO Only" data-id="SSO Saja">SSO Saja</option>
+            <option value="sso_mfa" data-en="SSO + MFA Required" data-id="SSO + MFA Wajib">SSO + MFA Wajib</option>
+            <option value="cert" data-en="Certificate" data-id="Sertifikat">Sertifikat</option>
+          </select>
+        </div>
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Inspection Level" data-id="Level Inspeksi">Level Inspeksi</label>
+          <select class="sse-form-select" id="app-form-inspection">
+            <option value="standard" data-en="Standard" data-id="Standar">Standar</option>
+            <option value="dpi" data-en="Deep Packet Inspection" data-id="Inspeksi Paket Dalam">Inspeksi Paket Dalam</option>
+            <option value="bypass" data-en="Bypass" data-id="Lewati">Lewati</option>
+          </select>
+        </div>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Status" data-id="Status">Status</label>
+        <div class="sse-chip-group" id="app-form-status-chips">
+          <span class="sse-chip active" data-value="active" onclick="toggleChipSingle(this,'app-form-status-chips')" data-en="Active" data-id="Aktif">Aktif</span>
+          <span class="sse-chip" data-value="protected" onclick="toggleChipSingle(this,'app-form-status-chips')" data-en="Protected" data-id="Dilindungi">Dilindungi</span>
+          <span class="sse-chip" data-value="reviewing" onclick="toggleChipSingle(this,'app-form-status-chips')" data-en="Reviewing" data-id="Ditinjau">Ditinjau</span>
+        </div>
+      </div>
+      <div class="sse-modal__footer">
+        <button class="ss-btn-ghost" onclick="closeModal('modal-add-app')" data-en="Cancel" data-id="Batal">Batal</button>
+        <button class="ss-btn-primary" onclick="saveApp(false)" data-en="Add App" data-id="Tambah Aplikasi">Tambah Aplikasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Add DLP Rule -->
+  <div class="sse-modal-overlay" id="modal-add-rule" hidden onclick="handleOverlayClick(event,'modal-add-rule')">
+    <div class="sse-modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-rule-title">
+      <div class="sse-modal__header">
+        <span class="sse-modal__title" id="modal-add-rule-title" data-en="Add DLP Rule" data-id="Tambah Aturan DLP">Tambah Aturan DLP</span>
+        <button class="sse-modal__close" onclick="closeModal('modal-add-rule')" aria-label="Close">×</button>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Rule Name *" data-id="Nama Aturan *">Nama Aturan *</label>
+        <input class="sse-form-input" id="rule-form-name" type="text" required placeholder="e.g. Block PAN data exfiltration">
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Description" data-id="Deskripsi">Deskripsi</label>
+        <textarea class="sse-form-textarea" id="rule-form-desc" placeholder="Describe what this rule does…"></textarea>
+      </div>
+      <div class="sse-form-row">
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Pattern Type" data-id="Tipe Pola">Tipe Pola</label>
+          <select class="sse-form-select" id="rule-form-pattern-type" onchange="toggleCustomPattern(this.value, 'add')">
+            <option value="custom_regex" data-en="Custom Regex" data-id="Regex Kustom">Regex Kustom</option>
+            <option value="pan" data-en="Credit Card (PAN)" data-id="Kartu Kredit (PAN)">Kartu Kredit (PAN)</option>
+            <option value="large_file" data-en="Large File Transfer" data-id="Transfer File Besar">Transfer File Besar</option>
+            <option value="keyword" data-en="Keyword Match" data-id="Pencocokan Kata Kunci">Pencocokan Kata Kunci</option>
+            <option value="extension" data-en="File Extension" data-id="Ekstensi File">Ekstensi File</option>
+          </select>
+        </div>
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Applies To" data-id="Berlaku Untuk">Berlaku Untuk</label>
+          <select class="sse-form-select" id="rule-form-applies">
+            <option value="all" data-en="All Traffic" data-id="Semua Lalu Lintas">Semua Lalu Lintas</option>
+            <option value="specific" data-en="Specific Apps" data-id="Aplikasi Tertentu">Aplikasi Tertentu</option>
+            <option value="outbound" data-en="Outbound Only" data-id="Hanya Keluar">Hanya Keluar</option>
+            <option value="inbound" data-en="Inbound Only" data-id="Hanya Masuk">Hanya Masuk</option>
+          </select>
+        </div>
+      </div>
+      <div class="sse-form-group" id="add-custom-pattern-group">
+        <label class="sse-form-label" data-en="Custom Pattern" data-id="Pola Kustom">Pola Kustom</label>
+        <input class="sse-form-input" id="rule-form-pattern" type="text" placeholder="e.g. \d{16}">
+        <div class="sse-form-hint" data-en="Regular expression pattern" data-id="Pola ekspresi reguler">Pola ekspresi reguler</div>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Action (select all that apply)" data-id="Tindakan (pilih yang berlaku)">Tindakan (pilih yang berlaku)</label>
+        <div class="sse-chip-group" id="rule-form-action-chips">
+          <span class="sse-chip" data-value="block" onclick="toggleChipMulti(this)" data-en="Block" data-id="Blokir">Blokir</span>
+          <span class="sse-chip" data-value="inspect" onclick="toggleChipMulti(this)" data-en="Inspect" data-id="Periksa">Periksa</span>
+          <span class="sse-chip" data-value="alert" onclick="toggleChipMulti(this)" data-en="Alert" data-id="Peringatan">Peringatan</span>
+          <span class="sse-chip" data-value="mfa" onclick="toggleChipMulti(this)" data-en="Require MFA" data-id="Wajib MFA">Wajib MFA</span>
+        </div>
+      </div>
+      <div class="sse-modal__footer">
+        <button class="ss-btn-ghost" onclick="closeModal('modal-add-rule')" data-en="Cancel" data-id="Batal">Batal</button>
+        <button class="ss-btn-primary" onclick="saveRule(false)" data-en="Add Rule" data-id="Tambah Aturan">Tambah Aturan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Edit App -->
+  <div class="sse-modal-overlay" id="modal-edit-app" hidden onclick="handleOverlayClick(event,'modal-edit-app')">
+    <div class="sse-modal" role="dialog" aria-modal="true" aria-labelledby="modal-edit-app-title">
+      <div class="sse-modal__header">
+        <span class="sse-modal__title" id="modal-edit-app-title" data-en="Edit App / Edit Aplikasi" data-id="Edit Aplikasi / Edit App">Edit Aplikasi</span>
+        <button class="sse-modal__close" onclick="closeModal('modal-edit-app')" aria-label="Close">×</button>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="App Name *" data-id="Nama Aplikasi *">Nama Aplikasi *</label>
+        <input class="sse-form-input" id="edit-app-form-name" type="text" required>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Internal URL / Domain *" data-id="URL / Domain Internal *">URL / Domain Internal *</label>
+        <input class="sse-form-input" id="edit-app-form-domain" type="text" required>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Access Groups" data-id="Grup Akses">Grup Akses</label>
+        <input class="sse-form-input" id="edit-app-form-groups" type="text" placeholder="e.g. finance-team, admin">
+        <div class="sse-form-hint" data-en="Comma-separated group names" data-id="Nama grup dipisahkan koma">Nama grup dipisahkan koma</div>
+      </div>
+      <div class="sse-form-row">
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Authentication" data-id="Autentikasi">Autentikasi</label>
+          <select class="sse-form-select" id="edit-app-form-auth">
+            <option value="sso" data-en="SSO Only" data-id="SSO Saja">SSO Saja</option>
+            <option value="sso_mfa" data-en="SSO + MFA Required" data-id="SSO + MFA Wajib">SSO + MFA Wajib</option>
+            <option value="cert" data-en="Certificate" data-id="Sertifikat">Sertifikat</option>
+          </select>
+        </div>
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Inspection Level" data-id="Level Inspeksi">Level Inspeksi</label>
+          <select class="sse-form-select" id="edit-app-form-inspection">
+            <option value="standard" data-en="Standard" data-id="Standar">Standar</option>
+            <option value="dpi" data-en="Deep Packet Inspection" data-id="Inspeksi Paket Dalam">Inspeksi Paket Dalam</option>
+            <option value="bypass" data-en="Bypass" data-id="Lewati">Lewati</option>
+          </select>
+        </div>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Status" data-id="Status">Status</label>
+        <div class="sse-chip-group" id="edit-app-form-status-chips">
+          <span class="sse-chip" data-value="active" onclick="toggleChipSingle(this,'edit-app-form-status-chips')" data-en="Active" data-id="Aktif">Aktif</span>
+          <span class="sse-chip" data-value="protected" onclick="toggleChipSingle(this,'edit-app-form-status-chips')" data-en="Protected" data-id="Dilindungi">Dilindungi</span>
+          <span class="sse-chip" data-value="reviewing" onclick="toggleChipSingle(this,'edit-app-form-status-chips')" data-en="Reviewing" data-id="Ditinjau">Ditinjau</span>
+        </div>
+      </div>
+      <input type="hidden" id="edit-app-form-id">
+      <div class="sse-modal__footer">
+        <button class="ss-btn-ghost" onclick="closeModal('modal-edit-app')" data-en="Cancel" data-id="Batal">Batal</button>
+        <button class="ss-btn-primary" onclick="saveApp(true)" data-en="Save Changes" data-id="Simpan Perubahan">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Edit DLP Rule -->
+  <div class="sse-modal-overlay" id="modal-edit-rule" hidden onclick="handleOverlayClick(event,'modal-edit-rule')">
+    <div class="sse-modal" role="dialog" aria-modal="true" aria-labelledby="modal-edit-rule-title">
+      <div class="sse-modal__header">
+        <span class="sse-modal__title" id="modal-edit-rule-title" data-en="Edit Rule / Edit Aturan" data-id="Edit Aturan / Edit Rule">Edit Aturan</span>
+        <button class="sse-modal__close" onclick="closeModal('modal-edit-rule')" aria-label="Close">×</button>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Rule Name *" data-id="Nama Aturan *">Nama Aturan *</label>
+        <input class="sse-form-input" id="edit-rule-form-name" type="text" required>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Description" data-id="Deskripsi">Deskripsi</label>
+        <textarea class="sse-form-textarea" id="edit-rule-form-desc"></textarea>
+      </div>
+      <div class="sse-form-row">
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Pattern Type" data-id="Tipe Pola">Tipe Pola</label>
+          <select class="sse-form-select" id="edit-rule-form-pattern-type" onchange="toggleCustomPattern(this.value, 'edit')">
+            <option value="custom_regex" data-en="Custom Regex" data-id="Regex Kustom">Regex Kustom</option>
+            <option value="pan" data-en="Credit Card (PAN)" data-id="Kartu Kredit (PAN)">Kartu Kredit (PAN)</option>
+            <option value="large_file" data-en="Large File Transfer" data-id="Transfer File Besar">Transfer File Besar</option>
+            <option value="keyword" data-en="Keyword Match" data-id="Pencocokan Kata Kunci">Pencocokan Kata Kunci</option>
+            <option value="extension" data-en="File Extension" data-id="Ekstensi File">Ekstensi File</option>
+          </select>
+        </div>
+        <div class="sse-form-group">
+          <label class="sse-form-label" data-en="Applies To" data-id="Berlaku Untuk">Berlaku Untuk</label>
+          <select class="sse-form-select" id="edit-rule-form-applies">
+            <option value="all" data-en="All Traffic" data-id="Semua Lalu Lintas">Semua Lalu Lintas</option>
+            <option value="specific" data-en="Specific Apps" data-id="Aplikasi Tertentu">Aplikasi Tertentu</option>
+            <option value="outbound" data-en="Outbound Only" data-id="Hanya Keluar">Hanya Keluar</option>
+            <option value="inbound" data-en="Inbound Only" data-id="Hanya Masuk">Hanya Masuk</option>
+          </select>
+        </div>
+      </div>
+      <div class="sse-form-group" id="edit-custom-pattern-group">
+        <label class="sse-form-label" data-en="Custom Pattern" data-id="Pola Kustom">Pola Kustom</label>
+        <input class="sse-form-input" id="edit-rule-form-pattern" type="text" placeholder="e.g. \d{16}">
+        <div class="sse-form-hint" data-en="Regular expression pattern" data-id="Pola ekspresi reguler">Pola ekspresi reguler</div>
+      </div>
+      <div class="sse-form-group">
+        <label class="sse-form-label" data-en="Action (select all that apply)" data-id="Tindakan (pilih yang berlaku)">Tindakan (pilih yang berlaku)</label>
+        <div class="sse-chip-group" id="edit-rule-form-action-chips">
+          <span class="sse-chip" data-value="block" onclick="toggleChipMulti(this)" data-en="Block" data-id="Blokir">Blokir</span>
+          <span class="sse-chip" data-value="inspect" onclick="toggleChipMulti(this)" data-en="Inspect" data-id="Periksa">Periksa</span>
+          <span class="sse-chip" data-value="alert" onclick="toggleChipMulti(this)" data-en="Alert" data-id="Peringatan">Peringatan</span>
+          <span class="sse-chip" data-value="mfa" onclick="toggleChipMulti(this)" data-en="Require MFA" data-id="Wajib MFA">Wajib MFA</span>
+        </div>
+      </div>
+      <input type="hidden" id="edit-rule-form-id">
+      <div class="sse-modal__footer">
+        <button class="ss-btn-ghost" onclick="closeModal('modal-edit-rule')" data-en="Cancel" data-id="Batal">Batal</button>
+        <button class="ss-btn-primary" onclick="saveRule(true)" data-en="Save Changes" data-id="Simpan Perubahan">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Delete Confirmation -->
+  <div class="sse-modal-overlay" id="modal-confirm-delete" hidden onclick="handleOverlayClick(event,'modal-confirm-delete')">
+    <div class="sse-modal sse-modal--danger" style="max-width:400px;" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+      <div class="sse-modal__header" style="justify-content:flex-end; margin-bottom:0;">
+        <button class="sse-modal__close" onclick="closeModal('modal-confirm-delete')" aria-label="Close">×</button>
+      </div>
+      <div class="sse-modal-delete-body">
+        <div class="sse-modal-delete-icon">
+          <i class="ti ti-trash"></i>
+        </div>
+        <h2 class="sse-modal__title" id="modal-delete-title" style="text-align:center;" data-en="Delete / Hapus" data-id="Hapus / Delete">Hapus</h2>
+        <p data-en="This action cannot be undone." data-id="Tindakan ini tidak dapat dibatalkan.">Tindakan ini tidak dapat dibatalkan.</p>
+      </div>
+      <div class="sse-modal__footer" style="justify-content:center;">
+        <button class="ss-btn-ghost" onclick="closeModal('modal-confirm-delete')" data-en="Cancel" data-id="Batal">Batal</button>
+        <button class="ss-btn-danger" onclick="confirmDelete()" data-en="Delete" data-id="Hapus">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     // ── Active nav item ────────────────────────────────────────────────────────
     document.querySelectorAll('.ss-nav__item').forEach(function(el) {
@@ -530,27 +613,23 @@
     if (sseLink) sseLink.classList.add('active');
 
     // ── Lock gate logic ────────────────────────────────────────────────────────
-    // Only mdr_ai sees full content; free / sprint / mdr see the lock overlay
     (function() {
       var tier = (window.SS && window.SS.tier) ? window.SS.tier : 'free';
       var gate = document.getElementById('sse-lock-gate');
       var wrap = document.getElementById('sse-content-wrap');
 
       if (tier === 'mdr_ai') {
-        // Unlock — hide gate, remove blur / pointer restrictions
         if (gate) gate.hidden = true;
         if (wrap) {
           wrap.style.position = '';
           wrap.style.minHeight = '';
         }
       } else {
-        // Lock — gate is shown (default visible), blur content beneath
         if (wrap) {
           wrap.style.position = 'relative';
           wrap.style.overflow = 'hidden';
           wrap.style.minHeight = '420px';
         }
-        // Disable toggles and buttons inside the locked area
         wrap && wrap.querySelectorAll('input, button').forEach(function(el) {
           el.disabled = true;
           el.style.pointerEvents = 'none';
@@ -558,11 +637,24 @@
       }
     })();
 
-    // ── Refresh log (no-op stub for locked tiers) ──────────────────────────────
+    // ── Tab switching ───────────────────────────────────────────────────────────
+    function switchSseTab(name) {
+      ['apps', 'traffic', 'dlp'].forEach(function(key) {
+        var tab = document.getElementById('sse-tab-' + key);
+        var panel = document.getElementById('sse-panel-' + key);
+        var active = key === name;
+        if (tab) {
+          tab.classList.toggle('active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+        if (panel) panel.hidden = !active;
+      });
+    }
+
+    // ── Refresh log ────────────────────────────────────────────────────────────
     function refreshLog() {
       var tier = (window.SS && window.SS.tier) ? window.SS.tier : 'free';
       if (tier !== 'mdr_ai') return;
-      // In a real app this would re-fetch; here just flash the indicator
       var btn = document.querySelector('[onclick="refreshLog()"]');
       if (btn) {
         btn.disabled = true;
@@ -574,9 +666,650 @@
       }
     }
 
-    // ── Apply language ─────────────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    // DATA
+    // ══════════════════════════════════════════════════════════════════════════
+
+    var appsData = [
+      { id: 'jira',     name: 'Jira Internal',      domain: 'jira.internal.corp',    users: 47, lastAccess: '2 menit lalu',   lastAccessEn: '2 min ago',     status: 'active',    auth: 'sso',     inspection: 'standard', groups: 'dev-team, admin' },
+      { id: 'hr',       name: 'HR Portal',           domain: 'hr.internal.corp',      users: 12, lastAccess: '15 menit lalu',  lastAccessEn: '15 min ago',    status: 'active',    auth: 'sso_mfa', inspection: 'standard', groups: 'hr-team' },
+      { id: 'finance',  name: 'Finance Dashboard',   domain: 'finance.internal.corp', users: 8,  lastAccess: '1 jam lalu',     lastAccessEn: '1 hour ago',    status: 'protected', auth: 'sso_mfa', inspection: 'dpi',      groups: 'finance-team' },
+      { id: 'erp',      name: 'Legacy ERP',          domain: 'erp.internal.corp',     users: 23, lastAccess: '3 jam lalu',     lastAccessEn: '3 hours ago',   status: 'reviewing', auth: 'sso',     inspection: 'standard', groups: 'all-staff' },
+      { id: 'apigw',    name: 'Dev API Gateway',     domain: 'api-gw.internal.corp',  users: 31, lastAccess: '5 menit lalu',   lastAccessEn: '5 min ago',     status: 'active',    auth: 'cert',    inspection: 'dpi',      groups: 'dev-team' },
+      { id: 'gitlab',   name: 'GitLab Internal',     domain: 'git.internal.corp',     users: 19, lastAccess: '22 menit lalu',  lastAccessEn: '22 min ago',    status: 'active',    auth: 'sso_mfa', inspection: 'standard', groups: 'dev-team, devops' },
+      { id: 'grafana',  name: 'Monitoring Stack',    domain: 'grafana.internal.corp', users: 5,  lastAccess: '2 jam lalu',     lastAccessEn: '2 hours ago',   status: 'protected', auth: 'sso_mfa', inspection: 'dpi',      groups: 'devops, sre' },
+      { id: 'admin',    name: 'Admin Panel',         domain: 'admin.internal.corp',   users: 3,  lastAccess: '4 jam lalu',     lastAccessEn: '4 hours ago',   status: 'reviewing', auth: 'cert',    inspection: 'dpi',      groups: 'admin' },
+      { id: 'backup',   name: 'Backup Portal',       domain: 'backup.internal.corp',  users: 7,  lastAccess: 'Kemarin',        lastAccessEn: 'Yesterday',     status: 'reviewing', auth: 'sso',     inspection: 'standard', groups: 'devops' },
+    ];
+
+    var trafficData = [
+      { id: 't1',  time: '14:32', user: 'rudi@contoh.co.id',    dest: 'jira.internal.corp',          action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't2',  time: '14:31', user: 'sari@contoh.co.id',    dest: 'suspicious-site.com',         action: 'block',   reason: 'Kebijakan DLP: unggahan eksternal diblokir',       reasonEn: 'DLP policy: external upload blocked' },
+      { id: 't3',  time: '14:30', user: 'budi@contoh.co.id',    dest: 'finance.internal.corp',       action: 'allow',   reason: 'Identitas terverifikasi + MFA',                    reasonEn: 'Identity verified + MFA' },
+      { id: 't4',  time: '14:29', user: 'unknown@contoh.co.id', dest: 'api.external-service.com',    action: 'inspect', reason: 'Volume data anomali',                              reasonEn: 'Anomalous data volume' },
+      { id: 't5',  time: '14:28', user: 'rudi@contoh.co.id',    dest: 'hr.internal.corp',            action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't6',  time: '14:27', user: 'sari@contoh.co.id',    dest: 'dropbox.com',                 action: 'block',   reason: 'DLP: penyimpanan cloud tidak diizinkan',           reasonEn: 'DLP: unauthorized cloud storage' },
+      { id: 't7',  time: '14:26', user: 'admin@contoh.co.id',   dest: 'erp.internal.corp',           action: 'inspect', reason: 'Akses pertama kali',                               reasonEn: 'First-time access' },
+      { id: 't8',  time: '14:25', user: 'budi@contoh.co.id',    dest: 'suspicious-site.com',         action: 'block',   reason: 'Indikator malware',                                reasonEn: 'Malware indicator' },
+      { id: 't9',  time: '14:24', user: 'rudi@contoh.co.id',    dest: 'api.external-service.com',    action: 'allow',   reason: 'Aplikasi disetujui',                               reasonEn: 'Approved app' },
+      { id: 't10', time: '14:23', user: 'sari@contoh.co.id',    dest: 'finance.internal.corp',       action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't11', time: '14:22', user: 'andi@contoh.co.id',    dest: 'git.internal.corp',           action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't12', time: '14:21', user: 'dewi@contoh.co.id',    dest: 'wetransfer.com',              action: 'block',   reason: 'DLP: transfer file besar diblokir',                reasonEn: 'DLP: large file transfer blocked' },
+      { id: 't13', time: '14:20', user: 'admin@contoh.co.id',   dest: 'admin.internal.corp',         action: 'inspect', reason: 'Autentikasi sertifikat tertunda',                  reasonEn: 'Certificate auth pending' },
+      { id: 't14', time: '14:19', user: 'rudi@contoh.co.id',    dest: 'grafana.internal.corp',       action: 'allow',   reason: 'SSO + MFA terverifikasi',                          reasonEn: 'SSO + MFA verified' },
+      { id: 't15', time: '14:18', user: 'unknown@contoh.co.id', dest: 'pastebin.com',                action: 'block',   reason: 'Kebocoran data potensial terdeteksi',              reasonEn: 'Potential data leak detected' },
+      { id: 't16', time: '14:17', user: 'budi@contoh.co.id',    dest: 'api-gw.internal.corp',        action: 'allow',   reason: 'Sertifikat klien valid',                           reasonEn: 'Valid client certificate' },
+      { id: 't17', time: '14:16', user: 'sari@contoh.co.id',    dest: 'hr.internal.corp',            action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't18', time: '14:15', user: 'dewi@contoh.co.id',    dest: 'google-drive.com',            action: 'inspect', reason: 'Sinkronisasi cloud terdeteksi',                    reasonEn: 'Cloud sync detected' },
+      { id: 't19', time: '14:14', user: 'andi@contoh.co.id',    dest: 'jira.internal.corp',          action: 'allow',   reason: 'Identitas terverifikasi',                          reasonEn: 'Identity verified' },
+      { id: 't20', time: '14:13', user: 'admin@contoh.co.id',   dest: 'backup.internal.corp',        action: 'inspect', reason: 'Aktivitas backup tidak terjadwal',                 reasonEn: 'Unscheduled backup activity' },
+    ];
+
+    var dlpData = [
+      { id: 'd1', enabled: true,  name: 'Block external cloud upload',   desc: 'Prevent uploads to non-approved cloud storage (Dropbox, WeTransfer, etc.)',         nameId: 'Blokir unggahan cloud eksternal',       descId: 'Cegah unggahan ke penyimpanan cloud yang tidak disetujui (Dropbox, WeTransfer, dll.)',    actions: ['block'],          patternType: 'extension', applies: 'outbound' },
+      { id: 'd2', enabled: true,  name: 'Flag large data transfers',      desc: 'Alert when >50 MB transferred to external destinations',                            nameId: 'Tandai transfer data besar',            descId: 'Beri peringatan jika >50 MB ditransfer ke tujuan eksternal',                             actions: ['inspect','alert'], patternType: 'large_file', applies: 'outbound' },
+      { id: 'd3', enabled: true,  name: 'Restrict finance data',          desc: 'Block access to finance.internal.corp from unverified devices',                    nameId: 'Batasi data keuangan',                  descId: 'Blokir akses ke finance.internal.corp dari perangkat yang tidak terverifikasi',           actions: ['block'],          patternType: 'keyword',    applies: 'all' },
+      { id: 'd4', enabled: true,  name: 'Credit card number detection',   desc: 'Scan outbound traffic for PAN data (Primary Account Number)',                      nameId: 'Deteksi nomor kartu kredit',            descId: 'Pindai lalu lintas keluar untuk data PAN (Primary Account Number)',                      actions: ['block','alert'],  patternType: 'pan',        applies: 'outbound' },
+      { id: 'd5', enabled: true,  name: 'Enforce MFA for admin apps',     desc: 'Require multi-factor authentication before accessing admin applications',           nameId: 'Wajibkan MFA untuk aplikasi admin',     descId: 'Wajibkan autentikasi multi-faktor sebelum mengakses aplikasi admin',                     actions: ['mfa'],            patternType: 'keyword',    applies: 'specific' },
+      { id: 'd6', enabled: true,  name: 'KTP / NIK number detection',     desc: 'Scan for Indonesian national ID patterns',                                         nameId: 'Deteksi nomor KTP / NIK',               descId: 'Pindai pola nomor identitas nasional Indonesia',                                         actions: ['block','alert'],  patternType: 'custom_regex', applies: 'outbound', pattern: '\\d{16}' },
+      { id: 'd7', enabled: true,  name: 'Block USB-to-cloud sync',        desc: 'Prevent desktop sync clients uploading to cloud',                                  nameId: 'Blokir sinkronisasi USB ke cloud',      descId: 'Cegah klien sinkronisasi desktop mengunggah ke cloud',                                   actions: ['block'],          patternType: 'extension',  applies: 'outbound' },
+      { id: 'd8', enabled: false, name: 'Executive email data guard',     desc: 'Flag emails sent externally from C-suite accounts',                                nameId: 'Perlindungan data email eksekutif',     descId: 'Tandai email yang dikirim ke luar dari akun C-suite',                                    actions: ['inspect','alert'], patternType: 'keyword',    applies: 'outbound' },
+      { id: 'd9', enabled: true,  name: 'Sensitive keyword match',        desc: 'Block outbound traffic containing classified keywords',                            nameId: 'Pencocokan kata kunci sensitif',         descId: 'Blokir lalu lintas keluar yang mengandung kata kunci rahasia',                           actions: ['block'],          patternType: 'keyword',    applies: 'outbound' },
+    ];
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // TABLE STATE
+    // ══════════════════════════════════════════════════════════════════════════
+
+    var tableState = {
+      apps:    { search: '', filter: 'all', sortCol: null, sortDir: 'asc', page: 1, perPage: 5 },
+      traffic: { search: '', filter: 'all', sortCol: null, sortDir: 'asc', page: 1, perPage: 5 },
+      dlp:     { search: '', filter: 'all', sortCol: null, sortDir: 'asc', page: 1, perPage: 5 },
+    };
+
+    var pendingDelete = null;
+    var currentLang = localStorage.getItem('ss-lang') || 'id';
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    function getLang() {
+      return localStorage.getItem('ss-lang') || 'id';
+    }
+
+    function t(enText, idText) {
+      return getLang() === 'id' ? idText : enText;
+    }
+
+    function actionBadge(action) {
+      var map = {
+        allow:   { cls: 'badge-allow',   en: 'Allow',       id: 'Izinkan' },
+        block:   { cls: 'badge-block',   en: 'Block',       id: 'Blokir' },
+        inspect: { cls: 'badge-inspect', en: 'Inspect',     id: 'Periksa' },
+      };
+      var m = map[action] || { cls: '', en: action, id: action };
+      return '<span class="badge ' + m.cls + '" data-en="' + m.en + '" data-id="' + m.id + '">' + (getLang() === 'id' ? m.id : m.en) + '</span>';
+    }
+
+    function statusBadge(status) {
+      var map = {
+        active:    { cls: 'badge-active',    en: 'Active',    id: 'Aktif' },
+        protected: { cls: 'badge-protected', en: 'Protected', id: 'Dilindungi' },
+        reviewing: { cls: 'badge-reviewing', en: 'Reviewing', id: 'Ditinjau' },
+      };
+      var m = map[status] || { cls: '', en: status, id: status };
+      return '<span class="badge ' + m.cls + '" data-en="' + m.en + '" data-id="' + m.id + '">' + (getLang() === 'id' ? m.id : m.en) + '</span>';
+    }
+
+    function dlpActionTags(actions) {
+      var tagMap = {
+        block:   { cls: 'sse-action-tag--block',   icon: 'ti-ban',          en: 'Block',       id: 'Blokir' },
+        inspect: { cls: 'sse-action-tag--inspect', icon: 'ti-search',       en: 'Inspect',     id: 'Periksa' },
+        alert:   { cls: 'sse-action-tag--alert',   icon: 'ti-bell',         en: 'Alert',       id: 'Peringatan' },
+        mfa:     { cls: 'sse-action-tag--mfa',     icon: 'ti-shield-check', en: 'Require MFA', id: 'Wajib MFA' },
+      };
+      return actions.map(function(a) {
+        var m = tagMap[a] || { cls: '', icon: 'ti-circle', en: a, id: a };
+        return '<span class="sse-action-tag ' + m.cls + '" data-en="' + m.en + '" data-id="' + m.id + '"><i class="ti ' + m.icon + '" style="font-size:10px;"></i> ' + (getLang() === 'id' ? m.id : m.en) + '</span>';
+      }).join(' ');
+    }
+
+    function renderPagination(tab, totalPages, currentPage) {
+      var el = document.getElementById(tab + '-pagination');
+      if (!el) return;
+      var html = '';
+      html += '<button class="sse-page-btn" ' + (currentPage <= 1 ? 'disabled' : '') + ' onclick="setPage(\'' + tab + '\',' + (currentPage - 1) + ')">&lsaquo;</button>';
+      for (var i = 1; i <= totalPages; i++) {
+        html += '<button class="sse-page-btn' + (i === currentPage ? ' active' : '') + '" onclick="setPage(\'' + tab + '\',' + i + ')">' + i + '</button>';
+      }
+      html += '<button class="sse-page-btn" ' + (currentPage >= totalPages ? 'disabled' : '') + ' onclick="setPage(\'' + tab + '\',' + (currentPage + 1) + ')">&rsaquo;</button>';
+      el.innerHTML = html;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // RENDER TABLES
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function renderTable(tab) {
+      if (tab === 'apps') renderApps();
+      else if (tab === 'traffic') renderTraffic();
+      else if (tab === 'dlp') renderDlp();
+    }
+
+    function filterAndPaginate(data, state, filterFn, searchFn, sortFn) {
+      var filtered = data.filter(function(row) {
+        var matchSearch = state.search === '' || searchFn(row, state.search.toLowerCase());
+        var matchFilter = state.filter === 'all' || filterFn(row, state.filter);
+        return matchSearch && matchFilter;
+      });
+
+      if (state.sortCol && sortFn) {
+        filtered.sort(function(a, b) {
+          return sortFn(a, b, state.sortCol, state.sortDir);
+        });
+      }
+
+      var total = filtered.length;
+      var totalPages = Math.max(1, Math.ceil(total / state.perPage));
+      if (state.page > totalPages) state.page = totalPages;
+      var start = (state.page - 1) * state.perPage;
+      var end = Math.min(start + state.perPage, total);
+      var pageRows = filtered.slice(start, end);
+
+      return { rows: pageRows, total: total, totalPages: totalPages, start: start, end: end };
+    }
+
+    function updateSortHeaders(tab) {
+      var state = tableState[tab];
+      var table = document.getElementById(tab + '-table');
+      if (!table) return;
+      table.querySelectorAll('th.sortable').forEach(function(th) {
+        var col = th.getAttribute('data-col');
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (col === state.sortCol) {
+          th.classList.add(state.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+          var icon = th.querySelector('.sse-sort-icon');
+          if (icon) {
+            icon.className = 'ti ' + (state.sortDir === 'asc' ? 'ti-arrow-up' : 'ti-arrow-down') + ' sse-sort-icon';
+          }
+        } else {
+          var icon2 = th.querySelector('.sse-sort-icon');
+          if (icon2) icon2.className = 'ti ti-arrows-sort sse-sort-icon';
+        }
+      });
+    }
+
+    // ── Apps card grid ─────────────────────────────────────────────────────────
+
+    var APP_COLORS = ['#00685F','#378ADD','#7C3AED','#D97706','#E04B4A','#059669','#0891B2','#9333EA'];
+
+    function renderApps() {
+      var state = tableState.apps;
+      var result = filterAndPaginate(
+        appsData, state,
+        function(row, f) { return row.status === f; },
+        function(row, s) { return row.name.toLowerCase().includes(s) || row.domain.toLowerCase().includes(s); },
+        function(a, b, col, dir) {
+          var av = col === 'users' ? a[col] : (a[col] || '').toString().toLowerCase();
+          var bv = col === 'users' ? b[col] : (b[col] || '').toString().toLowerCase();
+          if (av < bv) return dir === 'asc' ? -1 : 1;
+          if (av > bv) return dir === 'asc' ? 1 : -1;
+          return 0;
+        }
+      );
+
+      var lang = getLang();
+      var grid = document.getElementById('apps-grid');
+      if (!grid) return;
+
+      var authLabel = { sso: 'SSO', sso_mfa: 'SSO+MFA', cert: 'Cert' };
+
+      grid.innerHTML = result.rows.map(function(row) {
+        var colorIdx = appsData.findIndex(function(r) { return r.id === row.id; });
+        var color = APP_COLORS[colorIdx % APP_COLORS.length];
+        var initials = row.name.split(' ').slice(0,2).map(function(w){ return w[0] || ''; }).join('').toUpperCase();
+        var auth = authLabel[row.auth] || row.auth || 'SSO';
+        var lastA = escHtml(lang === 'id' ? row.lastAccess : row.lastAccessEn);
+        return (
+          '<div class="sse-app-card">' +
+            '<div class="sse-app-card__avatar" style="background:' + color + '">' + initials + '</div>' +
+            '<div class="sse-app-card__body">' +
+              '<div class="sse-app-card__head">' +
+                '<span class="sse-app-card__name">' + escHtml(row.name) + '</span>' +
+                statusBadge(row.status) +
+              '</div>' +
+              '<div class="sse-app-card__domain">' + escHtml(row.domain) + '</div>' +
+              '<div class="sse-app-card__meta">' +
+                '<span><i class="ti ti-users"></i> ' + row.users + '</span>' +
+                '<span><i class="ti ti-key"></i> ' + auth + '</span>' +
+                '<span><i class="ti ti-clock"></i> ' + lastA + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="sse-app-card__actions">' +
+              '<button class="sse-row-btn" onclick="openEditApp(\'' + row.id + '\')" title="Edit"><i class="ti ti-pencil"></i></button>' +
+              '<button class="sse-row-btn sse-row-btn--danger" onclick="openDeleteConfirm(\'app\',\'' + row.id + '\')" title="Delete"><i class="ti ti-trash"></i></button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      var countEl = document.getElementById('apps-count');
+      if (countEl) countEl.textContent = result.total + (lang === 'id' ? ' aplikasi ditemukan' : ' apps found');
+
+      var rangeEl = document.getElementById('apps-range');
+      if (rangeEl) rangeEl.textContent = (result.start + 1) + '–' + result.end + ' of ' + result.total;
+
+      renderPagination('apps', result.totalPages, state.page);
+    }
+
+    // ── Traffic feed ───────────────────────────────────────────────────────────
+
+    function renderTraffic() {
+      var state = tableState.traffic;
+      var result = filterAndPaginate(
+        trafficData, state,
+        function(row, f) { return row.action === f; },
+        function(row, s) { return row.user.toLowerCase().includes(s) || row.dest.toLowerCase().includes(s) || row.reason.toLowerCase().includes(s) || row.reasonEn.toLowerCase().includes(s); },
+        function(a, b, col, dir) {
+          var av = (a[col] || '').toString().toLowerCase();
+          var bv = (b[col] || '').toString().toLowerCase();
+          if (av < bv) return dir === 'asc' ? -1 : 1;
+          if (av > bv) return dir === 'asc' ? 1 : -1;
+          return 0;
+        }
+      );
+
+      var lang = getLang();
+      var feed = document.getElementById('traffic-feed');
+      if (!feed) return;
+
+      feed.innerHTML = result.rows.map(function(row) {
+        var reason = escHtml(lang === 'id' ? row.reason : row.reasonEn);
+        return (
+          '<div class="sse-traffic-entry sse-traffic-entry--' + row.action + '">' +
+            '<span class="sse-traffic-dot"></span>' +
+            '<span class="sse-log-time">' + escHtml(row.time) + '</span>' +
+            '<div class="sse-traffic-path">' +
+              '<span class="sse-log-user">' + escHtml(row.user) + '</span>' +
+              '<i class="ti ti-arrow-narrow-right" style="font-size:12px;color:var(--ss-on-surface-variant);flex-shrink:0;"></i>' +
+              '<span class="sse-log-dest">' + escHtml(row.dest) + '</span>' +
+            '</div>' +
+            '<div class="sse-traffic-badge">' + actionBadge(row.action) + '</div>' +
+            '<div class="sse-log-reason sse-traffic-reason" data-en="' + escHtml(row.reasonEn) + '" data-id="' + escHtml(row.reason) + '">' + reason + '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      var countEl = document.getElementById('traffic-count');
+      if (countEl) countEl.textContent = result.total + (lang === 'id' ? ' entri ditemukan' : ' entries found');
+
+      var rangeEl = document.getElementById('traffic-range');
+      if (rangeEl) rangeEl.textContent = (result.start + 1) + '–' + result.end + ' of ' + result.total;
+
+      renderPagination('traffic', result.totalPages, state.page);
+    }
+
+    // ── DLP rule cards ─────────────────────────────────────────────────────────
+
+    var PATTERN_LABELS = { custom_regex: 'Regex', pan: 'PAN', large_file: 'Large File', keyword: 'Keyword', extension: 'Extension' };
+
+    function renderDlp() {
+      var state = tableState.dlp;
+      var result = filterAndPaginate(
+        dlpData, state,
+        function(row, f) { return row.actions.includes(f); },
+        function(row, s) { return row.name.toLowerCase().includes(s) || row.nameId.toLowerCase().includes(s) || row.desc.toLowerCase().includes(s) || row.descId.toLowerCase().includes(s); },
+        function(a, b, col, dir) {
+          var av = col === 'action' ? a.actions.join(',') : ((a[col] || '').toString().toLowerCase());
+          var bv = col === 'action' ? b.actions.join(',') : ((b[col] || '').toString().toLowerCase());
+          if (av < bv) return dir === 'asc' ? -1 : 1;
+          if (av > bv) return dir === 'asc' ? 1 : -1;
+          return 0;
+        }
+      );
+
+      var lang = getLang();
+      var list = document.getElementById('dlp-list');
+      if (!list) return;
+
+      list.innerHTML = result.rows.map(function(row) {
+        var patternTag = PATTERN_LABELS[row.patternType] || row.patternType;
+        var name = escHtml(lang === 'id' ? row.nameId : row.name);
+        var desc = escHtml(lang === 'id' ? row.descId : row.desc);
+        var disabledCls = row.enabled ? '' : ' sse-dlp-rule--disabled';
+        return (
+          '<div class="sse-dlp-rule' + disabledCls + '">' +
+            '<div class="sse-dlp-rule__toggle">' +
+              '<input type="checkbox" class="sse-toggle" ' + (row.enabled ? 'checked' : '') + ' onchange="toggleDlpRule(\'' + row.id + '\',this.checked)" aria-label="' + escHtml(row.name) + '">' +
+            '</div>' +
+            '<div class="sse-dlp-rule__body">' +
+              '<div class="sse-dlp-rule__name" data-en="' + escHtml(row.name) + '" data-id="' + escHtml(row.nameId) + '">' +
+                name + ' <span class="sse-pattern-tag">' + patternTag + '</span>' +
+              '</div>' +
+              '<div class="sse-dlp-rule__desc" data-en="' + escHtml(row.desc) + '" data-id="' + escHtml(row.descId) + '">' + desc + '</div>' +
+            '</div>' +
+            '<div class="sse-dlp-rule__action">' + dlpActionTags(row.actions) + '</div>' +
+            '<div class="sse-dlp-rule__controls">' +
+              '<button class="sse-row-btn" onclick="openEditRule(\'' + row.id + '\')" title="Edit"><i class="ti ti-pencil"></i></button>' +
+              '<button class="sse-row-btn sse-row-btn--danger" onclick="openDeleteConfirm(\'rule\',\'' + row.id + '\')" title="Delete"><i class="ti ti-trash"></i></button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      var countEl = document.getElementById('dlp-count');
+      if (countEl) countEl.textContent = result.total + (lang === 'id' ? ' aturan ditemukan' : ' rules found');
+
+      var rangeEl = document.getElementById('dlp-range');
+      if (rangeEl) rangeEl.textContent = (result.start + 1) + '–' + result.end + ' of ' + result.total;
+
+      renderPagination('dlp', result.totalPages, state.page);
+    }
+
+    // ── DLP toggle ─────────────────────────────────────────────────────────────
+
+    function toggleDlpRule(id, checked) {
+      var rule = dlpData.find(function(r) { return r.id === id; });
+      if (rule) rule.enabled = checked;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // TABLE CONTROLS
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function setSearch(tab, val) {
+      tableState[tab].search = val;
+      tableState[tab].page = 1;
+      renderTable(tab);
+    }
+
+    function setFilter(tab, val) {
+      tableState[tab].filter = val;
+      tableState[tab].page = 1;
+      renderTable(tab);
+    }
+
+    function setSort(tab, col) {
+      var state = tableState[tab];
+      if (state.sortCol === col) {
+        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortCol = col;
+        state.sortDir = 'asc';
+      }
+      renderTable(tab);
+    }
+
+    function setPage(tab, n) {
+      tableState[tab].page = n;
+      renderTable(tab);
+    }
+
+    function setPerPage(tab, val) {
+      tableState[tab].perPage = val;
+      tableState[tab].page = 1;
+      renderTable(tab);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // MODAL FUNCTIONS
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function openModal(id) {
+      var el = document.getElementById(id);
+      if (el) { el.hidden = false; document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeModal(id) {
+      var el = document.getElementById(id);
+      if (el) { el.hidden = true; document.body.style.overflow = ''; }
+    }
+
+    function handleOverlayClick(e, id) {
+      if (e.target === e.currentTarget) closeModal(id);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        ['modal-add-app','modal-add-rule','modal-edit-app','modal-edit-rule','modal-confirm-delete'].forEach(closeModal);
+      }
+    });
+
+    // ── Chip helpers ───────────────────────────────────────────────────────────
+
+    function toggleChipSingle(chip, groupId) {
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.querySelectorAll('.sse-chip').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+    }
+
+    function toggleChipMulti(chip) {
+      chip.classList.toggle('active');
+    }
+
+    function getActiveChipsSingle(groupId) {
+      var group = document.getElementById(groupId);
+      if (!group) return '';
+      var active = group.querySelector('.sse-chip.active');
+      return active ? active.getAttribute('data-value') : '';
+    }
+
+    function getActiveChipsMulti(groupId) {
+      var group = document.getElementById(groupId);
+      if (!group) return [];
+      return Array.from(group.querySelectorAll('.sse-chip.active')).map(function(c) { return c.getAttribute('data-value'); });
+    }
+
+    function setActiveChipSingle(groupId, value) {
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.querySelectorAll('.sse-chip').forEach(function(c) {
+        c.classList.toggle('active', c.getAttribute('data-value') === value);
+      });
+    }
+
+    function setActiveChipsMulti(groupId, values) {
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.querySelectorAll('.sse-chip').forEach(function(c) {
+        c.classList.toggle('active', values.indexOf(c.getAttribute('data-value')) !== -1);
+      });
+    }
+
+    // ── Custom pattern visibility ──────────────────────────────────────────────
+
+    function toggleCustomPattern(value, mode) {
+      var groupId = (mode === 'add') ? 'add-custom-pattern-group' : 'edit-custom-pattern-group';
+      var group = document.getElementById(groupId);
+      if (group) group.style.display = (value === 'custom_regex') ? '' : 'none';
+    }
+
+    // ── Add App ────────────────────────────────────────────────────────────────
+
+    function openAddApp() {
+      document.getElementById('app-form-name').value = '';
+      document.getElementById('app-form-domain').value = '';
+      document.getElementById('app-form-groups').value = '';
+      document.getElementById('app-form-auth').value = 'sso';
+      document.getElementById('app-form-inspection').value = 'standard';
+      setActiveChipSingle('app-form-status-chips', 'active');
+      openModal('modal-add-app');
+    }
+
+    // ── Edit App ───────────────────────────────────────────────────────────────
+
+    function openEditApp(id) {
+      var row = appsData.find(function(r) { return r.id === id; });
+      if (!row) return;
+      document.getElementById('edit-app-form-id').value = row.id;
+      document.getElementById('edit-app-form-name').value = row.name;
+      document.getElementById('edit-app-form-domain').value = row.domain;
+      document.getElementById('edit-app-form-groups').value = row.groups || '';
+      document.getElementById('edit-app-form-auth').value = row.auth || 'sso';
+      document.getElementById('edit-app-form-inspection').value = row.inspection || 'standard';
+      setActiveChipSingle('edit-app-form-status-chips', row.status);
+      openModal('modal-edit-app');
+    }
+
+    // ── Save App ───────────────────────────────────────────────────────────────
+
+    function saveApp(isEdit) {
+      var prefix = isEdit ? 'edit-app-form' : 'app-form';
+      var nameVal = document.getElementById(prefix + '-name').value.trim();
+      var domainVal = document.getElementById(prefix + '-domain').value.trim();
+      if (!nameVal || !domainVal) { alert(getLang() === 'id' ? 'Nama aplikasi dan domain wajib diisi.' : 'App name and domain are required.'); return; }
+      var statusChipsGroup = isEdit ? 'edit-app-form-status-chips' : 'app-form-status-chips';
+      var statusVal = getActiveChipsSingle(statusChipsGroup) || 'active';
+
+      if (isEdit) {
+        var id = document.getElementById('edit-app-form-id').value;
+        var row = appsData.find(function(r) { return r.id === id; });
+        if (row) {
+          row.name = nameVal;
+          row.domain = domainVal;
+          row.groups = document.getElementById('edit-app-form-groups').value.trim();
+          row.auth = document.getElementById('edit-app-form-auth').value;
+          row.inspection = document.getElementById('edit-app-form-inspection').value;
+          row.status = statusVal;
+        }
+        closeModal('modal-edit-app');
+      } else {
+        var newId = 'app-' + Date.now();
+        appsData.push({
+          id: newId,
+          name: nameVal,
+          domain: domainVal,
+          groups: document.getElementById('app-form-groups').value.trim(),
+          users: 0,
+          lastAccess: getLang() === 'id' ? 'Baru saja' : 'Just now',
+          lastAccessEn: 'Just now',
+          status: statusVal,
+          auth: document.getElementById('app-form-auth').value,
+          inspection: document.getElementById('app-form-inspection').value,
+        });
+        document.getElementById('stat-apps-count').textContent = appsData.length;
+        closeModal('modal-add-app');
+      }
+      renderTable('apps');
+    }
+
+    // ── Add Rule ───────────────────────────────────────────────────────────────
+
+    function openAddRule() {
+      document.getElementById('rule-form-name').value = '';
+      document.getElementById('rule-form-desc').value = '';
+      document.getElementById('rule-form-pattern-type').value = 'custom_regex';
+      document.getElementById('rule-form-applies').value = 'all';
+      document.getElementById('rule-form-pattern').value = '';
+      document.getElementById('add-custom-pattern-group').style.display = '';
+      document.getElementById('rule-form-action-chips').querySelectorAll('.sse-chip').forEach(function(c) { c.classList.remove('active'); });
+      openModal('modal-add-rule');
+    }
+
+    // ── Edit Rule ──────────────────────────────────────────────────────────────
+
+    function openEditRule(id) {
+      var row = dlpData.find(function(r) { return r.id === id; });
+      if (!row) return;
+      document.getElementById('edit-rule-form-id').value = row.id;
+      document.getElementById('edit-rule-form-name').value = row.name;
+      document.getElementById('edit-rule-form-desc').value = row.desc;
+      document.getElementById('edit-rule-form-pattern-type').value = row.patternType || 'custom_regex';
+      document.getElementById('edit-rule-form-applies').value = row.applies || 'all';
+      document.getElementById('edit-rule-form-pattern').value = row.pattern || '';
+      document.getElementById('edit-custom-pattern-group').style.display = (row.patternType === 'custom_regex') ? '' : 'none';
+      setActiveChipsMulti('edit-rule-form-action-chips', row.actions || []);
+      openModal('modal-edit-rule');
+    }
+
+    // ── Save Rule ──────────────────────────────────────────────────────────────
+
+    function saveRule(isEdit) {
+      var prefix = isEdit ? 'edit-rule-form' : 'rule-form';
+      var nameVal = document.getElementById(prefix + '-name').value.trim();
+      if (!nameVal) { alert(getLang() === 'id' ? 'Nama aturan wajib diisi.' : 'Rule name is required.'); return; }
+      var actionsVal = getActiveChipsMulti(isEdit ? 'edit-rule-form-action-chips' : 'rule-form-action-chips');
+      if (!actionsVal.length) { alert(getLang() === 'id' ? 'Pilih minimal satu tindakan.' : 'Select at least one action.'); return; }
+      var patternTypeVal = document.getElementById(prefix + '-pattern-type').value;
+      var patternVal = document.getElementById(prefix + '-pattern').value.trim();
+      var appliesToVal = document.getElementById(prefix + '-applies').value;
+      var descVal = document.getElementById(prefix + '-desc').value.trim();
+
+      if (isEdit) {
+        var id = document.getElementById('edit-rule-form-id').value;
+        var row = dlpData.find(function(r) { return r.id === id; });
+        if (row) {
+          row.name = nameVal;
+          row.nameId = nameVal;
+          row.desc = descVal;
+          row.descId = descVal;
+          row.actions = actionsVal;
+          row.patternType = patternTypeVal;
+          row.pattern = patternVal;
+          row.applies = appliesToVal;
+        }
+        closeModal('modal-edit-rule');
+      } else {
+        var newId = 'dlp-' + Date.now();
+        dlpData.push({
+          id: newId,
+          enabled: true,
+          name: nameVal,
+          nameId: nameVal,
+          desc: descVal,
+          descId: descVal,
+          actions: actionsVal,
+          patternType: patternTypeVal,
+          pattern: patternVal,
+          applies: appliesToVal,
+        });
+        document.getElementById('stat-dlp-count').textContent = dlpData.length;
+        closeModal('modal-add-rule');
+      }
+      renderTable('dlp');
+    }
+
+    // ── Delete ─────────────────────────────────────────────────────────────────
+
+    function openDeleteConfirm(type, id) {
+      pendingDelete = { type: type, id: id };
+      openModal('modal-confirm-delete');
+    }
+
+    function confirmDelete() {
+      if (!pendingDelete) return;
+      if (pendingDelete.type === 'app') {
+        var idx = appsData.findIndex(function(r) { return r.id === pendingDelete.id; });
+        if (idx !== -1) appsData.splice(idx, 1);
+        document.getElementById('stat-apps-count').textContent = appsData.length;
+        renderTable('apps');
+      } else if (pendingDelete.type === 'rule') {
+        var idx2 = dlpData.findIndex(function(r) { return r.id === pendingDelete.id; });
+        if (idx2 !== -1) dlpData.splice(idx2, 1);
+        document.getElementById('stat-dlp-count').textContent = dlpData.length;
+        renderTable('dlp');
+      }
+      pendingDelete = null;
+      closeModal('modal-confirm-delete');
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // ESCAPE HTML
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════════════════════════
+
     document.addEventListener('DOMContentLoaded', function() {
       applyLang(localStorage.getItem('ss-lang') || 'id');
+      renderTable('apps');
+      renderTable('traffic');
+      renderTable('dlp');
     });
   </script>
 </body>

@@ -1,10 +1,22 @@
 /* Shannon Sentinel — AI Governance page-specific styles */
 
-/* ── Page layout ── */
+/* ── Page layout (legacy, kept for backwards compat) ── */
 .ag-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--ss-gap-xl);
+}
+
+/* ── Two-column body grid ── */
+.ag-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--ss-gap-xl);
+  align-items: start;
+  margin-bottom: var(--ss-gap-xl);
+}
+@media (max-width: 960px) {
+  .ag-body-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Section headers ── */
@@ -103,20 +115,16 @@
 .ag-pending-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 .ag-pending-card {
   background: var(--ss-surface-container-lowest);
   border-radius: var(--ss-radius-md);
-  box-shadow: var(--ss-shadow-card);
-  border-left: 3px solid var(--ss-danger);
-  overflow: hidden;
+  border: 0.5px solid var(--ss-border);
+  padding: 14px 16px;
   transition: box-shadow 0.2s, opacity 0.3s, transform 0.3s;
 }
-.ag-pending-card[data-risk="critical"] { border-left-color: #A32D2D; }
-.ag-pending-card[data-risk="high"]     { border-left-color: var(--ss-warning); }
-.ag-pending-card[data-risk="medium"]   { border-left-color: var(--ss-info); }
-.ag-pending-card:hover { box-shadow: 0px 4px 16px rgba(25,28,30,0.10), 0px 2px 8px rgba(25,28,30,0.06); }
+.ag-pending-card:hover { box-shadow: var(--ss-shadow-card); }
 
 .ag-pending-card--resolved {
   opacity: 0.55;
@@ -125,56 +133,42 @@
 }
 
 .ag-pending-card__top {
-  padding: 14px 16px 10px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.ag-pending-card__agent-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: var(--ss-brand-gradient);
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.ag-pending-card__agent-icon i {
-  font-size: 16px;
-  color: #fff;
-}
-.ag-pending-card__meta {
-  flex: 1;
-  min-width: 0;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 .ag-pending-card__agent-name {
   font-size: 12px;
   font-weight: 600;
   color: var(--ss-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ag-pending-card__agent-name i {
+  font-size: 13px;
+  opacity: 0.7;
 }
 .ag-pending-card__tool {
   font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12.5px;
   color: var(--ss-on-surface);
   background: var(--ss-surface-container-low);
   border-radius: 5px;
   padding: 3px 8px;
-  display: inline-block;
+  display: block;
   word-break: break-all;
   line-height: 1.5;
+  margin-bottom: 8px;
 }
 .ag-pending-card__badges {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 .ag-pending-card__time {
   font-size: 11px;
@@ -182,14 +176,13 @@
 }
 
 .ag-pending-card__reason {
-  padding: 0 16px 12px;
   font-size: 13px;
   color: var(--ss-on-surface-variant);
   line-height: 1.55;
-  border-bottom: 1px solid var(--ss-outline-variant);
   display: flex;
   gap: 8px;
   align-items: flex-start;
+  margin-bottom: 12px;
 }
 .ag-pending-card__reason i {
   font-size: 14px;
@@ -200,7 +193,6 @@
 }
 
 .ag-pending-card__actions {
-  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -275,20 +267,23 @@
   color: #A32D2D;
 }
 
-/* ── Stats bar ── */
+/* ── Stats bar (single seamless card, divided columns) ── */
 .ag-stats-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--ss-gap-md);
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--ss-surface-container-lowest);
+  border: 0.5px solid var(--ss-border);
+  border-radius: var(--ss-radius-md);
   margin-bottom: var(--ss-gap-xl);
+  overflow: hidden;
 }
 .ag-stat {
-  background: var(--ss-surface-container-lowest);
-  box-shadow: var(--ss-shadow-card);
-  border-radius: var(--ss-radius-md);
+  flex: 1 1 140px;
   padding: 14px 16px;
   text-align: center;
+  border-right: 0.5px solid var(--ss-border);
 }
+.ag-stat:last-child { border-right: none; }
 .ag-stat__value {
   font-size: 26px;
   font-weight: 700;
@@ -305,7 +300,55 @@
   line-height: 1.4;
 }
 
-/* ── Policy rules table ── */
+/* ── Policy rules compact list (right column) ── */
+.ag-policy-list { display: flex; flex-direction: column; }
+
+.ag-policy-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ss-on-surface-variant);
+  padding: 10px 14px 6px;
+  border-bottom: 0.5px solid var(--ss-border);
+}
+
+.ag-policy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 0.5px solid var(--ss-border);
+  transition: background 0.1s;
+}
+.ag-policy-row:last-child { border-bottom: none; }
+.ag-policy-row:hover { background: var(--ss-surface-container); }
+
+.ag-policy-row__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+.ag-policy-row__name i {
+  font-size: 14px;
+  color: var(--ss-on-surface-variant);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.ag-policy-row__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Policy rules table (kept for any legacy references) ── */
 .ag-policy-table-wrap {
   overflow-x: auto;
   border-radius: var(--ss-radius-md);
@@ -352,6 +395,8 @@
   opacity: 0.6;
   flex-shrink: 0;
 }
+
+/* ── Action pills ── */
 .ag-action-pill {
   display: inline-flex;
   align-items: center;
@@ -373,6 +418,7 @@
   background: #EDE9FF;
   color: #4C1D95;
 }
+
 /* Toggle switch */
 .ag-toggle {
   position: relative;
@@ -529,8 +575,6 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .ag-pending-card__top { flex-direction: column; }
-  .ag-policy-table th:nth-child(2),
-  .ag-policy-table td:nth-child(2) { display: none; }
   .ag-audit-table th:nth-child(5),
   .ag-audit-table td:nth-child(5) { display: none; }
 }

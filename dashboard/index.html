@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=6">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -105,6 +106,7 @@
     .ss-domain-modal__finding-sev { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 2px; }
     .ss-domain-modal__finding-sev--critical { color: var(--ss-danger); }
     .ss-domain-modal__finding-sev--high { color: var(--ss-warning); }
+    .ss-domain-modal__finding-investigate { flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--ss-brand); white-space: nowrap; margin-top: 2px; }
     .ss-domain-modal__empty { text-align: center; padding: 24px 0; color: var(--ss-on-surface-variant); font-size: 13px; }
     .ss-domain-card__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .ss-domain-card__title { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; color: var(--ss-on-surface); }
@@ -115,8 +117,27 @@
     .ss-block--h  { background: var(--ss-warning); }
     .ss-block--ok { background: var(--ss-success); }
     .ss-block--na { background: var(--ss-surface-container-low); border: 0.5px solid var(--ss-border); }
-    .ss-domain-card__footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; padding-top: 4px; border-top: 0.5px solid var(--ss-border); }
+    .ss-domain-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; padding-top: 4px; border-top: 0.5px solid var(--ss-border); }
+    .ss-domain-card__footer-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .ss-domain-card__status { font-weight: 600; }
+    .ss-domain-card__tier { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; white-space: nowrap; }
+    .ss-domain-card__tier--verified { background: var(--ss-info-light); color: #1E40AF; }
+    .ss-domain-card__tier--deterministic { background: var(--ss-surface-container-low); color: var(--ss-on-surface-variant); }
+    .ss-domain-card__tier--review { background: #FFF7E6; color: var(--ss-warning); }
+
+    /* ── AI verification strip (self-consistency + judge cascade, HITL abstentions) ── */
+    .ss-ai-verify-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--ss-surface-container-lowest); border: 0.5px solid var(--ss-border); border-radius: var(--ss-radius-lg); box-shadow: var(--ss-shadow-card); padding: 12px 18px; margin-bottom: var(--ss-gap-lg); font-size: 13px; }
+    .ss-badge-verify { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--ss-info-light); color: #1E40AF; cursor: help; }
+    .ss-ai-verify-bar__sep { width: 0.5px; height: 16px; background: var(--ss-border-md); }
+    .ss-ai-verify-bar__abstain { color: var(--ss-warning); font-weight: 500; }
+    .ss-ai-verify-bar a { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--ss-brand); white-space: nowrap; }
+
+    /* ── Citation coverage (SRF-style provenance rollup) ── */
+    .ss-citation-coverage-line { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ss-success); font-weight: 500; margin-top: 10px; padding-top: 10px; border-top: 0.5px dashed var(--ss-border-md); }
+
+    /* ── Header audit/governance link (hover tooltip pattern) ── */
+    .ss-hdr-audit-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ss-on-surface-variant); text-decoration: none; cursor: help; }
+    .ss-hdr-audit-link:hover { color: var(--ss-on-surface); }
     .ss-domain-card__status--critical { color: var(--ss-danger); }
     .ss-domain-card__status--high { color: var(--ss-warning); }
     .ss-domain-card__status--ok { color: var(--ss-success); }
@@ -194,18 +215,27 @@
         <i class="ti ti-file-text ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Reports" data-id="Laporan">Laporan</span>
       </a>
-      <a href="/agentic-soc/inspector/" class="ss-nav__item" title="Inspector">
-        <i class="ti ti-eye ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
-      </a>
       <a href="/agentic-soc/sse/" class="ss-nav__item" title="Prevention Edge">
         <i class="ti ti-shield-lock ss-nav__item-icon"></i>
         <span class="ss-nav__item-label" data-en="Prevention Edge" data-id="Edge Pencegahan">Edge Pencegahan</span>
       </a>
-      <a href="/agentic-soc/ai-governance/" class="ss-nav__item" title="AI Governance">
-        <i class="ti ti-robot ss-nav__item-icon"></i>
-        <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
-      </a>
+      <div class="ss-nav__group" data-group-key="ai-oversight">
+        <button class="ss-nav__group-toggle" type="button" onclick="toggleNavGroup(this)" title="AI Oversight">
+          <i class="ti ti-shield-check ss-nav__item-icon"></i>
+          <span class="ss-nav__item-label" data-en="AI Oversight" data-id="Pengawasan AI">Pengawasan AI</span>
+          <i class="ti ti-chevron-down ss-nav__group-chevron"></i>
+        </button>
+        <div class="ss-nav__submenu">
+          <a href="/agentic-soc/inspector/" class="ss-nav__item ss-nav__item--sub" title="Inspector">
+            <i class="ti ti-eye ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="Inspector" data-id="Inspektor">Inspektor</span>
+          </a>
+          <a href="/agentic-soc/ai-governance/" class="ss-nav__item ss-nav__item--sub" title="AI Governance">
+            <i class="ti ti-robot ss-nav__item-icon"></i>
+            <span class="ss-nav__item-label" data-en="AI Governance" data-id="Tata Kelola AI">Tata Kelola AI</span>
+          </a>
+        </div>
+      </div>
     </div>
     <div class="ss-nav__upgrade-nudge" id="nav-upgrade-nudge">
       <p data-en="You're on Free Tier" data-id="Anda di Tier Gratis">Anda di Tier Gratis</p>
@@ -239,10 +269,16 @@
           25 Apr 2026 · 14:32 WIB &nbsp;·&nbsp; <span id="hdr-company">Perusahaan Anda</span>
         </p>
       </div>
-      <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:7px 14px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;margin-top:2px;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
-        <i class="ti ti-settings" style="font-size:14px;"></i>
-        <span data-en="Domain settings" data-id="Pengaturan domain">Pengaturan domain</span>
-      </a>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:2px;">
+        <a class="ss-hdr-audit-link" href="/agentic-soc/ai-governance/" title="Audit chain: last verification 2h ago · redaction gates PASS">
+          <i class="ti ti-shield-lock" style="font-size:14px;"></i>
+          <span data-en="Audit trail →" data-id="Jejak audit →">Jejak audit →</span>
+        </a>
+        <a href="/agentic-soc/onboarding/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ss-on-surface-variant);padding:7px 14px;border-radius:var(--ss-radius-sm);border:1px solid var(--ss-outline-variant);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--ss-surface-container-low)'" onmouseout="this.style.background=''" data-en="Domain settings" data-id="Pengaturan domain">
+          <i class="ti ti-settings" style="font-size:14px;"></i>
+          <span data-en="Domain settings" data-id="Pengaturan domain">Pengaturan domain</span>
+        </a>
+      </div>
     </div>
 
     <!-- Freemium cap bar -->
@@ -251,6 +287,14 @@
       <span class="ss-cap-bar__used">42 / 50</span>
       <div class="ss-cap-bar__track"><div class="ss-cap-bar__fill" style="width:84%"></div></div>
       <a href="/agentic-soc/pricing/" class="ss-cap-bar__upgrade" data-en="Upgrade for unlimited →" data-id="Upgrade untuk tak terbatas →">Upgrade untuk tak terbatas →</a>
+    </div>
+
+    <!-- AI verification strip (concept preview: self-consistency + judge verification cascade) -->
+    <div class="ss-ai-verify-bar">
+      <span class="ss-badge-verify" title="9/10 findings passed self-consistency voting (k=5) + judge model review"><i class="ti ti-checks"></i> <span data-en="9/10 findings verified" data-id="9/10 temuan terverifikasi">9/10 temuan terverifikasi</span></span>
+      <span class="ss-ai-verify-bar__sep"></span>
+      <span class="ss-ai-verify-bar__abstain"><i class="ti ti-alert-triangle"></i> <span data-en="1 abstained — pending analyst review" data-id="1 abstain — menunggu tinjauan analis">1 abstain — menunggu tinjauan analis</span></span>
+      <a href="/agentic-soc/triage/" data-en="Review in Triage →" data-id="Tinjau di Triase →">Tinjau di Triase →</a>
     </div>
 
     <!-- Visual overview panel -->
@@ -365,6 +409,10 @@
             <span class="ss-status-row__name" data-en="Resolved" data-id="Selesai">Selesai</span>
             <span class="ss-status-row__val">5</span>
           </div>
+          <div class="ss-citation-coverage-line" title="Each finding cites ≥2 independent sources: ATT&CK, threat intel, internal telemetry">
+            <i class="ti ti-shield-check"></i>
+            <span data-en="8/9 findings ≥2 independent citations" data-id="8/9 temuan ≥2 sitasi independen">8/9 temuan ≥2 sitasi independen</span>
+          </div>
         </div>
 
       </div>
@@ -393,7 +441,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="2 critical · 1 high" data-id="2 kritis · 1 tinggi">2 kritis · 1 tinggi</span>
-          <span class="ss-domain-card__checks">7/16</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--review" title="Tier 4: conformal abstention — awaiting analyst review">Tier 4 · Review</span>
+            <span class="ss-domain-card__checks">7/16</span>
+          </span>
         </div>
       </div>
 
@@ -413,7 +464,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--high" data-en="2 high" data-id="2 tinggi">2 tinggi</span>
-          <span class="ss-domain-card__checks">3/14</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--verified" title="Tier 3: AI-verified — self-consistency + judge model PASS">Tier 3 · Verified</span>
+            <span class="ss-domain-card__checks">3/14</span>
+          </span>
         </div>
       </div>
 
@@ -433,7 +487,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="1 critical · 2 high" data-id="1 kritis · 2 tinggi">1 kritis · 2 tinggi</span>
-          <span class="ss-domain-card__checks">5/16</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--verified" title="Tier 3: AI-verified — self-consistency + judge model PASS">Tier 3 · Verified</span>
+            <span class="ss-domain-card__checks">5/16</span>
+          </span>
         </div>
       </div>
 
@@ -453,7 +510,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--critical" data-en="1 critical · 2 high" data-id="1 kritis · 2 tinggi">1 kritis · 2 tinggi</span>
-          <span class="ss-domain-card__checks">1/12</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--review" title="Tier 4: conformal abstention — awaiting analyst review">Tier 4 · Review</span>
+            <span class="ss-domain-card__checks">1/12</span>
+          </span>
         </div>
       </div>
 
@@ -473,7 +533,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--na" data-en="Not yet scanned" data-id="Belum dipindai">Belum dipindai</span>
-          <span class="ss-domain-card__checks">0/16</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--deterministic" title="Tier 1: not yet scanned — no detection tier applied">—</span>
+            <span class="ss-domain-card__checks">0/16</span>
+          </span>
         </div>
       </div>
 
@@ -493,7 +556,10 @@
         </div>
         <div class="ss-domain-card__footer">
           <span class="ss-domain-card__status ss-domain-card__status--high" data-en="1 high" data-id="1 tinggi">1 tinggi</span>
-          <span class="ss-domain-card__checks">5/14</span>
+          <span class="ss-domain-card__footer-right">
+            <span class="ss-domain-card__tier ss-domain-card__tier--verified" title="Tier 3: AI-verified — self-consistency + judge model PASS">Tier 3 · Verified</span>
+            <span class="ss-domain-card__checks">5/14</span>
+          </span>
         </div>
       </div>
 
@@ -513,7 +579,6 @@
         <div id="domain-modal-findings"></div>
         <div class="ss-modal__actions">
           <button type="button" class="ss-btn-ghost" onclick="closeDomainModal()" data-en="Close" data-id="Tutup">Tutup</button>
-          <a class="ss-btn-primary" id="domain-modal-cta" href="/agentic-soc/investigate/" data-en="View in Investigate →" data-id="Lihat di Investigate →">Lihat di Investigate →</a>
         </div>
       </div>
     </div>
@@ -565,7 +630,7 @@
     <div class="ss-sales-cta" id="sales-cta"></div>
   </div>
 
-  <script src="/agentic-soc/shared.js?v=6"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     if (window.SS) {
       const lang = localStorage.getItem('ss-lang') || 'id';
@@ -930,9 +995,9 @@
         nameEn: 'Email Security', nameId: 'Keamanan Email',
         checksEn: '7 of 16 checks complete', checksId: '7 dari 16 pemeriksaan selesai',
         findings: [
-          { sev: 'critical', en: 'DMARC policy missing on company domain', id: 'Kebijakan DMARC hilang pada domain perusahaan' },
-          { sev: 'critical', en: 'SPF record allows unauthorized senders', id: 'Rekaman SPF mengizinkan pengirim tidak sah' },
-          { sev: 'high', en: 'DKIM signing not enabled on secondary domain', id: 'Penandatanganan DKIM belum diaktifkan pada domain sekunder' },
+          { key: 'email-dmarc', sev: 'critical', en: 'DMARC policy missing on company domain', id: 'Kebijakan DMARC hilang pada domain perusahaan' },
+          { key: 'email-spf', sev: 'critical', en: 'SPF record allows unauthorized senders', id: 'Rekaman SPF mengizinkan pengirim tidak sah' },
+          { key: 'email-dkim', sev: 'high', en: 'DKIM signing not enabled on secondary domain', id: 'Penandatanganan DKIM belum diaktifkan pada domain sekunder' },
         ],
       },
       identity: {
@@ -940,8 +1005,8 @@
         nameEn: 'Identity & Access', nameId: 'Identitas & Akses',
         checksEn: '3 of 14 checks complete', checksId: '3 dari 14 pemeriksaan selesai',
         findings: [
-          { sev: 'high', en: '4 admin accounts without MFA', id: '4 akun admin tanpa MFA' },
-          { sev: 'high', en: 'Stale service account with owner-level access', id: 'Akun layanan tidak aktif dengan akses setingkat pemilik' },
+          { key: 'identity-mfa', sev: 'high', en: '4 admin accounts without MFA', id: '4 akun admin tanpa MFA' },
+          { key: 'identity-stale', sev: 'high', en: 'Stale service account with owner-level access', id: 'Akun layanan tidak aktif dengan akses setingkat pemilik' },
         ],
       },
       network: {
@@ -949,9 +1014,9 @@
         nameEn: 'Network & Perimeter', nameId: 'Jaringan & Perimeter',
         checksEn: '5 of 16 checks complete', checksId: '5 dari 16 pemeriksaan selesai',
         findings: [
-          { sev: 'critical', en: 'Exposed RDP service on public IP', id: 'Layanan RDP terbuka pada IP publik' },
-          { sev: 'high', en: 'Outdated TLS version (1.0) on VPN gateway', id: 'Versi TLS usang (1.0) pada gateway VPN' },
-          { sev: 'high', en: 'Firewall rule allows any-to-any on port 22', id: 'Aturan firewall mengizinkan any-to-any pada port 22' },
+          { key: 'network-rdp', sev: 'critical', en: 'Exposed RDP service on public IP', id: 'Layanan RDP terbuka pada IP publik' },
+          { key: 'network-tls', sev: 'high', en: 'Outdated TLS version (1.0) on VPN gateway', id: 'Versi TLS usang (1.0) pada gateway VPN' },
+          { key: 'network-fw', sev: 'high', en: 'Firewall rule allows any-to-any on port 22', id: 'Aturan firewall mengizinkan any-to-any pada port 22' },
         ],
       },
       log: {
@@ -959,9 +1024,9 @@
         nameEn: 'Log Management', nameId: 'Manajemen Log',
         checksEn: '1 of 12 checks complete', checksId: '1 dari 12 pemeriksaan selesai',
         findings: [
-          { sev: 'critical', en: 'No centralized log retention — SIEM ingestion gap', id: 'Tidak ada retensi log terpusat — celah pada penyerapan SIEM' },
-          { sev: 'high', en: 'Audit logging disabled on 3 critical servers', id: 'Pencatatan audit dinonaktifkan pada 3 server kritis' },
-          { sev: 'high', en: 'Log retention below compliance minimum (7 days)', id: 'Retensi log di bawah standar minimum kepatuhan (7 hari)' },
+          { key: 'log-siem', sev: 'critical', en: 'No centralized log retention — SIEM ingestion gap', id: 'Tidak ada retensi log terpusat — celah pada penyerapan SIEM' },
+          { key: 'log-audit', sev: 'high', en: 'Audit logging disabled on 3 critical servers', id: 'Pencatatan audit dinonaktifkan pada 3 server kritis' },
+          { key: 'log-retention', sev: 'high', en: 'Log retention below compliance minimum (7 days)', id: 'Retensi log di bawah standar minimum kepatuhan (7 hari)' },
         ],
       },
       endpoint: {
@@ -975,7 +1040,7 @@
         nameEn: 'Web & Subdomain', nameId: 'Web & Subdomain',
         checksEn: '5 of 14 checks complete', checksId: '5 dari 14 pemeriksaan selesai',
         findings: [
-          { sev: 'high', en: 'Expired TLS certificate on subdomain', id: 'Sertifikat TLS kedaluwarsa pada subdomain' },
+          { key: 'web-tls', sev: 'high', en: 'Expired TLS certificate on subdomain', id: 'Sertifikat TLS kedaluwarsa pada subdomain' },
         ],
       },
     };
@@ -994,15 +1059,20 @@
       if (data.findings.length === 0) {
         list.innerHTML = `<div class="ss-domain-modal__empty">${isEn ? 'No findings yet — this domain has not been scanned.' : 'Belum ada temuan — domain ini belum dipindai.'}</div>`;
       } else {
-        list.innerHTML = data.findings.map(f => `
+        list.innerHTML = data.findings.map(f => {
+          const text = isEn ? f.en : f.id;
+          const params = new URLSearchParams({ conv: f.key, t: text, sev: f.sev, dom: key });
+          return `
           <div class="ss-domain-modal__finding">
             <span class="ss-domain-modal__finding-icon ss-domain-modal__finding-icon--${f.sev}"><i class="ti ${f.sev === 'critical' ? 'ti-alert-triangle' : 'ti-alert-circle'}"></i></span>
             <span class="ss-domain-modal__finding-title">
               <span class="ss-domain-modal__finding-sev ss-domain-modal__finding-sev--${f.sev}">${f.sev === 'critical' ? (isEn ? 'Critical' : 'Kritis') : (isEn ? 'High' : 'Tinggi')}</span>
-              ${isEn ? f.en : f.id}
+              ${text}
             </span>
+            <a class="ss-domain-modal__finding-investigate" href="/agentic-soc/investigate/?${params.toString()}">${isEn ? 'Investigate →' : 'Investigasi →'}</a>
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
 
       modal.hidden = false;

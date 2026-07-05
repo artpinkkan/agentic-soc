@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
-  <link rel="stylesheet" href="/agentic-soc/shared.css?v=3">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/agentic-soc/shared.css?v=7">
   <script>
     document.documentElement.lang = localStorage.getItem('ss-lang') || 'id';
     (function() {
@@ -866,27 +867,13 @@
           </div>
         </div>
 
-        <!-- What's next: full-width, below done banner (hidden while scanning) -->
-        <div class="ss-whats-next" id="whats-next" hidden>
-          <p class="ss-whats-next__label"
-             data-en="Here's what you can do next:"
-             data-id="Ini yang bisa Anda lakukan selanjutnya:">
-            Here's what you can do next:
-          </p>
-          <div class="ss-whats-next__steps" id="whats-next-steps"></div>
-          <a href="/agentic-soc/pricing/#platform" class="ss-whats-next__platform-link"
-             data-en="Curious where this goes long-term? See the full platform direction →"
-             data-id="Penasaran arah jangka panjangnya? Lihat arah platform lengkap →">
-            Curious where this goes long-term? See the full platform direction →
-          </a>
-        </div>
 
       </div>
     </div>
 
   </div><!-- /ob-page -->
 
-  <script src="/agentic-soc/shared.js?v=3"></script>
+  <script src="/agentic-soc/shared.js?v=8"></script>
   <script>
     let epCount = 0;
     let selectedFunnel = (window.SS && window.SS.funnel) || null;
@@ -1126,14 +1113,6 @@
       const accent = accentMap[funnel] || 'var(--ss-brand)';
       document.querySelectorAll('.ob-card').forEach(card => card.style.setProperty('--ob-card-accent', accent));
 
-      // Step 4: what's next
-      document.getElementById('whats-next-steps').innerHTML = meta.whatsNext.map((step, i) => `
-        <div class="ss-whats-next__step${step.active ? ' ss-whats-next__step--active' : ''}">
-          <span class="ss-whats-next__num">${i + 1}</span>
-          <p class="ss-whats-next__title">${step.title[lang] || step.title.id}</p>
-          <p class="ss-whats-next__sub">${step.sub[lang] || step.sub.id}</p>
-        </div>`
-      ).join('');
     }
 
     function goStep(n) {
@@ -1175,7 +1154,6 @@
           setTimeout(() => {
             document.getElementById('ob-scan-2col').hidden = true;
             document.getElementById('scan-done').hidden    = false;
-            document.getElementById('whats-next').hidden   = false;
             const sess = {
               email: 'budi@majuindustri.co.id',
               name: 'Budi Santoso',
