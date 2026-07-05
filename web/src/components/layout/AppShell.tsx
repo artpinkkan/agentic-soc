@@ -178,14 +178,14 @@ export function AppShell() {
                   side="top"
                   sideOffset={4}
                 >
-                  <div className="flex items-center gap-2 px-2 py-1.5">
-                    <div className="flex flex-col">
+                  <div className="flex flex-col gap-1.5 px-2 py-1.5">
+                    <div className="min-w-0">
                       <span className="text-xs text-muted-foreground">
                         {t("Signed in as", "Masuk sebagai")}
                       </span>
-                      <span className="text-sm font-medium">{account.email}</span>
+                      <p className="truncate text-sm font-medium">{account.email}</p>
                     </div>
-                    <Badge className="ml-auto">
+                    <Badge className="w-fit whitespace-nowrap">
                       {t(account.tierLabel.en, account.tierLabel.id)}
                     </Badge>
                   </div>
@@ -250,11 +250,16 @@ export function AppShell() {
           <SidebarTrigger />
           <Separator orientation="vertical" className="mr-1 h-4" />
           <div className="flex items-center gap-1.5 text-sm min-w-0">
-            <span className="text-muted-foreground truncate">{account.company}</span>
+            <NavLink to="/dashboard" className="text-muted-foreground truncate hover:text-foreground hover:underline">
+              {account.company}
+            </NavLink>
             <ChevronRight className="size-3.5 text-muted-foreground shrink-0" />
-            <span className="font-medium truncate">
+            <NavLink
+              to={currentItem?.to ?? "/dashboard"}
+              className="font-medium truncate hover:underline"
+            >
               {currentItem ? t(currentItem.en, currentItem.id) : t("Dashboard", "Dasbor")}
-            </span>
+            </NavLink>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <button

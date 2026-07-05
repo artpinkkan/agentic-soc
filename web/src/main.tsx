@@ -9,7 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/agentic-soc/">
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <I18nProvider>
         <SessionProvider>
           <TooltipProvider>

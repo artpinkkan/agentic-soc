@@ -64,7 +64,7 @@ const DOMAIN_FINDINGS: Record<string, DomainData> = {
   email: {
     icon: Mail,
     chip: "bg-sky-100 text-sky-600",
-    dot: "#0284c7",
+    dot: "#171717",
     nameEn: "Email Security",
     nameId: "Keamanan Email",
     checksEn: "7 of 16 checks complete",
@@ -81,7 +81,7 @@ const DOMAIN_FINDINGS: Record<string, DomainData> = {
   identity: {
     icon: UserCog,
     chip: "bg-violet-100 text-violet-600",
-    dot: "#7c3aed",
+    dot: "#404040",
     nameEn: "Identity & Access",
     nameId: "Identitas & Akses",
     checksEn: "3 of 14 checks complete",
@@ -97,7 +97,7 @@ const DOMAIN_FINDINGS: Record<string, DomainData> = {
   network: {
     icon: Network,
     chip: "bg-amber-100 text-amber-600",
-    dot: "#d97706",
+    dot: "#737373",
     nameEn: "Network & Perimeter",
     nameId: "Jaringan & Perimeter",
     checksEn: "5 of 16 checks complete",
@@ -114,7 +114,7 @@ const DOMAIN_FINDINGS: Record<string, DomainData> = {
   log: {
     icon: FileText,
     chip: "bg-cyan-100 text-cyan-600",
-    dot: "#0891b2",
+    dot: "#a3a3a3",
     nameEn: "Log Management",
     nameId: "Manajemen Log",
     checksEn: "1 of 12 checks complete",
@@ -144,7 +144,7 @@ const DOMAIN_FINDINGS: Record<string, DomainData> = {
   web: {
     icon: Globe,
     chip: "bg-indigo-100 text-indigo-600",
-    dot: "#4f46e5",
+    dot: "#d4d4d4",
     nameEn: "Web & Subdomain",
     nameId: "Web & Subdomain",
     checksEn: "5 of 14 checks complete",
@@ -184,17 +184,25 @@ const DAILY_ALERTS: { date: string; value: number }[] = Array.from({ length: ALE
   return { date: toISODate(d), value }
 })
 
+function formatBucketDate(date: string) {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  })
+}
+
 function bucketAlerts(alerts: { date: string; value: number }[], targetBuckets: number) {
   if (alerts.length === 0) return []
   const bucketCount = Math.max(1, Math.min(targetBuckets, alerts.length))
   const size = Math.ceil(alerts.length / bucketCount)
-  const buckets: { label: string; value: number }[] = []
+  const buckets: { label: string; value: number; rangeStart: string; rangeEnd: string; days: number }[] = []
   for (let i = 0; i < alerts.length; i += size) {
     const chunk = alerts.slice(i, i + size)
     const value = chunk.reduce((sum, a) => sum + a.value, 0)
-    const start = new Date(`${chunk[0].date}T00:00:00Z`)
-    const label = start.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })
-    buckets.push({ label, value })
+    const rangeStart = chunk[0].date
+    const rangeEnd = chunk[chunk.length - 1].date
+    buckets.push({ label: formatBucketDate(rangeStart), value, rangeStart, rangeEnd, days: chunk.length })
   }
   return buckets
 }
@@ -218,18 +226,10 @@ export function Dashboard() {
     () => domainEntries.reduce((sum, [, d]) => sum + d.findings.length, 0),
     [domainEntries]
   )
-  const donutGradient = useMemo(() => {
-    let acc = 0
-    const stops = domainEntries
-      .filter(([, d]) => d.findings.length > 0)
-      .map(([, d]) => {
-        const start = (acc / donutTotal) * 360
-        acc += d.findings.length
-        const end = (acc / donutTotal) * 360
-        return `${d.dot} ${start}deg ${end}deg`
-      })
-    return `conic-gradient(${stops.join(", ")})`
-  }, [domainEntries, donutTotal])
+  const maxSourceCount = useMemo(
+    () => Math.max(1, ...domainEntries.map(([, d]) => d.findings.length)),
+    [domainEntries]
+  )
 
   const defaultStart = DAILY_ALERTS[0].date
   const defaultEnd = DAILY_ALERTS[DAILY_ALERTS.length - 1].date
@@ -378,11 +378,11 @@ export function Dashboard() {
       </Card>
 
       {/* Findings breakdown, alert trend, findings status */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 items-stretch">
-        <Card className="h-full">
+      <div className="flex flex-col gap-4">
+        <Card size="sm">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
-              <CardTitle className="text-base">{t("Alert Trend", "Tren Peringatan")}</CardTitle>
+              <CardTitle className="text-sm">{t("Alert Trend", "Tren Peringatan")}</CardTitle>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {formatRangeLabel(trendRange.start)} – {formatRangeLabel(trendRange.end)}
               </p>
@@ -443,24 +443,38 @@ export function Dashboard() {
           </CardHeader>
           <CardContent className="flex flex-1 flex-col">
             {trendBuckets.length === 0 ? (
-              <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+              <div className="flex h-44 items-center justify-center text-sm text-muted-foreground">
                 {t("No alerts in this range", "Tidak ada peringatan pada rentang ini")}
               </div>
             ) : (
-              <div className="flex flex-1 items-end gap-3">
+              <div className="flex h-44 items-end gap-4">
                 {trendBuckets.map((w, i) => {
                   const isSpike = w.value === trendPeak && w.value > 0
                   const heightPct = (w.value / maxTrend) * 100
+                  const rangeLabel =
+                    w.days > 1
+                      ? `${formatBucketDate(w.rangeStart)} – ${formatBucketDate(w.rangeEnd)}`
+                      : formatBucketDate(w.rangeStart)
                   return (
-                    <div key={`${w.label}-${i}`} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                    <div key={`${w.label}-${i}`} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
                       {isSpike && (
-                        <span className="text-xs font-semibold text-red-600">{w.value}</span>
+                        <span className="text-[10px] font-semibold text-red-600">{w.value}</span>
                       )}
-                      <div
-                        className={`w-full rounded-t-sm ${isSpike ? "bg-red-500" : "bg-emerald-400"}`}
-                        style={{ height: `${heightPct}%` }}
-                      />
-                      <span className="text-[10px] text-muted-foreground">{w.label}</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div
+                            className={`w-full rounded-t-sm transition-opacity hover:opacity-80 ${isSpike ? "bg-red-500" : "bg-neutral-700"}`}
+                            style={{ height: `${heightPct}%` }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="font-medium">{rangeLabel}</p>
+                          <p className="text-muted-foreground">
+                            {w.value} {t("alerts", "peringatan")}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <span className="text-[9px] text-muted-foreground">{w.label}</span>
                     </div>
                   )
                 })}
@@ -469,73 +483,78 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t("Finding Sources Breakdown", "Rincian Sumber Temuan")}</CardTitle>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card size="sm">
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
+              <CardTitle className="text-sm">{t("Finding Sources Breakdown", "Rincian Sumber Temuan")}</CardTitle>
+              <span className="text-xs text-muted-foreground">
+                {donutTotal} {t("findings", "temuan")}
+              </span>
             </CardHeader>
-            <CardContent className="flex items-center gap-6">
-              <div className="relative size-24 shrink-0 rounded-full" style={{ background: donutGradient }}>
-                <div className="absolute inset-3 rounded-full bg-card flex flex-col items-center justify-center">
-                  <span className="text-lg font-semibold tracking-tight">{donutTotal}</span>
-                  <span className="text-[10px] text-muted-foreground">{t("findings", "temuan")}</span>
-                </div>
-              </div>
-              <ul className="flex w-full flex-col gap-1.5 text-sm min-w-0">
-                {domainEntries
-                  .filter(([, d]) => d.findings.length > 0)
-                  .map(([key, d]) => (
-                    <li key={key} className="flex items-center gap-2">
-                      <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: d.dot }} />
+            <CardContent className="flex flex-col gap-2.5 text-xs">
+              {domainEntries
+                .filter(([, d]) => d.findings.length > 0)
+                .map(([key, d]) => (
+                  <div key={key} className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
                       <span className="truncate text-foreground/80">{t(d.nameEn, d.nameId)}</span>
-                      <span className="ml-auto font-medium">{d.findings.length}</span>
-                    </li>
-                  ))}
-              </ul>
+                      <span className="font-medium">{d.findings.length}</span>
+                    </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${(d.findings.length / maxSourceCount) * 100}%`,
+                          backgroundColor: d.dot,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
             </CardContent>
           </Card>
 
-          <Card>
+          <Card size="sm">
             <CardHeader>
-              <CardTitle className="text-base">{t("Findings Status", "Status Temuan")}</CardTitle>
+              <CardTitle className="text-sm">{t("Findings Status", "Status Temuan")}</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4 text-sm">
-              <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className="bg-sky-500" style={{ width: `${(12 / 25) * 100}%` }} />
-                <div className="bg-violet-500" style={{ width: `${(4 / 25) * 100}%` }} />
+            <CardContent className="flex flex-col gap-3 text-xs">
+              <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div className="bg-neutral-800" style={{ width: `${(12 / 25) * 100}%` }} />
+                <div className="bg-neutral-300" style={{ width: `${(4 / 25) * 100}%` }} />
                 <div className="bg-emerald-500" style={{ width: `${(9 / 25) * 100}%` }} />
               </div>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <span className="size-6 rounded-md bg-sky-100 text-sky-600 flex items-center justify-center">
-                      <Circle className="size-3" />
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="size-5 rounded-md bg-neutral-200 text-neutral-800 flex items-center justify-center">
+                      <Circle className="size-2.5" />
                     </span>
                     {t("Open", "Terbuka")}
                   </span>
                   <span className="font-medium">12</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <span className="size-6 rounded-md bg-violet-100 text-violet-600 flex items-center justify-center">
-                      <Eye className="size-3" />
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="size-5 rounded-md bg-neutral-100 text-neutral-400 flex items-center justify-center">
+                      <Eye className="size-2.5" />
                     </span>
                     {t("Monitoring", "Pemantauan")}
                   </span>
                   <span className="font-medium">4</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <span className="size-6 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                      <ShieldCheck className="size-3" />
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="size-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                      <ShieldCheck className="size-2.5" />
                     </span>
                     {t("Resolved", "Terselesaikan")}
                   </span>
                   <span className="font-medium">9</span>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium pt-3 border-t border-dashed">
-                <ShieldCheck className="size-3.5" />
+              <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium pt-2.5 border-t border-dashed">
+                <ShieldCheck className="size-3" />
                 {t("8/9 findings ≥2 independent citations", "8/9 temuan ≥2 sitasi independen")}
               </div>
             </CardContent>

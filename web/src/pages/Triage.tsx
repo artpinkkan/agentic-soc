@@ -213,7 +213,7 @@ export function Triage() {
       </Card>
 
       <Tabs defaultValue="playbook">
-        <TabsList>
+        <TabsList className="gap-2">
           <TabsTrigger value="playbook" className="gap-1.5">
             <ListChecks className="size-4" />
             {t("Active Playbook", "Playbook Aktif")}

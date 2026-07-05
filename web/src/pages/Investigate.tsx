@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   AlertTriangle,
   ExternalLink,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +32,11 @@ const GENERIC_CITATIONS = [
   { kind: "attck" as const, label: "attck:lookup", title: "node_hash: 2b7f0a91 · tier: knowledge-graph" },
 ]
 
+function truncateChars(text: string, max: number) {
+  if (text.length <= max) return text
+  return `${text.slice(0, max).trimEnd()}...`
+}
+
 function severityBadge(sev: Severity | undefined, t: (en: string, id: string) => string) {
   if (!sev) return null
   return (
@@ -45,11 +51,13 @@ function ConversationList({
   activeKey,
   onSelect,
   onNew,
+  onDelete,
 }: {
   conversations: Record<string, Conversation>
   activeKey: string
   onSelect: (key: string) => void
   onNew: () => void
+  onDelete: (key: string) => void
 }) {
   const { t, lang } = useI18n()
   return (
@@ -68,14 +76,25 @@ function ConversationList({
           {Object.values(conversations).map((c) => {
             const title = lang === "en" ? c.titleEn : c.titleId
             const lastMsg = c.messages[c.messages.length - 1]
-            const snippet = lastMsg ? (lang === "en" ? lastMsg.en : lastMsg.id) : t("No messages yet", "Belum ada pesan")
+            const snippet = truncateChars(
+              lastMsg ? (lang === "en" ? lastMsg.en : lastMsg.id) : t("No messages yet", "Belum ada pesan"),
+              36
+            )
             const active = c.key === activeKey
             return (
-              <button
+              <div
                 key={c.key}
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelect(c.key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    onSelect(c.key)
+                  }
+                }}
                 className={
-                  "flex items-start gap-2.5 px-3 py-2.5 text-left border-l-2 transition-colors hover:bg-accent " +
+                  "group relative flex w-full cursor-pointer items-start gap-2.5 pl-3 pr-6 py-2.5 text-left border-l-2 transition-colors hover:bg-accent " +
                   (active ? "bg-accent border-l-primary" : "border-l-transparent")
                 }
               >
@@ -89,7 +108,7 @@ function ConversationList({
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[12.5px] font-medium">{title}</div>
-                  <div className="truncate text-[11.5px] text-muted-foreground">{snippet}</div>
+                  <div className="overflow-hidden text-nowrap text-[11.5px] text-muted-foreground">{snippet}</div>
                   <div className="mt-1 flex items-center gap-1.5">
                     {c.severity && severityBadge(c.severity, t)}
                     {c.ref && (
@@ -99,7 +118,18 @@ function ConversationList({
                     )}
                   </div>
                 </div>
-              </button>
+                <button
+                  type="button"
+                  aria-label={t("Delete conversation", "Hapus percakapan")}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete(c.key)
+                  }}
+                  className="absolute right-0.5 top-1/2 hidden size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive group-hover:flex"
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              </div>
             )
           })}
         </div>
@@ -275,6 +305,23 @@ export function Investigate() {
     setSidebarOpen(false)
   }
 
+  const handleDelete = (key: string) => {
+    const ok = window.confirm(
+      t("Delete this conversation? This cannot be undone.", "Hapus percakapan ini? Tindakan ini tidak dapat dibatalkan.")
+    )
+    if (!ok) return
+
+    const remainingKeys = Object.keys(conversations).filter((k) => k !== key)
+    setConversations((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+    if (activeKey === key) {
+      setActiveKey(remainingKeys[0] ?? "")
+    }
+  }
+
   const handleSend = () => {
     const text = input.trim()
     if (!text || !active) return
@@ -316,14 +363,15 @@ export function Investigate() {
       activeKey={activeKey}
       onSelect={handleSelect}
       onNew={handleNew}
+      onDelete={handleDelete}
     />
   )
 
   const messages = useMemo(() => active?.messages ?? [], [active])
 
   return (
-    <div className="flex min-h-0 flex-1 -m-4 md:-m-6 overflow-hidden rounded-none border-t md:rounded-lg md:border">
-      {!isMobile && <div className="w-64 shrink-0 border-r">{sidebarContent}</div>}
+    <div className="flex min-h-0 flex-1 -m-4 md:-m-6 overflow-hidden border-t md:border">
+      {!isMobile && <div className="w-80 shrink-0 border-r">{sidebarContent}</div>}
 
       {isMobile && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
