@@ -21,11 +21,30 @@ import {
   FileSearch,
   FileBarChart,
   Plus,
+  Download,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useSession } from "@/lib/session"
 import {
   Table,
@@ -39,8 +58,9 @@ import { useI18n } from "@/lib/i18n"
 import {
   AUDIT_LOG,
   PENDING_ACTIONS,
-  POLICY_GROUPS,
+  POLICY_GROUPS as POLICY_GROUPS_INITIAL,
   type PolicyRule,
+  type PolicyMode,
 } from "@/lib/ai-governance-data"
 
 const RISK_BADGE: Record<string, "destructive" | "secondary"> = {
@@ -98,6 +118,8 @@ const DECISION_BADGE: Record<string, { icon: typeof Zap; en: string; id: string 
 
 type CardState = "pending" | "approved" | "rejected"
 
+const NEW_RULE_ICON: PolicyRule["icon"] = "settings"
+
 export function AiGovernance() {
   const { t } = useI18n()
   const { account } = useSession()
@@ -105,10 +127,46 @@ export function AiGovernance() {
   const [previewUnlocked, setPreviewUnlocked] = useState(false)
   const tierUnlocked = account.tier === "mdr_ai" || previewUnlocked
 
+  const [policyGroups, setPolicyGroups] = useState(POLICY_GROUPS_INITIAL)
+  const [ruleEnabled, setRuleEnabled] = useState<Record<string, boolean>>({})
+  const [addRuleOpen, setAddRuleOpen] = useState(false)
+  const [newRuleName, setNewRuleName] = useState("")
+  const [newRuleMode, setNewRuleMode] = useState<PolicyMode>("hitl")
+
   const pendingCount = PENDING_ACTIONS.filter((a) => (cardStates[a.id] ?? "pending") === "pending").length
 
   const approve = (id: number) => setCardStates((prev) => ({ ...prev, [id]: "approved" }))
   const reject = (id: number) => setCardStates((prev) => ({ ...prev, [id]: "rejected" }))
+
+  const addRule = () => {
+    const name = newRuleName.trim()
+    if (!name) return
+    setPolicyGroups((prev) =>
+      prev.map((group, i) =>
+        i === 0
+          ? { ...group, rules: [...group.rules, { nameEn: name, nameId: name, mode: newRuleMode, icon: NEW_RULE_ICON }] }
+          : group
+      )
+    )
+    setNewRuleName("")
+    setNewRuleMode("hitl")
+    setAddRuleOpen(false)
+  }
+
+  const exportCsv = () => {
+    const header = ["Time", "Agent", "Tool Call", "Decision", "Decided By", "Outcome"]
+    const rows = AUDIT_LOG.map((e) => [e.time, e.agent, e.toolCall, e.decision, e.decidedByEn, e.outcome])
+    const csv = [header, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "ai-governance-audit-log.csv"
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   const stats = [
     { value: pendingCount, label: { en: "Pending approval", id: "Menunggu persetujuan" }, danger: true },
@@ -278,10 +336,57 @@ export function AiGovernance() {
                   <ShieldCheck className="size-4" />
                   {t("Policy Rules", "Aturan Kebijakan")}
                 </div>
-                <Button size="sm" variant="outline" disabled>
-                  <Plus className="size-3.5" />
-                  {t("Add Rule", "Tambah Aturan")}
-                </Button>
+                <Dialog open={addRuleOpen} onOpenChange={setAddRuleOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      <Plus className="size-3.5" />
+                      {t("Add Rule", "Tambah Aturan")}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{t("Add Policy Rule", "Tambah Aturan Kebijakan")}</DialogTitle>
+                      <DialogDescription>
+                        {t(
+                          "Define a new governance rule for AI agent tool calls.",
+                          "Tentukan aturan tata kelola baru untuk pemanggilan alat agen AI."
+                        )}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4 py-2">
+                      <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="rule-name">{t("Rule name", "Nama aturan")}</Label>
+                        <Input
+                          id="rule-name"
+                          value={newRuleName}
+                          onChange={(e) => setNewRuleName(e.target.value)}
+                          placeholder={t("e.g. Access billing records", "mis. Akses data tagihan")}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <Label>{t("Mode", "Mode")}</Label>
+                        <Select value={newRuleMode} onValueChange={(v) => setNewRuleMode(v as PolicyMode)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="hitl">{t("Human approval", "Persetujuan manusia")}</SelectItem>
+                            <SelectItem value="audit">{t("+ audit", "+ audit")}</SelectItem>
+                            <SelectItem value="auto">{t("Auto", "Otomatis")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setAddRuleOpen(false)}>
+                        {t("Cancel", "Batal")}
+                      </Button>
+                      <Button onClick={addRule} disabled={!newRuleName.trim()}>
+                        {t("Add Rule", "Tambah Aturan")}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
@@ -292,13 +397,14 @@ export function AiGovernance() {
 
               <Card className="py-0 overflow-hidden">
                 <CardContent className="p-0 divide-y">
-                  {POLICY_GROUPS.map((group) => (
+                  {policyGroups.map((group) => (
                     <div key={group.labelEn}>
                       <div className="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted/50">
                         {t(group.labelEn, group.labelId)}
                       </div>
                       {group.rules.map((rule) => {
                         const Icon = POLICY_ICON[rule.icon]
+                        const enabled = ruleEnabled[rule.nameEn] ?? true
                         return (
                           <div key={rule.nameEn} className="flex items-center justify-between gap-3 px-4 py-3 border-t">
                             <div className="flex items-center gap-2 text-sm min-w-0">
@@ -307,7 +413,12 @@ export function AiGovernance() {
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <PolicyModePill mode={rule.mode} />
-                              <Switch checked disabled />
+                              <Switch
+                                checked={enabled}
+                                onCheckedChange={(v) =>
+                                  setRuleEnabled((prev) => ({ ...prev, [rule.nameEn]: v }))
+                                }
+                              />
                             </div>
                           </div>
                         )
@@ -326,9 +437,14 @@ export function AiGovernance() {
                 <History className="size-4" />
                 {t("Audit Log", "Log Audit")}
               </div>
-              <span className="text-xs font-medium text-primary cursor-pointer hover:underline">
+              <button
+                type="button"
+                onClick={exportCsv}
+                className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+              >
+                <Download className="size-3" />
                 {t("Export CSV", "Ekspor CSV")}
-              </span>
+              </button>
             </div>
 
             <Card className="py-0 overflow-hidden">

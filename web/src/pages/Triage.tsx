@@ -105,6 +105,7 @@ export function Triage() {
     { time: "14:08", en: "HITL gate triggered — awaiting approval for 3 steps", id: "Gate HITL aktif — menunggu persetujuan 3 langkah" },
   ])
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("all")
+  const [activeTab, setActiveTab] = useState("playbook")
   const [role, setRole] = useState<"analyst" | "admin" | "compliance">("analyst")
 
   useEffect(() => {
@@ -207,12 +208,16 @@ export function Triage() {
         <span className="text-sm font-medium">SSH Brute Force — ssh.domain.com</span>
         <span className="text-sm text-red-600 font-medium">{t("Critical", "Kritis")}</span>
         <span className="text-xs text-muted-foreground">14:07</span>
-        <span className="ml-auto text-sm font-medium text-primary hover:underline cursor-pointer">
+        <button
+          type="button"
+          onClick={() => setActiveTab("queue")}
+          className="ml-auto text-sm font-medium text-primary hover:underline cursor-pointer"
+        >
           {t("2 more alerts waiting → View Case Queue", "2 alert lain menunggu → Lihat Antrean Kasus")}
-        </span>
+        </button>
       </Card>
 
-      <Tabs defaultValue="playbook">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="gap-2">
           <TabsTrigger value="playbook" className="gap-1.5">
             <ListChecks className="size-4" />
